@@ -37,6 +37,18 @@ services:
       - "5173:5173"
     depends_on:
       - backend
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: lockin_phpmyadmin
+    ports:
+      - "8082:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: ${MYSQL_USER:-lockin_user}
+      PMA_PASSWORD: ${MYSQL_PASSWORD:-lockin_pass}
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   db_data:
