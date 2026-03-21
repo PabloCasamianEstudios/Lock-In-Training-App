@@ -2,7 +2,7 @@ import SystemStatus from './components/SystemStatus'
 
 function App() {
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden p-4 text-text-main font-rpg">
+    <div className="fixed inset-0 bg-black flex items-center justify-center overflow-hidden p-4 text-text-main font-rpg">
       {/* Background patterns */}
       <div className="absolute inset-0 z-0 bg-grid pointer-events-none opacity-60"></div>
       

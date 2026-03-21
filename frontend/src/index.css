@@ -29,12 +29,24 @@
   --system-accent: #f58027;
 }
 
-body {
+html,
+body,
+#root {
   margin: 0;
-  font-family: 'Orbitron', sans-serif;
-  overflow-x: hidden;
-  background-color: var(--background);
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000 !important;
   color: var(--text);
+  overflow: hidden;
+  font-family: 'Orbitron', sans-serif;
+}
+
+/* Global Reset for any potential blue leakage */
+* {
+  border-color: transparent;
+  outline-color: transparent;
+  box-shadow: none;
 }
 
 .system-card {
