@@ -7,7 +7,7 @@ const SystemStatus = () => {
     useEffect(() => {
         const fetchStatus = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/system/status');
+                const response = await fetch('http://localhost:8081/api/system/status');
                 const data = await response.json();
                 setStatus(data);
             } catch (error) {
