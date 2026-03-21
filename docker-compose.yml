@@ -1,20 +1,46 @@
-version: '3.8'
-
 services:
   db:
     image: mysql:8.0
-    container_name: lockin-db
-    restart: always
+    container_name: lockin_db
     environment:
-      MYSQL_DATABASE: lockin_db
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-lockin_db}
+      MYSQL_USER: ${MYSQL_USER:-lockin_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-lockin_pass}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_pass}
     ports:
       - "3306:3306"
     volumes:
-      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-      - mysql_data:/var/lib/mysql
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: lockin_backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${MYSQL_DATABASE:-lockin_db}?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-lockin_user}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-lockin_pass}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: lockin_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
 
 volumes:
-  mysql_data:
+  db_data:
+
+networks:
+  default:
+    name: lockin_network
