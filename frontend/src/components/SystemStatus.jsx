@@ -18,35 +18,52 @@ const SystemStatus = () => {
             }
         };
 
-        const timeout = setTimeout(fetchStatus, 1500); // Slight delay for aesthetic effect
+        const timeout = setTimeout(fetchStatus, 1500);
         return () => clearTimeout(timeout);
     }, []);
 
     return (
-        <div className="flex flex-col items-center justify-center space-y-4">
-            <div className="system-card min-w-[320px]">
-                <div className="flex justify-between items-center mb-4 border-b border-system-blue/30 pb-2">
-                    <span className="text-[10px] text-system-blue uppercase tracking-[0.2em]">Status Report</span>
-                    <span className={`text-[10px] ${status.status === 'SYSTEM ACTIVE' ? 'text-green-400' : 'text-red-500'}`}>
+        <div className="flex flex-col items-center justify-center space-y-6">
+            <div className="system-card min-w-[360px] relative overflow-hidden">
+                {/* Decorative corner elements */}
+                <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-main/20"></div>
+                
+                <div className="flex justify-between items-center mb-6 border-b border-main/10 pb-2">
+                    <span className="text-[9px] text-main/40 uppercase tracking-[0.3em] font-bold">[ SYSTEM LINK ]</span>
+                    <span className={`text-[9px] font-bold ${status.status === 'SYSTEM ACTIVE' ? 'text-good' : 'text-error animate-pulse'}`}>
                         {status.status}
                     </span>
                 </div>
                 
-                <h2 className="text-neon text-2xl font-bold mb-2 tracking-widest text-center">
-                    {status.status}
-                </h2>
+                <div className="relative mb-6">
+                    <h2 className="text-neon text-3xl font-black mb-1 tracking-[0.15em] text-center italic">
+                        {status.status}
+                    </h2>
+                    <div className="flex justify-center gap-1">
+                        <div className="h-[2px] w-2 bg-main/30"></div>
+                        <div className="h-[2px] w-8 bg-main/60"></div>
+                        <div className="h-[2px] w-2 bg-main/30"></div>
+                    </div>
+                </div>
                 
-                <p className="font-console text-sm text-gray-300 text-center leading-relaxed">
-                    {status.message}
+                <p className="font-console text-xs text-text-secondary text-center leading-relaxed tracking-tight px-4 opacity-80">
+                    {">"} {status.message}
                 </p>
 
-                <div className="mt-6 h-1 w-full bg-system-blue/10 overflow-hidden">
-                    <div className={`h-full bg-system-blue shadow-neon transition-all duration-1000 ${loading ? 'w-1/3 animate-pulse' : 'w-full'}`}></div>
+                <div className="mt-8 relative px-4">
+                    <div className="absolute -top-3 left-4 text-[8px] text-main/30 font-bold uppercase">Initialization Progress</div>
+                    <div className="h-[3px] w-full bg-main/5 overflow-hidden">
+                        <div className={`h-full bg-main shadow-[0_0_8px_var(--main-color)] transition-all duration-1000 ${loading ? 'w-1/3 animate-pulse' : 'w-full'}`}></div>
+                    </div>
                 </div>
             </div>
             
-            <div className="text-[10px] text-system-blue/50 uppercase tracking-[0.4em] mt-8 animate-pulse">
-                System Interface v1.0.0
+            <div className="flex items-center gap-4 opacity-20">
+                <div className="h-[1px] w-12 bg-main"></div>
+                <div className="text-[8px] text-main uppercase tracking-[0.5em] whitespace-nowrap">
+                    Core Security Protocol Enabled
+                </div>
+                <div className="h-[1px] w-12 bg-main"></div>
             </div>
         </div>
     );
