@@ -64,6 +64,13 @@ export const userService = {
     };
 
     localStorage.setItem('lockin_profile', JSON.stringify(mockProfile));
+
+    const storedUser = JSON.parse(localStorage.getItem('lockin_user'));
+    if (storedUser) {
+      storedUser.hasCompletedSurvey = true;
+      localStorage.setItem('lockin_user', JSON.stringify(storedUser));
+    }
+
     return mockProfile;
   }
 };

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Shield, Zap, Heart, Brain, Target, Star, Swords, RefreshCw } from 'lucide-react';
 
-const RankAssignment = ({ profile, onRestart }) => {
+const RankAssignment = ({ profile, onRestart, onEnterHub }) => {
   const { stats, rank, level, username, biometria } = profile;
 
   const statIcons = {
@@ -132,6 +132,7 @@ const RankAssignment = ({ profile, onRestart }) => {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={onEnterHub}
                 className="button-neon flex-1 py-6 text-3xl font-black tracking-widest"
               >
                 GO TO TRAINING
