@@ -1,49 +1,135 @@
-import SystemStatus from './components/SystemStatus'
+import { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import SplashScreen from './components/sequence/SplashScreen';
+import AuthScreen from './components/sequence/AuthScreen';
+import SurveyStepper from './components/sequence/SurveyStepper';
+import AnalyzingScreen from './components/sequence/AnalyzingScreen';
+import RankAssignment from './components/sequence/RankAssignment';
+import { userService } from './services/mockApi';
 
 function App() {
+  const [screen, setScreen] = useState('splash');
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+
+  const handleSplashComplete = () => {
+    const savedToken = localStorage.getItem('lockin_token');
+    const savedUser = JSON.parse(localStorage.getItem('lockin_user'));
+    
+    if (savedToken && savedUser) {
+      setUser(savedUser);
+      setScreen(savedUser.hasCompletedSurvey ? 'result' : 'survey');
+      if (savedUser.hasCompletedSurvey) {
+        setProfile(JSON.parse(localStorage.getItem('lockin_profile')));
+      }
+    } else {
+      setScreen('auth');
+    }
+  };
+
+  const handleAuthComplete = (userData) => {
+    setUser(userData);
+    setScreen(userData.hasCompletedSurvey ? 'result' : 'survey');
+    if (userData.hasCompletedSurvey) {
+      setProfile(JSON.parse(localStorage.getItem('lockin_profile')));
+    }
+  };
+
+  const handleGuestEntry = () => {
+    setUser({ username: 'GuestPlayer', rank: 'E', isGuest: true });
+    setScreen('survey');
+  };
+
+  const handleSurveyComplete = async (surveyData) => {
+    setScreen('analyzing');
+    const playerProfile = await userService.submitSurvey(surveyData);
+    setProfile(playerProfile);
+  };
+
+  const handleAnalysisComplete = () => {
+    setScreen('result');
+  };
+
+  const handleRestart = () => {
+    localStorage.clear();
+    setUser(null);
+    setProfile(null);
+    setScreen('splash');
+  };
+
   return (
-    <div className="fixed inset-0 bg-black flex items-center justify-center overflow-hidden p-4 text-text-main font-rpg">
-      {/* Background patterns */}
-      <div className="absolute inset-0 z-0 bg-grid pointer-events-none opacity-60"></div>
-      
-      {/* Scanline effect */}
-      <div className="scanline z-50 pointer-events-none"></div>
+    <div className="fixed inset-0 bg-black overflow-hidden font-rpg">
+      <AnimatePresence mode="wait">
+        {screen === 'splash' && (
+          <motion.div 
+            key="splash"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
+            transition={{ duration: 0.8 }}
+          >
+            <SplashScreen onComplete={handleSplashComplete} />
+          </motion.div>
+        )}
 
-      <main className="relative z-10 w-full max-w-5xl">
-        <header className="mb-20 text-center">
-          <div className="inline-block relative">
-            <h1 className="text-8xl md:text-9xl font-black text-text-main italic tracking-tighter uppercase mb-0 leading-none">
-              LOCK <span className="text-main drop-shadow-[0_0_25px_var(--main-glow)]">IN</span>
-            </h1>
-            {/* Structural lines */}
-            <div className="absolute -bottom-4 left-0 w-full h-[1px] bg-main/30"></div>
-            <div className="absolute -bottom-6 right-0 w-1/2 h-[2px] bg-main/60"></div>
-          </div>
-          
-          <div className="mt-12 flex items-center justify-center gap-6">
-            <div className="h-[1px] w-12 bg-main/20"></div>
-            <div className="px-4 py-1 border border-main/20 text-[10px] text-main font-bold uppercase tracking-[1em] bg-main/5">
-              Player Synchronization
-            </div>
-            <div className="h-[1px] w-12 bg-main/20"></div>
-          </div>
-        </header>
+        {screen === 'auth' && (
+          <motion.div 
+            key="auth"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, x: -100 }}
+          >
+            <AuthScreen 
+              onAuthComplete={handleAuthComplete} 
+              onGuestEntry={handleGuestEntry} 
+            />
+          </motion.div>
+        )}
 
-        <SystemStatus />
-      </main>
-      
-      {/* Anime-style frame details - NO BLUE */}
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-main/40 to-transparent"></div>
-      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-main/40 to-transparent"></div>
-      
-      {/* Sharp Corner Accents */}
-      <div className="absolute top-10 left-10 w-24 h-24 border-t-2 border-l-2 border-main/30"></div>
-      <div className="absolute bottom-10 right-10 w-24 h-24 border-b-2 border-r-2 border-main/30"></div>
-      
-      <div className="absolute top-20 left-20 w-4 h-[1px] bg-main/50"></div>
-      <div className="absolute top-20 left-20 w-[1px] h-4 bg-main/50"></div>
+        {screen === 'survey' && (
+          <motion.div 
+            key="survey"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+          >
+            <SurveyStepper onComplete={handleSurveyComplete} />
+          </motion.div>
+        )}
+
+        {screen === 'analyzing' && (
+          <motion.div 
+            key="analyzing"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.5 }}
+          >
+            <AnalyzingScreen onComplete={handleAnalysisComplete} />
+          </motion.div>
+        )}
+
+        {screen === 'result' && profile && (
+          <motion.div 
+            key="result"
+            initial={{ opacity: 0, rotateY: 90 }}
+            animate={{ opacity: 1, rotateY: 0 }}
+            transition={{ type: 'spring', damping: 20 }}
+          >
+            <RankAssignment profile={profile} onRestart={handleRestart} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {user && (
+        <div className="absolute bottom-4 left-4 z-[60] bg-black/40 border border-main/20 px-2 py-1 flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-main animate-pulse" />
+          <span className="text-[8px] text-main/60 uppercase font-mono tracking-tighter">
+            PROT: {user.username} | {screen.toUpperCase()}_STAGE
+          </span>
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

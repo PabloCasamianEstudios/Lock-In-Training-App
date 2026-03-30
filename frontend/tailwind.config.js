@@ -1,4 +1,3 @@
-/** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
@@ -7,7 +6,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        main: 'var(--main-color)',
+        main: '#F58027',
+        'neon-blue': '#00f2ff',
+        'neon-purple': '#bc13fe',
         secondary: 'var(--secondary-color)',
         back: 'var(--background)',
         'back-secondary': 'var(--secondary-back)',
