@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/user")
@@ -23,13 +25,16 @@ public class UserController {
     private final UserSurveyService userSurveyService;
     private final UserRepository userRepository;
     private final UserQuestProgressRepository userQuestProgressRepository;
+    private final com.lockin.repository.QuestRepository questRepository;
 
     public UserController(UserSurveyService userSurveyService,
                           UserRepository userRepository,
-                          UserQuestProgressRepository userQuestProgressRepository) {
+                          UserQuestProgressRepository userQuestProgressRepository,
+                          com.lockin.repository.QuestRepository questRepository) {
         this.userSurveyService = userSurveyService;
         this.userRepository = userRepository;
         this.userQuestProgressRepository = userQuestProgressRepository;
+        this.questRepository = questRepository;
     }
 
     @PostMapping("/survey")
@@ -94,6 +99,95 @@ public class UserController {
             progressData.put("goldReward", progress.getQuest().getGoldReward());
             progressData.put("totalRepetitions", totalRepetitions);
             progressData.put("completedRepetitions", completedRepetitions);
+            progressData.put("exercises", exercises);
+
+            response.add(progressData);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/quests/daily/today")
+    public ResponseEntity<List<Map<String, Object>>> getDailyQuestsForToday(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        LocalDate today = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
+
+        // Muestras: todas las quests diarias definidas en DB.
+        List<com.lockin.model.Quest> dailyQuests = questRepository.findByType(com.lockin.model.Quest.QuestType.DAILY);
+
+        List<Map<String, Object>> response = new ArrayList<>();
+
+        for (com.lockin.model.Quest quest : dailyQuests) {
+            // Si existen varios registros, cogemos el más reciente.
+            List<UserQuestProgress> progressRows = userQuestProgressRepository
+                    .findByUserIdAndQuestId(id, quest.getId());
+
+            UserQuestProgress latest = null;
+            if (progressRows != null && !progressRows.isEmpty()) {
+                latest = progressRows.stream()
+                        .sorted((a, b) -> {
+                            LocalDateTime aStart = a.getStartTime() != null ? a.getStartTime() : LocalDateTime.MIN;
+                            LocalDateTime bStart = b.getStartTime() != null ? b.getStartTime() : LocalDateTime.MIN;
+                            return bStart.compareTo(aStart);
+                        })
+                        .findFirst()
+                        .orElse(null);
+            }
+
+            if (latest == null) {
+                latest = new UserQuestProgress();
+                latest.setUser(userRepository.getReferenceById(id));
+                latest.setQuest(quest);
+                latest.setStatus(UserQuestProgress.QuestStatus.ACTIVE);
+                latest.setStartTime(now);
+                latest.setCompletionTime(null);
+                latest = userQuestProgressRepository.save(latest);
+            }
+
+            boolean completedToday = latest.getStatus() == UserQuestProgress.QuestStatus.COMPLETED
+                    && latest.getCompletionTime() != null
+                    && latest.getCompletionTime().toLocalDate().equals(today);
+
+            List<Map<String, Object>> exercises = new ArrayList<>();
+            int totalRepetitions = 0;
+
+            if (quest.getSteps() != null) {
+                for (QuestStep step : quest.getSteps()) {
+                    int stepTotalReps = step.getSeries() * step.getRepetitions();
+                    totalRepetitions += stepTotalReps;
+
+                    Map<String, Object> exerciseData = new HashMap<>();
+                    exerciseData.put("exerciseId", step.getExercise() != null ? step.getExercise().getId() : null);
+                    exerciseData.put("exerciseName", step.getExercise() != null ? step.getExercise().getName() : null);
+                    exerciseData.put("exerciseType", step.getExercise() != null ? step.getExercise().getType() : null);
+                    exerciseData.put("series", step.getSeries());
+                    exerciseData.put("repetitionsPerSeries", step.getRepetitions());
+                    exerciseData.put("totalRepetitions", stepTotalReps);
+                    exerciseData.put("completedRepetitions", completedToday ? stepTotalReps : 0);
+                    exercises.add(exerciseData);
+                }
+            }
+
+            Map<String, Object> progressData = new HashMap<>();
+            progressData.put("progressId", latest.getId());
+            progressData.put("status", latest.getStatus() != null ? latest.getStatus().name() : null);
+            progressData.put("completed", completedToday);
+            progressData.put("startTime", latest.getStartTime());
+            progressData.put("completionTime", latest.getCompletionTime());
+
+            progressData.put("questId", quest.getId());
+            progressData.put("title", quest.getTitle());
+            progressData.put("rank", quest.getRankDifficulty());
+            progressData.put("difficulty", quest.getRankDifficulty());
+            progressData.put("xpReward", quest.getXpReward());
+            progressData.put("goldReward", quest.getGoldReward());
+
+            progressData.put("totalRepetitions", totalRepetitions);
+            progressData.put("completedRepetitions", completedToday ? totalRepetitions : 0);
             progressData.put("exercises", exercises);
 
             response.add(progressData);

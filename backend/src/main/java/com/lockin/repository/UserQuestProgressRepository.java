@@ -8,5 +8,7 @@ import com.lockin.model.UserQuestProgress;
 
 public interface UserQuestProgressRepository extends JpaRepository<UserQuestProgress, Long> {
     List<UserQuestProgress> findByUserId(Long userId);
+
+    List<UserQuestProgress> findByUserIdAndQuestId(Long userId, Long questId);
 }
 
