@@ -3,6 +3,7 @@ package com.lockin.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 @Data
 @Entity
@@ -21,10 +22,13 @@ public class Quest {
     @Enumerated(EnumType.STRING)
     private QuestType type;
 
-    private String rankDifficulty; // E, D, C, B, A, S, SS, SS+
+    private String rankDifficulty;
 
     private long goldReward;
     private long xpReward;
+
+    @OneToMany(mappedBy = "quest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<QuestStep> steps;
 
     public enum QuestType {
         DAILY, STORY, SIDE, CUSTOM

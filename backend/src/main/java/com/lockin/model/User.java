@@ -34,11 +34,15 @@ public class User {
     private int level = 1;
     private long xp = 0;
     private long coins = 0;
+
+    @Column(name = "user_rank")
+    private String rank;
+
     private String role = "USER";
 
     // Biometría
-    private Double weight; // kg
-    private Double height; // cm
+    private Double weight;
+    private Double height; 
     private LocalDate birthDate;
     private String gender;
 

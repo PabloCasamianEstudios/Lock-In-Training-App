@@ -37,23 +37,23 @@ public class UserSurveyService {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Actualizar biometría en el propio User
+        
         user.setWeight(dto.getWeight());
         user.setHeight(dto.getHeight());
 
-        // Calcular stats según el algoritmo
         Map<String, Integer> statValues = calculateStats(dto);
 
-        // Guardar/actualizar UserStats
+        
         persistUserStats(user, statValues);
 
-        // Calcular rango en función de la suma de stats
+        
         int total = statValues.values().stream().mapToInt(Integer::intValue).sum();
         String rank = calculateRank(total);
         user.setLevel(1);
         user.setTotalPoints(total);
-
-        // En este punto solo almacenamos el "rango" como texto en coins/xp/role si lo necesitas;
+        user.setRank(rank);
+        
+       
         // por ahora dejamos el campo leagueId comentado como en el modelo.
 
         return userRepository.save(user);
