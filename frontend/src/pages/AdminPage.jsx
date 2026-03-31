@@ -69,7 +69,6 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
   const [testId, setTestId] = useState('');
   const [requestBody, setRequestBody] = useState('');
 
-  // Pre-fill template when block is expanded
   useEffect(() => {
     if (isExpanded && (method === 'post' || method === 'put') && !requestBody) {
       setRequestBody(JSON.stringify(JSON_TEMPLATES[entity] || {}, null, 2));
@@ -108,7 +107,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
       }
 
       const response = await fetch(url, options);
-      
+
       let result;
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
@@ -142,7 +141,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
 
   return (
     <div className={`mb-4 border-2 ${borderClass} rounded-sm overflow-hidden transition-all duration-300`}>
-      <div 
+      <div
         onClick={() => setIsExpanded(!isExpanded)}
         className={`px-4 py-2 flex items-center gap-4 cursor-pointer ${bgClass}`}
       >
@@ -150,7 +149,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           {method.toUpperCase()}
         </span>
         <span className="text-xs font-bold font-mono">
-          /api/admin/{entity}{ (type === 'id' || method === 'delete' || method === 'put') ? '/{id}' : ''}
+          /api/admin/{entity}{(type === 'id' || method === 'delete' || method === 'put') ? '/{id}' : ''}
         </span>
         <span className="text-[10px] opacity-60 ml-auto uppercase font-black">{title}</span>
         {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
@@ -160,8 +159,8 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
         <div className="p-4 bg-black/40 font-mono text-[11px]">
           <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
             <span className="opacity-70 uppercase tracking-widest text-[9px]">Parameters & Payload</span>
-            <button 
-              onClick={execute} 
+            <button
+              onClick={execute}
               disabled={loading}
               className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded text-[9px] font-black italic text-orange-500 transition-all border border-white/10"
             >
@@ -170,25 +169,25 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           </div>
 
           <div className="flex flex-col gap-4">
-            {/* INPUTS SECTION */}
+            {/* Secion input */}
             <div className="grid grid-cols-1 gap-3">
               {(type === 'id' || method === 'delete' || method === 'put') && (
                 <div className="flex flex-col gap-1">
                   <label className="text-[8px] opacity-40 uppercase font-black">Record ID (Required)</label>
-                  <input 
-                    className="bg-white/5 border border-white/10 p-2 text-white w-full outline-none focus:border-orange-500/50 font-mono text-xs" 
+                  <input
+                    className="bg-white/5 border border-white/10 p-2 text-white w-full outline-none focus:border-orange-500/50 font-mono text-xs"
                     placeholder="e.g. 1"
                     value={testId}
                     onChange={(e) => setTestId(e.target.value)}
                   />
                 </div>
               )}
-              
+
               {(method === 'post' || method === 'put') && (
                 <div className="flex flex-col gap-1">
                   <label className="text-[8px] opacity-40 uppercase font-black">Request Body (JSON)</label>
-                  <textarea 
-                    className="bg-white/5 border border-white/10 p-2 text-white w-full h-32 outline-none focus:border-orange-500/50 font-mono text-xs resize-none" 
+                  <textarea
+                    className="bg-white/5 border border-white/10 p-2 text-white w-full h-32 outline-none focus:border-orange-500/50 font-mono text-xs resize-none"
                     placeholder='{ "name": "New Entity", ... }'
                     value={requestBody}
                     onChange={(e) => setRequestBody(e.target.value)}
@@ -197,12 +196,12 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
               )}
             </div>
 
-            {/* RESPONSE SECTION */}
+            {/* Secion respuesta */}
             <div className="mt-2 border-t border-white/5 pt-4">
               <label className="text-[8px] opacity-40 uppercase font-black block mb-2">Response</label>
-              
+
               {loading && <div className="p-4 text-center opacity-50 animate-pulse uppercase font-black text-xs">Awaiting Server Response...</div>}
-              
+
               {error && (
                 <div className="p-4 bg-red-950/40 border border-red-500/50 rounded animate-in slide-in-from-top-2">
                   <div className="text-red-500 font-black mb-1 text-xs">ERROR {error.status} {error.statusText}</div>
@@ -231,7 +230,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
 
 const AdminPage = () => {
   const [selectedEntity, setSelectedEntity] = useState('users');
-  const [globalData, setGlobalData] = useState([]); // Shared only for the bottom table
+  const [globalData, setGlobalData] = useState([]);
 
   const entities = [
     { id: 'users', name: 'Users' },
@@ -268,8 +267,8 @@ const AdminPage = () => {
           Admin <span className="text-orange-500 text-glow">Panel</span>
         </h1>
         <div className="ml-auto flex items-center gap-2 px-4 py-1 bg-white/5 border border-white/10 skew-x-[-15deg]">
-           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-           <span className="text-[10px] font-black uppercase tracking-widest text-white/50 skew-x-[15deg]">System Online</span>
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/50 skew-x-[15deg]">System Online</span>
         </div>
       </div>
 
@@ -282,8 +281,8 @@ const AdminPage = () => {
               key={e.id}
               onClick={() => { setSelectedEntity(e.id); setGlobalData([]); }}
               className={`p-4 text-left text-xs font-black uppercase tracking-[0.2em] transition-all skew-x-[-15deg] border-2 group relative overflow-hidden ${selectedEntity === e.id
-                  ? 'bg-orange-500 border-orange-500 text-black shadow-[6px_6px_0_white]'
-                  : 'border-white/10 text-white/40 hover:border-white/30 hover:text-white'
+                ? 'bg-orange-500 border-orange-500 text-black shadow-[6px_6px_0_white]'
+                : 'border-white/10 text-white/40 hover:border-white/30 hover:text-white'
                 }`}
             >
               <span className="relative z-10 skew-x-[15deg] inline-block">{e.name}</span>
@@ -294,57 +293,55 @@ const AdminPage = () => {
           ))}
         </div>
 
-        {/* SWAGGER UI CONTENT */}
         <div className="lg:col-span-3">
           <div className="flex flex-col mb-8 gap-1">
             <h2 className="text-3xl font-black uppercase tracking-tight leading-none">{selectedEntity}</h2>
             <div className="flex items-center gap-2 text-[10px] opacity-40 font-mono italic">
-               <span>Endpoint Base:</span>
-               <span className="text-orange-500/80">/api/admin/{selectedEntity}</span>
+              <span>Endpoint Base:</span>
+              <span className="text-orange-500/80">/api/admin/{selectedEntity}</span>
             </div>
           </div>
 
           <div className="flex flex-col gap-1">
-            <SwaggerBlock 
+            <SwaggerBlock
               key={`${selectedEntity}-get-all`}
               method="get" title="List all records" entity={selectedEntity} type="all"
               colorClass="bg-green-600" borderClass="border-green-600/20" bgClass="bg-green-600/10 hover:bg-green-600/20"
               onDataReceived={(data) => setGlobalData(data)}
             />
-            
-            <SwaggerBlock 
+
+            <SwaggerBlock
               key={`${selectedEntity}-get-id`}
               method="get" title="Find by ID" entity={selectedEntity} type="id"
               colorClass="bg-green-700" borderClass="border-green-700/20" bgClass="bg-green-700/10 hover:bg-green-700/20"
             />
-            
-            <SwaggerBlock 
+
+            <SwaggerBlock
               key={`${selectedEntity}-post`}
               method="post" title="Create new entry" entity={selectedEntity} type="create"
               colorClass="bg-blue-600" borderClass="border-blue-600/20" bgClass="bg-blue-600/10 hover:bg-blue-600/20"
             />
-            
-            <SwaggerBlock 
+
+            <SwaggerBlock
               key={`${selectedEntity}-put`}
               method="put" title="Update existing entry" entity={selectedEntity} type="update"
               colorClass="bg-amber-600" borderClass="border-amber-600/20" bgClass="bg-amber-600/10 hover:bg-amber-600/20"
             />
-            
-            <SwaggerBlock 
+
+            <SwaggerBlock
               key={`${selectedEntity}-delete`}
               method="delete" title="Purge record" entity={selectedEntity} type="delete"
               colorClass="bg-red-600" borderClass="border-red-600/20" bgClass="bg-red-600/10 hover:bg-red-600/20"
             />
           </div>
 
-          {/* QUICK OVERVIEW DATA TABLE */}
           <div className="mt-12 group border-2 border-white/5 rounded-sm overflow-hidden bg-black/20">
             <div className="bg-white/5 p-4 flex items-center justify-between border-b border-white/10 leading-none">
-                <span className="font-black text-xs uppercase tracking-[0.3em] flex items-center gap-2">
-                   <div className="w-1.5 h-1.5 bg-orange-500 rounded-full" />
-                   Quick View: {selectedEntity}
-                </span>
-                <span className="text-[9px] opacity-30 font-mono italic">Results from 'LIST ALL' execution</span>
+              <span className="font-black text-xs uppercase tracking-[0.3em] flex items-center gap-2">
+                <div className="w-1.5 h-1.5 bg-orange-500 rounded-full" />
+                Quick View: {selectedEntity}
+              </span>
+              <span className="text-[9px] opacity-30 font-mono italic">Results from 'LIST ALL' execution</span>
             </div>
             <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
               <table className="w-full text-left border-collapse">
@@ -360,9 +357,9 @@ const AdminPage = () => {
                     <tr key={item.id} className="hover:bg-white/[0.02] transition-colors group/row">
                       <td className="p-4 font-mono text-[11px] text-orange-500/70 font-bold">#{item.id}</td>
                       <td className="p-4">
-                         <div className="text-[10px] text-white/50 font-mono truncate max-w-md italic">
-                            {JSON.stringify(item).substring(0, 80)}...
-                         </div>
+                        <div className="text-[10px] text-white/50 font-mono truncate max-w-md italic">
+                          {JSON.stringify(item).substring(0, 80)}...
+                        </div>
                       </td>
                       <td className="p-4 text-right">
                         <button

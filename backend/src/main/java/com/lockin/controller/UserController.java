@@ -28,9 +28,9 @@ public class UserController {
     private final com.lockin.repository.QuestRepository questRepository;
 
     public UserController(UserSurveyService userSurveyService,
-                          UserRepository userRepository,
-                          UserQuestProgressRepository userQuestProgressRepository,
-                          com.lockin.repository.QuestRepository questRepository) {
+            UserRepository userRepository,
+            UserQuestProgressRepository userQuestProgressRepository,
+            com.lockin.repository.QuestRepository questRepository) {
         this.userSurveyService = userSurveyService;
         this.userRepository = userRepository;
         this.userQuestProgressRepository = userQuestProgressRepository;
@@ -116,13 +116,11 @@ public class UserController {
         LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
 
-        // Muestras: todas las quests diarias definidas en DB.
         List<com.lockin.model.Quest> dailyQuests = questRepository.findByType(com.lockin.model.Quest.QuestType.DAILY);
 
         List<Map<String, Object>> response = new ArrayList<>();
 
         for (com.lockin.model.Quest quest : dailyQuests) {
-            // Si existen varios registros, cogemos el más reciente.
             List<UserQuestProgress> progressRows = userQuestProgressRepository
                     .findByUserIdAndQuestId(id, quest.getId());
 
@@ -194,4 +192,3 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 }
-

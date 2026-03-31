@@ -18,9 +18,6 @@ export const authService = {
       const errorText = await response.text().catch(() => 'Error en el registro');
       throw new Error(errorText);
     }
-
-    // El backend devuelve solo un mensaje, así que creamos
-    // un "usuario" mínimo para el front.
     const registeredUser = {
       username: userData.username,
       email: userData.email,
@@ -49,7 +46,7 @@ export const authService = {
       throw new Error(errorText);
     }
 
-    const data = await response.json(); // { token, role, username, email, id }
+    const data = await response.json();
 
     const loggedUser = {
       id: data.id,
