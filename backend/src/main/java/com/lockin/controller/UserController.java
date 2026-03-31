@@ -129,11 +129,8 @@ public class UserController {
             UserQuestProgress latest = null;
             if (progressRows != null && !progressRows.isEmpty()) {
                 latest = progressRows.stream()
-                        .sorted((a, b) -> {
-                            LocalDateTime aStart = a.getStartTime() != null ? a.getStartTime() : LocalDateTime.MIN;
-                            LocalDateTime bStart = b.getStartTime() != null ? b.getStartTime() : LocalDateTime.MIN;
-                            return bStart.compareTo(aStart);
-                        })
+                        .filter(p -> p.getStartTime() != null && p.getStartTime().toLocalDate().equals(today))
+                        .sorted((a, b) -> b.getStartTime().compareTo(a.getStartTime()))
                         .findFirst()
                         .orElse(null);
             }
@@ -148,7 +145,8 @@ public class UserController {
                 latest = userQuestProgressRepository.save(latest);
             }
 
-            boolean completedToday = latest.getStatus() == UserQuestProgress.QuestStatus.COMPLETED
+            boolean isCompleted = latest.getStatus() == UserQuestProgress.QuestStatus.COMPLETED;
+            boolean completedToday = isCompleted
                     && latest.getCompletionTime() != null
                     && latest.getCompletionTime().toLocalDate().equals(today);
 

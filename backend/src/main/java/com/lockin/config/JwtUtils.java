@@ -22,6 +22,11 @@ public class JwtUtils {
         return claims.getSubject();
     }
 
+    public String extractRole(String token) {
+        Claims claims = parseClaims(token);
+        return (String) claims.get("role");
+    }
+
     public boolean validateToken(String token) {
         try {
             parseClaims(token);
@@ -39,9 +44,10 @@ public class JwtUtils {
                 .getBody();
     }
 
-    public String generateJwtToken(String email) {
+    public String generateJwtToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)

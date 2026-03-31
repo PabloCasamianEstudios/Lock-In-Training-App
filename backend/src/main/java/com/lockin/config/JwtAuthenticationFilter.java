@@ -40,12 +40,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (jwtUtils.validateToken(token)
                     && SecurityContextHolder.getContext().getAuthentication() == null) {
                 String email = jwtUtils.extractEmail(token);
-
-                // No gestionamos roles/usuarios en este punto: basta para "authenticated()".
+                String role = jwtUtils.extractRole(token);
+                
+                // Prefijamos con ROLE_ para que Spring Security lo reconozca
+                String authority = "ROLE_" + (role != null ? role.toUpperCase() : "USER");
+                
                 var authentication = new UsernamePasswordAuthenticationToken(
                         email,
                         null,
-                        List.<SimpleGrantedAuthority>of()
+                        List.of(new SimpleGrantedAuthority(authority))
                 );
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

@@ -27,8 +27,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
-            String token = userService.authenticate(loginRequest);
-            return ResponseEntity.ok(java.util.Map.of("token", token));
+            java.util.Map<String, Object> responseData = userService.authenticate(loginRequest);
+            return ResponseEntity.ok(responseData);
         } catch (Exception e) {
             return ResponseEntity.status(401).body("Error de autenticación: " + e.getMessage());
         }

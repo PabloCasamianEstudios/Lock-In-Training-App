@@ -49,12 +49,14 @@ export const authService = {
       throw new Error(errorText);
     }
 
-    const data = await response.json(); // { token: '...' }
+    const data = await response.json(); // { token, role, username, email, id }
 
     const loggedUser = {
-      username: credentials.email.split('@')[0],
-      email: credentials.email,
+      id: data.id,
+      username: data.username,
+      email: data.email,
       token: data.token,
+      role: data.role,
       hasCompletedSurvey: true
     };
 

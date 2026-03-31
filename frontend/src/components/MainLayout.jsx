@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Scroll, Swords, Trophy, User, ChevronDown, LogOut } from 'lucide-react';
+import { Home, Scroll, Swords, Trophy, User, ChevronDown, LogOut, Database } from 'lucide-react';
 
 import HomePage from '../pages/HomePage';
 import QuestsPage from '../pages/QuestsPage';
 import PlayPage from '../pages/PlayPage';
 import RankingsPage from '../pages/RankingsPage';
 import ProfilePage from '../pages/ProfilePage';
+import AdminPage from '../pages/AdminPage';
 
 const tabs = [
   { id: 'home', label: 'HOME', icon: Home },
@@ -22,6 +23,7 @@ const pageMap = {
   play: PlayPage,
   rankings: RankingsPage,
   profile: ProfilePage,
+  admin: AdminPage,
 };
 
 const MainLayout = ({ user, profile, onLogout }) => {
@@ -81,6 +83,14 @@ const MainLayout = ({ user, profile, onLogout }) => {
                 >
                   <User className="w-4 h-4" /> PROFILE
                 </button>
+                {user?.role === 'ADMIN' && (
+                  <button
+                    onClick={() => { setActiveTab('admin'); setUserMenuOpen(false); }}
+                    className="hub-dropdown-item text-orange-500"
+                  >
+                    <Database className="w-4 h-4" /> ADMIN PANEL
+                  </button>
+                )}
                 <div className="hub-dropdown-divider" />
                 <button onClick={onLogout} className="hub-dropdown-item hub-dropdown-danger">
                   <LogOut className="w-4 h-4" /> LOGOUT

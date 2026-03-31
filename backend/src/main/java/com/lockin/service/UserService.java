@@ -39,12 +39,21 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public String authenticate(LoginRequest loginRequest) {
+    public java.util.Map<String, Object> authenticate(LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            return jwtUtils.generateJwtToken(user.getEmail());
+            String token = jwtUtils.generateJwtToken(user.getEmail(), user.getRole());
+            
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("token", token);
+            response.put("username", user.getUsername());
+            response.put("email", user.getEmail());
+            response.put("role", user.getRole());
+            response.put("id", user.getId());
+            
+            return response;
         } else {
             throw new RuntimeException("Contraseña incorrecta");
         }
