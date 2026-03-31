@@ -1,36 +1,67 @@
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
 
 export const authService = {
   register: async (userData) => {
-    console.log('Registering user:', userData);
-    await delay(1500);
+    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: userData.email,
+        password: userData.password,
+        username: userData.username
+      })
+    });
 
-    const mockResponse = {
-      id: 1,
-      username: userData.username || 'ShadowPlayer',
-      token: 'jwt_mock_token_' + Math.random().toString(36).substring(7),
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => 'Error en el registro');
+      throw new Error(errorText);
+    }
+
+    // El backend devuelve solo un mensaje, así que creamos
+    // un "usuario" mínimo para el front.
+    const registeredUser = {
+      username: userData.username,
+      email: userData.email,
       hasCompletedSurvey: false
     };
 
-    localStorage.setItem('lockin_token', mockResponse.token);
-    localStorage.setItem('lockin_user', JSON.stringify(mockResponse));
+    localStorage.setItem('lockin_user', JSON.stringify(registeredUser));
 
-    return mockResponse;
+    return registeredUser;
   },
 
   login: async (credentials) => {
-    console.log('Logging in user:', credentials);
-    await delay(1000);
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: credentials.email,
+        password: credentials.password
+      })
+    });
 
-    const mockResponse = {
-      id: 1,
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => 'Error de autenticación');
+      throw new Error(errorText);
+    }
+
+    const data = await response.json(); // { token: '...' }
+
+    const loggedUser = {
       username: credentials.email.split('@')[0],
-      token: 'jwt_mock_token_' + Math.random().toString(36).substring(7),
+      email: credentials.email,
+      token: data.token,
       hasCompletedSurvey: true
     };
 
-    localStorage.setItem('lockin_token', mockResponse.token);
-    return mockResponse;
+    localStorage.setItem('lockin_token', data.token);
+    localStorage.setItem('lockin_user', JSON.stringify(loggedUser));
+
+    return loggedUser;
   }
 };
 

@@ -19,3 +19,6 @@ Thumbs.db
 backend/target/
 frontend/dist/
 node_modules/
+
+# Spring local overrides (no subir credenciales locales)
+backend/src/main/resources/application-local.properties
