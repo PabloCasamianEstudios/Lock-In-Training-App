@@ -31,6 +31,7 @@ function App() {
     }
   };
 
+  /* --- AUTH HANDLERS --- */
   const handleAuthComplete = (userData) => {
     setUser(userData);
     if (userData.hasCompletedSurvey) {
@@ -44,8 +45,16 @@ function App() {
 
   const handleGuestEntry = () => {
     setUser({ username: 'GuestPlayer', rank: 'E', isGuest: true });
-    setScreen('survey');
+    setProfile({
+      rank: 'E',
+      level: 1,
+      xp: 0,
+      coins: 0,
+      stats: { STR: 5, VIT: 5, AGI: 5, INT: 5, DISC: 5, LUK: 5 }
+    });
+    setScreen('hub');
   };
+  /* --- SURVEY HANDLERS --- */
 
   const handleSurveyComplete = async (surveyData) => {
     setScreen('analyzing');
