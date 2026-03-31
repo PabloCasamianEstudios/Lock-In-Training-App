@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, Target, Activity, Ruler, Dumbbell } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Target, Activity, Ruler, Dumbbell, X } from 'lucide-react';
 
 const steps = [
   { id: 'biometry', title: 'CONTAINER', icon: Ruler },
@@ -9,7 +9,7 @@ const steps = [
   { id: 'goal', title: 'OBJECTIVE', icon: Target }
 ];
 
-const SurveyStepper = ({ onComplete }) => {
+const SurveyStepper = ({ onComplete, onLogout }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     gender: '',
@@ -218,7 +218,14 @@ const SurveyStepper = ({ onComplete }) => {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-5xl z-10"
       >
-        <div className="system-card border-white shadow-[15px_15px_0px_var(--main-color)] p-0">
+        <div className="system-card border-white shadow-[15px_15px_0px_var(--main-color)] p-0 relative">
+          <button
+            onClick={onLogout}
+            className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-red-500 transition-all duration-300 transform -skew-x-12 z-50 group"
+            title="LOGOUT"
+          >
+            <X className="w-6 h-6 text-white group-hover:scale-110" />
+          </button>
           <div className="p-12 md:p-20 space-y-16">
             <div className="flex justify-between items-center gap-4">
               {steps.map((s, idx) => (

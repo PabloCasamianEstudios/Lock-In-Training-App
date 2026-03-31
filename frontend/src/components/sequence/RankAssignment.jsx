@@ -2,7 +2,13 @@ import { motion } from 'framer-motion';
 import { Shield, Zap, Heart, Brain, Target, Star, Swords, RefreshCw } from 'lucide-react';
 
 const RankAssignment = ({ profile, onRestart, onEnterHub }) => {
-  const { stats, rank, level, username, biometria } = profile;
+  const { 
+    stats = { STR: 1, AGI: 1, VIT: 1, INT: 1, DEX: 1, LUK: 1, DISC: 1 }, 
+    rank = 'E', 
+    level = 1, 
+    username = 'HUNTER',
+    biometria = {} 
+  } = profile || {};
 
   const statIcons = {
     STR: Swords,
@@ -92,7 +98,7 @@ const RankAssignment = ({ profile, onRestart, onEnterHub }) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                 {Object.entries(stats).map(([key, val]) => {
-                  const Icon = statIcons[key];
+                  const Icon = statIcons[key] || Shield;
                   return (
                     <motion.div key={key} variants={itemVariants} className="space-y-3">
                       <div className="flex justify-between items-end">
