@@ -8,6 +8,8 @@ import java.util.List;
 /* --- REPOSITORY ZONE --- */
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
+
     Boolean existsByEmail(String email);
-    List<User> findTop10ByOrderByTotalPointsDesc();
+
+    List<User> findTop10ByOrderBySeasonPointsDesc();
 }

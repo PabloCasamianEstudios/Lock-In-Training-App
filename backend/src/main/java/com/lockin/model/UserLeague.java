@@ -21,5 +21,6 @@ public class UserLeague {
     @ManyToOne
     @JoinColumn(name = "league_id", nullable = false)
     private League league;
-}
 
+    private int groupId = 1;
+}

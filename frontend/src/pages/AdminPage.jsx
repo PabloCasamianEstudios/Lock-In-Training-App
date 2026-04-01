@@ -82,6 +82,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
   const [loading, setLoading] = useState(false);
   const [testId, setTestId] = useState('');
   const [requestBody, setRequestBody] = useState('');
+  const [showRaw, setShowRaw] = useState(false);
 
   useEffect(() => {
     if (isExpanded && (method === 'post' || method === 'put') && !requestBody) {
@@ -128,6 +129,15 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
       } else if (type === 'quest-active') {
         if (!testId) throw new Error("User ID is required");
         url = `${API_BASE_URL}/api/quests/active/${testId}`;
+      } else if (type === 'comp-monthly') {
+        url = `${API_BASE_URL}/api/admin/competitive/monthly-update`;
+      } else if (type === 'comp-season') {
+        url = `${API_BASE_URL}/api/admin/competitive/season-reset`;
+      } else if (type === 'comp-ranks') {
+        url = `${API_BASE_URL}/api/admin/competitive/refresh-ranks`;
+      } else if (type === 'users-custom-stats') {
+        if (!testId) throw new Error("User ID is required");
+        url = `${API_BASE_URL}/api/user/${testId}/stats`;
       } else if (type === 'id' || method === 'delete' || method === 'put') {
         if (!testId) throw new Error("ID is required for this operation");
         url += `/${testId}`;
@@ -168,10 +178,11 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           onDataReceived(finalData);
         }
       } else {
+        const errorMsg = typeof result === 'string' ? result : (result.message || result.error || JSON.stringify(result));
         setError({
           status: response.status,
           statusText: response.statusText,
-          message: result || 'Request failed'
+          message: errorMsg
         });
       }
     } catch (err) {
@@ -197,13 +208,17 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           {type === 'custom-top10' ? '/api/admin/users/top10' : 
            type === 'custom-league-players' ? `/api/admin/leagues/{id}/players` :
            type === 'custom-league-generate' ? `/api/leagues/generate?maxUsersPerLeague={n}` :
-           type === 'users-custom-quests' ? `/api/admin/users/{id}/custom-quests` :
-           type === 'social-request' ? `/api/social/friends/request?senderId={n}&receiverId={n}` :
+            type === 'users-custom-quests' ? `/api/admin/users/{id}/custom-quests` :
+            type === 'users-custom-stats' ? `/api/user/{id}/stats` :
+            type === 'social-request' ? `/api/social/friends/request?senderId={n}&receiverId={n}` :
            type === 'social-accept' ? `/api/social/friends/accept/{id}` :
            type === 'social-list' ? `/api/social/friends/{id}` :
            type === 'quest-complete' ? `/api/quests/progress/{id}/complete` :
            type === 'quest-start' ? `/api/quests/{questId}/start?userId={n}` :
            type === 'quest-active' ? `/api/quests/active/{id}` :
+           type === 'comp-monthly' ? `/api/admin/competitive/monthly-update` :
+           type === 'comp-season' ? `/api/admin/competitive/season-reset` :
+           type === 'comp-ranks' ? `/api/admin/competitive/refresh-ranks` :
            `/api/admin/${entity}${ (type === 'id' || method === 'delete' || method === 'put') ? '/{id}' : ''}`}
         </span>
         <span className="text-[10px] opacity-60 ml-auto uppercase font-black">{title}</span>
@@ -226,11 +241,12 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           <div className="flex flex-col gap-4">
             {/* Secion input */}
             <div className="grid grid-cols-1 gap-3">
-              {(type === 'id' || method === 'delete' || method === 'put' || type === 'custom-league-players' || type === 'custom-league-generate' || type === 'users-custom-quests' || type === 'social-accept' || type === 'social-list' || type === 'quest-complete' || type === 'quest-start' || type === 'quest-active') && (
+              {(type === 'id' || method === 'delete' || method === 'put' || type === 'custom-league-players' || type === 'custom-league-generate' || type === 'users-custom-quests' || type === 'users-custom-stats' || type === 'social-accept' || type === 'social-list' || type === 'quest-complete' || type === 'quest-start' || type === 'quest-active') && (
                 <div className="flex flex-col gap-1">
                   <label className="text-[8px] opacity-40 uppercase font-black">
                     {type === 'custom-league-generate' ? 'Max Players Per League' : 
                      (type === 'quest-complete' || type === 'quest-start' || type === 'quest-active') ? 'Progress / Quest / User ID (Required)' :
+                     type === 'users-custom-stats' ? 'User ID (Required)' :
                      'Record / User / Request ID (Required)'}
                   </label>
                   <input
@@ -257,18 +273,67 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
 
             {/* Secion respuesta */}
             <div className="mt-2 border-t border-white/5 pt-4">
-              <label className="text-[8px] opacity-40 uppercase font-black block mb-2">Response</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[8px] opacity-40 uppercase font-black block">Response</label>
+                {data && type === 'custom-top10' && (
+                  <button 
+                    onClick={() => setShowRaw(!showRaw)}
+                    className="text-[9px] px-2 py-0.5 bg-orange-500/20 text-orange-500 border border-orange-500/30 font-black italic hover:bg-orange-500 hover:text-black transition-all"
+                  >
+                    {showRaw ? "VIEW LEADERBOARD" : "VIEW RAW JSON"}
+                  </button>
+                )}
+              </div>
 
               {loading && <div className="p-4 text-center opacity-50 animate-pulse uppercase font-black text-xs">Awaiting Server Response...</div>}
 
               {error && (
                 <div className="p-4 bg-red-950/40 border border-red-500/50 rounded animate-in slide-in-from-top-2">
-                  <div className="text-red-500 font-black mb-1 text-xs">ERROR {error.status} {error.statusText}</div>
-                  <pre className="text-red-300 whitespace-pre-wrap text-[10px] leading-relaxed italic">{error.message}</pre>
+                  <div className="text-red-500 font-black mb-1 text-xs">ERROR {error.status || '500'} {error.statusText || ''}</div>
+                  <pre className="text-red-300 whitespace-pre-wrap text-[10px] leading-relaxed italic">
+                    {typeof error === 'string' ? error : (error.message || JSON.stringify(error, null, 2))}
+                  </pre>
                 </div>
               )}
 
-              {data && (
+              {data && type === 'custom-top10' && !showRaw && (
+                <div className="mt-4 border border-white/10 rounded overflow-hidden animate-in zoom-in-95 duration-300">
+                  <table className="w-full text-left text-[10px]">
+                    <thead className="bg-white/10 italic text-white/50">
+                      <tr>
+                        <th className="p-2">#</th>
+                        <th className="p-2">User</th>
+                        <th className="p-2">Stats</th>
+                        <th className="p-2 text-right">Season Rank</th>
+                        <th className="p-2 text-right">Season Points</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {data.map((u, idx) => (
+                        <tr key={u.id} className="hover:bg-white/5">
+                          <td className="p-2 font-black text-orange-500">{idx + 1}</td>
+                          <td className="p-2">
+                             <div className="font-bold text-white">{u.username}</div>
+                             <div className="opacity-40 text-[8px] uppercase">{u.title || 'Warrior'}</div>
+                          </td>
+                          <td className="p-2 opacity-50">Lvl {u.level}</td>
+                          <td className="p-2 text-right">
+                             <span className={`px-2 py-0.5 rounded-sm font-black ${
+                               u.seasonRank === 'S' ? 'bg-yellow-500 text-black shadow-[0_0_5px_yellow]' : 
+                               u.seasonRank === 'A' ? 'bg-purple-500 text-white' : 'bg-white/10 text-white'
+                             }`}>
+                                {u.seasonRank || 'E'}
+                             </span>
+                          </td>
+                          <td className="p-2 text-right font-mono text-orange-400">{(u.seasonPoints || 0).toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {data && (type !== 'custom-top10' || showRaw) && (
                 <pre className="max-h-80 overflow-y-auto custom-scrollbar bg-black/30 p-3 rounded border border-white/5 animate-in fade-in text-green-400/90 text-[10px]">
                   {JSON.stringify(data, null, 2)}
                 </pre>
@@ -302,6 +367,7 @@ const AdminPage = () => {
     { id: 'titles', name: 'Titles' },
     { id: 'social', name: 'Social' },
     { id: 'quest-progress', name: 'Quest Progression' },
+    { id: 'competitive', name: 'Competitive Automation' },
   ];
 
   const handleDeleteQuick = async (id) => {
@@ -377,6 +443,11 @@ const AdminPage = () => {
                   method="get" title="Profile: User Custom Quests" entity="users" type="users-custom-quests"
                   colorClass="bg-blue-600" borderClass="border-blue-600/20" bgClass="bg-blue-600/10 hover:bg-blue-600/20"
                 />
+                <SwaggerBlock
+                  key="users-custom-stats"
+                  method="get" title="Profile: User Physical Stats" entity="users" type="users-custom-stats"
+                  colorClass="bg-teal-600" borderClass="border-teal-600/20" bgClass="bg-teal-600/10 hover:bg-teal-600/20"
+                />
               </>
             )}
 
@@ -431,6 +502,26 @@ const AdminPage = () => {
                   key="quest-complete"
                   method="post" title="Rewards: Complete Quest" entity="quests" type="quest-complete"
                   colorClass="bg-yellow-600" borderClass="border-yellow-600/20" bgClass="bg-yellow-600/10 hover:bg-yellow-600/20"
+                />
+              </>
+            )}
+
+            {selectedEntity === 'competitive' && (
+              <>
+                <SwaggerBlock
+                  key="comp-monthly"
+                  method="post" title="Automation: End Month (Leagues)" entity="competitive" type="comp-monthly"
+                  colorClass="bg-indigo-600" borderClass="border-indigo-600/20" bgClass="bg-indigo-600/10 hover:bg-indigo-600/20"
+                />
+                <SwaggerBlock
+                  key="comp-season"
+                  method="post" title="Automation: End Season (Hard Reset)" entity="competitive" type="comp-season"
+                  colorClass="bg-indigo-800" borderClass="border-indigo-800/20" bgClass="bg-indigo-800/10 hover:bg-indigo-800/20"
+                />
+                <SwaggerBlock
+                  key="comp-ranks"
+                  method="post" title="Automation: Refresh Global Ranks" entity="competitive" type="comp-ranks"
+                  colorClass="bg-indigo-400" borderClass="border-indigo-400/20" bgClass="bg-indigo-400/10 hover:bg-indigo-400/20"
                 />
               </>
             )}

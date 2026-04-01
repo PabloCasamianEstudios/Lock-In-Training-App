@@ -9,4 +9,5 @@ import com.lockin.model.UserLeague;
 public interface UserLeagueRepository extends JpaRepository<UserLeague, Long> {
     List<UserLeague> findByUser(User user);
     List<UserLeague> findByLeagueId(Long leagueId);
+    List<UserLeague> findByLeagueIdAndGroupId(Long leagueId, int groupId);
 }

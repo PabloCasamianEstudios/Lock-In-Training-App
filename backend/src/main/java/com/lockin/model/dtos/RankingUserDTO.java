@@ -17,5 +17,7 @@ public class RankingUserDTO {
     private String title;
     private int level;
     private String rank;
+    private String seasonRank;
     private long totalPoints;
+    private long seasonPoints;
 }

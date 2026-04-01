@@ -24,6 +24,7 @@ public class QuestStep {
     @JoinColumn(name = "exercise_id", nullable = false)
     private Exercise exercise;
 
+    private String description;
     private int series;
     private int repetitions;
 }
