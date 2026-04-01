@@ -72,6 +72,9 @@ const JSON_TEMPLATES = {
   social: {
     senderId: 1,
     receiverId: 2
+  },
+  moderation: {
+    userId: 1
   }
 };
 
@@ -135,6 +138,30 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
         url = `${API_BASE_URL}/api/admin/competitive/season-reset`;
       } else if (type === 'comp-ranks') {
         url = `${API_BASE_URL}/api/admin/competitive/refresh-ranks`;
+      } else if (type === 'mod-muted') {
+        url = `${API_BASE_URL}/api/admin/moderation/muted`;
+      } else if (type === 'mod-unmute') {
+        if (!testId) throw new Error("User ID is required");
+        url = `${API_BASE_URL}/api/admin/moderation/unmute/${testId}`;
+      } else if (type === 'mod-mute') {
+        if (!testId) throw new Error("User ID is required");
+        url = `${API_BASE_URL}/api/admin/moderation/mute/${testId}`;
+      } else if (type === 'shop-list') {
+        url = `${API_BASE_URL}/api/shop/items`;
+      } else if (type === 'shop-buy-item') {
+        const [uId, iId] = testId.split(',');
+        if (!uId || !iId) throw new Error("Format: userId,itemId");
+        url = `${API_BASE_URL}/api/shop/purchase/item/${uId}/${iId}`;
+      } else if (type === 'shop-user-items') {
+        if (!testId) throw new Error("User ID is required");
+        url = `${API_BASE_URL}/api/shop/items/user/${testId}`;
+      } else if (type === 'shop-user-titles') {
+        if (!testId) throw new Error("User ID is required");
+        url = `${API_BASE_URL}/api/shop/titles/user/${testId}`;
+      } else if (type === 'shop-buy-title') {
+        const [uId, tId] = testId.split(',');
+        if (!uId || !tId) throw new Error("Format: userId,titleId");
+        url = `${API_BASE_URL}/api/shop/purchase/title/${uId}/${tId}`;
       } else if (type === 'users-custom-stats') {
         if (!testId) throw new Error("User ID is required");
         url = `${API_BASE_URL}/api/user/${testId}/stats`;
@@ -205,21 +232,21 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           {method.toUpperCase()}
         </span>
         <span className="text-xs font-bold font-mono">
-          {type === 'custom-top10' ? '/api/admin/users/top10' : 
-           type === 'custom-league-players' ? `/api/admin/leagues/{id}/players` :
-           type === 'custom-league-generate' ? `/api/leagues/generate?maxUsersPerLeague={n}` :
-            type === 'users-custom-quests' ? `/api/admin/users/{id}/custom-quests` :
-            type === 'users-custom-stats' ? `/api/user/{id}/stats` :
-            type === 'social-request' ? `/api/social/friends/request?senderId={n}&receiverId={n}` :
-           type === 'social-accept' ? `/api/social/friends/accept/{id}` :
-           type === 'social-list' ? `/api/social/friends/{id}` :
-           type === 'quest-complete' ? `/api/quests/progress/{id}/complete` :
-           type === 'quest-start' ? `/api/quests/{questId}/start?userId={n}` :
-           type === 'quest-active' ? `/api/quests/active/{id}` :
-           type === 'comp-monthly' ? `/api/admin/competitive/monthly-update` :
-           type === 'comp-season' ? `/api/admin/competitive/season-reset` :
-           type === 'comp-ranks' ? `/api/admin/competitive/refresh-ranks` :
-           `/api/admin/${entity}${ (type === 'id' || method === 'delete' || method === 'put') ? '/{id}' : ''}`}
+          {type === 'custom-top10' ? '/api/admin/users/top10' :
+            type === 'custom-league-players' ? `/api/admin/leagues/{id}/players` :
+              type === 'custom-league-generate' ? `/api/leagues/generate?maxUsersPerLeague={n}` :
+                type === 'users-custom-quests' ? `/api/admin/users/{id}/custom-quests` :
+                  type === 'users-custom-stats' ? `/api/user/{id}/stats` :
+                    type === 'social-request' ? `/api/social/friends/request?senderId={n}&receiverId={n}` :
+                      type === 'social-accept' ? `/api/social/friends/accept/{id}` :
+                        type === 'social-list' ? `/api/social/friends/{id}` :
+                          type === 'quest-complete' ? `/api/quests/progress/{id}/complete` :
+                            type === 'quest-start' ? `/api/quests/{questId}/start?userId={n}` :
+                              type === 'quest-active' ? `/api/quests/active/{id}` :
+                                type === 'comp-monthly' ? `/api/admin/competitive/monthly-update` :
+                                  type === 'comp-season' ? `/api/admin/competitive/season-reset` :
+                                    type === 'comp-ranks' ? `/api/admin/competitive/refresh-ranks` :
+                                      `/api/admin/${entity}${(type === 'id' || method === 'delete' || method === 'put') ? '/{id}' : ''}`}
         </span>
         <span className="text-[10px] opacity-60 ml-auto uppercase font-black">{title}</span>
         {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
@@ -241,13 +268,16 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           <div className="flex flex-col gap-4">
             {/* Secion input */}
             <div className="grid grid-cols-1 gap-3">
-              {(type === 'id' || method === 'delete' || method === 'put' || type === 'custom-league-players' || type === 'custom-league-generate' || type === 'users-custom-quests' || type === 'users-custom-stats' || type === 'social-accept' || type === 'social-list' || type === 'quest-complete' || type === 'quest-start' || type === 'quest-active') && (
+              {(type === 'id' || method === 'delete' || method === 'put' || type === 'custom-league-players' || type === 'custom-league-generate' || type === 'users-custom-quests' || type === 'users-custom-stats' || type === 'social-accept' || type === 'social-list' || type === 'quest-complete' || type === 'quest-start' || type === 'quest-active' || type === 'mod-unmute' || type === 'mod-mute' || type === 'shop-buy-item' || type === 'shop-buy-title' || type === 'shop-user-items' || type === 'shop-user-titles') && (
                 <div className="flex flex-col gap-1">
                   <label className="text-[8px] opacity-40 uppercase font-black">
-                    {type === 'custom-league-generate' ? 'Max Players Per League' : 
-                     (type === 'quest-complete' || type === 'quest-start' || type === 'quest-active') ? 'Progress / Quest / User ID (Required)' :
-                     type === 'users-custom-stats' ? 'User ID (Required)' :
-                     'Record / User / Request ID (Required)'}
+                    {type === 'custom-league-generate' ? 'Max Players Per League' :
+                      (type === 'quest-complete' || type === 'quest-start' || type === 'quest-active') ? 'Progress / Quest / User ID (Required)' :
+                        (type === 'mod-unmute' || type === 'mod-mute') ? 'Target User ID (Required)' :
+                      (type === 'shop-buy-item' || type === 'shop-buy-title') ? 'Target IDs (Format: userId,itemId/titleId)' :
+                      (type === 'shop-user-items' || type === 'shop-user-titles') ? 'User ID (Required)' :
+                          type === 'users-custom-stats' ? 'User ID (Required)' :
+                            'Record / User / Request ID (Required)'}
                   </label>
                   <input
                     className="bg-white/5 border border-white/10 p-2 text-white w-full outline-none focus:border-orange-500/50 font-mono text-xs"
@@ -258,7 +288,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
                 </div>
               )}
 
-              {(method === 'post' || method === 'put') && (
+              {(method === 'post' || method === 'put') && type !== 'mod-unmute' && type !== 'mod-mute' && type !== 'shop-buy-item' && type !== 'shop-buy-title' && (
                 <div className="flex flex-col gap-1">
                   <label className="text-[8px] opacity-40 uppercase font-black">Request Body (JSON)</label>
                   <textarea
@@ -276,7 +306,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
               <div className="flex items-center justify-between mb-2">
                 <label className="text-[8px] opacity-40 uppercase font-black block">Response</label>
                 {data && type === 'custom-top10' && (
-                  <button 
+                  <button
                     onClick={() => setShowRaw(!showRaw)}
                     className="text-[9px] px-2 py-0.5 bg-orange-500/20 text-orange-500 border border-orange-500/30 font-black italic hover:bg-orange-500 hover:text-black transition-all"
                   >
@@ -313,17 +343,16 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
                         <tr key={u.id} className="hover:bg-white/5">
                           <td className="p-2 font-black text-orange-500">{idx + 1}</td>
                           <td className="p-2">
-                             <div className="font-bold text-white">{u.username}</div>
-                             <div className="opacity-40 text-[8px] uppercase">{u.title || 'Warrior'}</div>
+                            <div className="font-bold text-white">{u.username}</div>
+                            <div className="opacity-40 text-[8px] uppercase">{u.title || 'Warrior'}</div>
                           </td>
                           <td className="p-2 opacity-50">Lvl {u.level}</td>
                           <td className="p-2 text-right">
-                             <span className={`px-2 py-0.5 rounded-sm font-black ${
-                               u.seasonRank === 'S' ? 'bg-yellow-500 text-black shadow-[0_0_5px_yellow]' : 
-                               u.seasonRank === 'A' ? 'bg-purple-500 text-white' : 'bg-white/10 text-white'
-                             }`}>
-                                {u.seasonRank || 'E'}
-                             </span>
+                            <span className={`px-2 py-0.5 rounded-sm font-black ${u.seasonRank === 'S' ? 'bg-yellow-500 text-black shadow-[0_0_5px_yellow]' :
+                                u.seasonRank === 'A' ? 'bg-purple-500 text-white' : 'bg-white/10 text-white'
+                              }`}>
+                              {u.seasonRank || 'E'}
+                            </span>
                           </td>
                           <td className="p-2 text-right font-mono text-orange-400">{(u.seasonPoints || 0).toLocaleString()}</td>
                         </tr>
@@ -368,6 +397,8 @@ const AdminPage = () => {
     { id: 'social', name: 'Social' },
     { id: 'quest-progress', name: 'Quest Progression' },
     { id: 'competitive', name: 'Competitive Automation' },
+    { id: 'moderation', name: 'Security & Moderation' },
+    { id: 'shop', name: 'Shop & Inventory' },
   ];
 
   const handleDeleteQuick = async (id) => {
@@ -502,6 +533,56 @@ const AdminPage = () => {
                   key="quest-complete"
                   method="post" title="Rewards: Complete Quest" entity="quests" type="quest-complete"
                   colorClass="bg-yellow-600" borderClass="border-yellow-600/20" bgClass="bg-yellow-600/10 hover:bg-yellow-600/20"
+                />
+              </>
+            )}
+
+            {selectedEntity === 'shop' && (
+              <>
+                <SwaggerBlock
+                  key="shop-list"
+                  method="get" title="Shop: List All Items" entity="shop" type="shop-list"
+                  colorClass="bg-amber-600" borderClass="border-amber-600/20" bgClass="bg-amber-600/10 hover:bg-amber-600/20"
+                />
+                <SwaggerBlock
+                  key="shop-user-items"
+                  method="get" title="Shop: Get User Items" entity="shop" type="shop-user-items"
+                  colorClass="bg-amber-700" borderClass="border-amber-700/20" bgClass="bg-amber-700/10 hover:bg-amber-700/20"
+                />
+                <SwaggerBlock
+                  key="shop-user-titles"
+                  method="get" title="Shop: Get User Titles" entity="shop" type="shop-user-titles"
+                  colorClass="bg-amber-500" borderClass="border-amber-500/20" bgClass="bg-amber-500/10 hover:bg-amber-500/20"
+                />
+                <SwaggerBlock
+                  key="shop-buy-item"
+                  method="post" title="Shop: Buy Item (userId,itemId)" entity="shop" type="shop-buy-item"
+                  colorClass="bg-amber-800" borderClass="border-amber-800/20" bgClass="bg-amber-800/10 hover:bg-amber-800/20"
+                />
+                <SwaggerBlock
+                  key="shop-buy-title"
+                  method="post" title="Shop: Buy Title (userId,titleId)" entity="shop" type="shop-buy-title"
+                  colorClass="bg-amber-400" borderClass="border-amber-400/20" bgClass="bg-amber-400/10 hover:bg-amber-400/20"
+                />
+              </>
+            )}
+
+            {selectedEntity === 'moderation' && (
+              <>
+                <SwaggerBlock
+                  key="mod-muted"
+                  method="get" title="Integrity: List Muted Users" entity="moderation" type="mod-muted"
+                  colorClass="bg-red-900" borderClass="border-red-900/20" bgClass="bg-red-900/10 hover:bg-red-900/20"
+                />
+                <SwaggerBlock
+                  key="mod-unmute"
+                  method="post" title="Integrity: Unmute/Restore User" entity="moderation" type="mod-unmute"
+                  colorClass="bg-green-800" borderClass="border-green-800/20" bgClass="bg-green-800/10 hover:bg-green-800/20"
+                />
+                <SwaggerBlock
+                  key="mod-mute"
+                  method="post" title="Integrity: Manual Mute" entity="moderation" type="mod-mute"
+                  colorClass="bg-red-600" borderClass="border-red-600/20" bgClass="bg-red-600/10 hover:bg-red-600/20"
                 />
               </>
             )}

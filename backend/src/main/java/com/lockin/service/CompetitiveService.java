@@ -61,6 +61,24 @@ public class CompetitiveService {
                 }
             }
         }
+        
+        // Shuffle groups for the next month to keep competition fresh
+        reassignLeagueGroups();
+    }
+
+    @Transactional
+    public void reassignLeagueGroups() {
+        List<League> leagues = leagueRepository.findAll();
+        for (League league : leagues) {
+            List<UserLeague> members = userLeagueRepository.findByLeagueId(league.getId());
+            Collections.shuffle(members); // Randomize
+            
+            for (int i = 0; i < members.size(); i++) {
+                UserLeague ul = members.get(i);
+                ul.setGroupId((i / 20) + 1); // Group users in batches of 20
+                userLeagueRepository.save(ul);
+            }
+        }
     }
 
     private void promote(UserLeague ul, int nextLvl) {

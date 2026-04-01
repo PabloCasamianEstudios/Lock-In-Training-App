@@ -28,6 +28,10 @@ public class UserQuestController {
         Quest quest = questRepository.findById(questId).orElse(null);
         if (user == null || quest == null) return ResponseEntity.status(404).body("Usuario o Quest no encontrada");
 
+        if ("MUTE".equals(user.getRole())) {
+            return ResponseEntity.status(403).body("Tu cuenta está silenciada. No puedes iniciar misiones.");
+        }
+
         // Check for existing active progress
         List<UserQuestProgress> active = progressRepository.findByUserIdAndStatus(userId, UserQuestProgress.QuestStatus.ACTIVE);
         if (active.stream().anyMatch(p -> p.getQuest().getId().equals(questId))) {

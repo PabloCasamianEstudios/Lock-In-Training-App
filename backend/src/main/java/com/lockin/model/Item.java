@@ -6,9 +6,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "titles")
+@Table(name = "items")
 @NoArgsConstructor
-public class Title {
+public class Item {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,4 +21,14 @@ public class Title {
 
     @Column(nullable = false)
     private Long price = 0L;
+
+    @Enumerated(EnumType.STRING)
+    private ItemType type = ItemType.COSMETIC;
+
+    public enum ItemType {
+        COSMETIC,
+        CONSUMABLE,
+        COLLECTIBLE,
+        SPECIAL
+    }
 }
