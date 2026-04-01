@@ -102,7 +102,13 @@ public class AdminController {
     }
 
     @PostMapping("/quests")
-    public Quest createQuest(@RequestBody Quest entity) { return questRepository.save(entity); }
+    public Quest createQuest(@RequestBody Quest entity) {
+        /* --- NESTED STEPS BINDING ZONE --- */
+        if (entity.getSteps() != null) {
+            entity.getSteps().forEach(step -> step.setQuest(entity));
+        }
+        return questRepository.save(entity);
+    }
 
     @PutMapping("/quests/{id}")
     public ResponseEntity<Object> updateQuest(@PathVariable Long id, @RequestBody Quest entity) {
@@ -110,6 +116,10 @@ public class AdminController {
             return ResponseEntity.status(404).body("El id no existe");
         }
         entity.setId(id);
+        /* --- NESTED STEPS BINDING ZONE --- */
+        if (entity.getSteps() != null) {
+            entity.getSteps().forEach(step -> step.setQuest(entity));
+        }
         return ResponseEntity.ok(questRepository.save(entity));
     }
 

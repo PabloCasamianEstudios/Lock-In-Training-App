@@ -21,11 +21,19 @@ const JSON_TEMPLATES = {
   },
   quests: {
     title: "New Daily Quest",
-    description: "Complete 30 pushups",
+    description: "Complete exercise routine",
     type: "DAILY",
     rankDifficulty: "C",
     goldReward: 50,
-    xpReward: 100
+    xpReward: 100,
+    /* --- SAMPLE STEPS ZONE --- */
+    steps: [
+      {
+        exercise: { id: 1 },
+        series: 3,
+        repetitions: 10
+      }
+    ]
   },
   exercises: {
     name: "Pushups",

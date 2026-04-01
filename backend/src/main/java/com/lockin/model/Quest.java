@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+/* --- MODEL ZONE --- */
 @Data
 @Entity
 @Table(name = "quests")
@@ -27,7 +29,8 @@ public class Quest {
     private long goldReward;
     private long xpReward;
 
-    @OneToMany(mappedBy = "quest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "quest", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<QuestStep> steps;
 
     public enum QuestType {
