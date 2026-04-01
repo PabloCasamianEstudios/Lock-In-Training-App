@@ -26,15 +26,18 @@ public class UserController {
     private final UserRepository userRepository;
     private final UserQuestProgressRepository userQuestProgressRepository;
     private final com.lockin.repository.QuestRepository questRepository;
+    private final com.lockin.repository.UserStatRepository userStatRepository;
 
     public UserController(UserSurveyService userSurveyService,
             UserRepository userRepository,
             UserQuestProgressRepository userQuestProgressRepository,
-            com.lockin.repository.QuestRepository questRepository) {
+            com.lockin.repository.QuestRepository questRepository,
+            com.lockin.repository.UserStatRepository userStatRepository) {
         this.userSurveyService = userSurveyService;
         this.userRepository = userRepository;
         this.userQuestProgressRepository = userQuestProgressRepository;
         this.questRepository = questRepository;
+        this.userStatRepository = userStatRepository;
     }
 
     @PostMapping("/survey")
@@ -189,6 +192,26 @@ public class UserController {
             response.add(progressData);
         }
 
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/stats")
+    public ResponseEntity<List<Map<String, Object>>> getUserStats(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        List<com.lockin.model.UserStat> stats = userStatRepository.findByUser(userRepository.getReferenceById(id));
+
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (com.lockin.model.UserStat us : stats) {
+            Map<String, Object> statData = new HashMap<>();
+            statData.put("id", us.getId());
+            statData.put("name", us.getStat().getName());
+            statData.put("description", us.getStat().getDescription());
+            statData.put("value", us.getCurrentValue());
+            response.add(statData);
+        }
         return ResponseEntity.ok(response);
     }
 }

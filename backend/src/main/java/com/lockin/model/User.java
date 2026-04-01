@@ -28,15 +28,18 @@ public class User {
     
     private LocalDateTime registrationDate = LocalDateTime.now();
 
-    // Progresión RPG
+    // --- PROGRESSION ZONE ---
     private int streak = 0;
     private long totalPoints = 0;
+    private long seasonPoints = 0;
     private int level = 1;
     private long xp = 0;
     private long coins = 0;
 
     @Column(name = "user_rank")
-    private String rank;
+    private String rank; // League Rank (e.g., Bronze)
+
+    private String seasonRank = "E"; // Global Rank (S to E)
 
     private String role = "USER";
 

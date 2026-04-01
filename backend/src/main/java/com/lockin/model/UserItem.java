@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "user_leagues")
+@Table(name = "user_items")
 @NoArgsConstructor
-public class UserLeague {
+public class UserItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,8 +19,14 @@ public class UserLeague {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "league_id", nullable = false)
-    private League league;
+    @JoinColumn(name = "item_id", nullable = false)
+    private Item item;
 
-    private int groupId = 1;
+    private int quantity = 1;
+
+    public UserItem(User user, Item item, int quantity) {
+        this.user = user;
+        this.item = item;
+        this.quantity = quantity;
+    }
 }

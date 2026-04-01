@@ -26,5 +26,5 @@ public class LeagueController {
         Map<String, Object> result = leagueGenerationService.generateLeaguesByRank(maxUsersPerLeague);
         return ResponseEntity.ok(result);
     }
-}
 
+}
