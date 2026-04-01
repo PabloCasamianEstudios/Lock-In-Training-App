@@ -1,8 +1,10 @@
+import { type FC } from 'react';
 import { useQuests } from '../hooks/useQuests';
 import { Scroll, CheckCircle2, Circle } from 'lucide-react';
+import type { PageProps } from '../types';
 
-const QuestsPage = ({ user }) => {
-  const { quests, loading, error } = useQuests(user?.id);
+const QuestsPage: FC<PageProps> = ({ user }) => {
+  const { quests, loading, error } = useQuests(user?.id ?? null);
 
   if (loading) return <div className="p-10 text-main animate-pulse">LOADING PROTOCOL...</div>;
   if (error) return <div className="p-10 text-red-500 uppercase font-black">Error: {error}</div>;
@@ -15,7 +17,7 @@ const QuestsPage = ({ user }) => {
       </div>
 
       <div className="grid gap-6">
-        {quests.map((quest) => (
+        {quests.map((quest: any) => (
           <div 
             key={quest.questId} 
             className={`system-card p-6 flex flex-col md:flex-row justify-between items-center gap-6 ${quest.completed ? 'opacity-60 grayscale' : 'border-main'}`}
@@ -27,7 +29,7 @@ const QuestsPage = ({ user }) => {
                 <span className="bg-main text-black px-2 py-0.5 text-[10px] font-black transform -skew-x-12">RANK {quest.rank}</span>
               </div>
               <div className="flex flex-wrap gap-4">
-                {quest.exercises.map((ex, i) => (
+                {quest.exercises.map((ex: any, i: number) => (
                   <span key={i} className="text-xs font-black uppercase text-white/40 italic">
                     {ex.exerciseName}: {ex.series}x{ex.repetitionsPerSeries}
                   </span>

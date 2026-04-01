@@ -1,9 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type FC, type ChangeEvent } from 'react';
 import { ChevronDown, ChevronRight, Trash2, Database, RefreshCw } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
+const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
 
-const JSON_TEMPLATES = {
+interface JsonTemplates {
+  [key: string]: Record<string, unknown>;
+}
+
+const JSON_TEMPLATES: JsonTemplates = {
   users: {
     username: "",
     email: "",
@@ -78,22 +82,39 @@ const JSON_TEMPLATES = {
   }
 };
 
-const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity, type = 'all', onDataReceived }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [testId, setTestId] = useState('');
-  const [requestBody, setRequestBody] = useState('');
-  const [showRaw, setShowRaw] = useState(false);
+interface ApiError {
+  status: string | number;
+  statusText?: string;
+  message: string;
+}
+
+interface SwaggerBlockProps {
+  method: string;
+  title: string;
+  colorClass: string;
+  borderClass: string;
+  bgClass: string;
+  entity: string;
+  type?: string;
+  onDataReceived?: (data: any[]) => void;
+}
+
+const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, borderClass, bgClass, entity, type = 'all', onDataReceived }) => {
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [data, setData] = useState<any[] | null>(null);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [testId, setTestId] = useState<string>('');
+  const [requestBody, setRequestBody] = useState<string>('');
+  const [showRaw, setShowRaw] = useState<boolean>(false);
 
   useEffect(() => {
     if (isExpanded && (method === 'post' || method === 'put') && !requestBody) {
       setRequestBody(JSON.stringify(JSON_TEMPLATES[entity] || {}, null, 2));
     }
-  }, [isExpanded, entity, method]);
+  }, [isExpanded, entity, method, requestBody]);
 
-  const execute = async () => {
+  const execute = async (): Promise<void> => {
     setLoading(true);
     setError(null);
     setData(null);
@@ -109,13 +130,13 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
         if (!testId) throw new Error("League ID is required");
         url = `${API_BASE_URL}/api/admin/leagues/${testId}/players`;
       } else if (type === 'custom-league-generate') {
-        const max = testId || 5;
+        const max = testId || '5';
         url = `${API_BASE_URL}/api/leagues/generate?maxUsersPerLeague=${max}`;
       } else if (type === 'users-custom-quests') {
         if (!testId) throw new Error("User ID is required");
         url = `${API_BASE_URL}/api/admin/users/${testId}/custom-quests`;
       } else if (type === 'social-request') {
-        const body = JSON.parse(requestBody);
+        const body = JSON.parse(requestBody) as { senderId: number; receiverId: number };
         url = `${API_BASE_URL}/api/social/friends/request?senderId=${body.senderId}&receiverId=${body.receiverId}`;
       } else if (type === 'social-accept') {
         if (!testId) throw new Error("Request ID is required");
@@ -127,7 +148,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
         if (!testId) throw new Error("Progress ID is required");
         url = `${API_BASE_URL}/api/quests/progress/${testId}/complete`;
       } else if (type === 'quest-start') {
-        const body = JSON.parse(requestBody);
+        const body = JSON.parse(requestBody) as { userId: number };
         url = `${API_BASE_URL}/api/quests/${testId}/start?userId=${body.userId}`;
       } else if (type === 'quest-active') {
         if (!testId) throw new Error("User ID is required");
@@ -170,7 +191,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
         url += `/${testId}`;
       }
 
-      const options = {
+      const options: RequestInit = {
         method: method.toUpperCase(),
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -183,14 +204,14 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           if (requestBody) {
             options.body = JSON.stringify(JSON.parse(requestBody));
           }
-        } catch (e) {
+        } catch {
           throw new Error("Invalid JSON format in Request Body");
         }
       }
 
       const response = await fetch(url, options);
 
-      let result;
+      let result: any;
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
         result = await response.json();
@@ -200,9 +221,9 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
 
       if (response.ok) {
         const finalData = Array.isArray(result) ? result : (result ? [result] : { success: true, message: result });
-        setData(finalData);
+        setData(finalData as any[]);
         if (type === 'all' && onDataReceived) {
-          onDataReceived(finalData);
+          onDataReceived(finalData as any[]);
         }
       } else {
         const errorMsg = typeof result === 'string' ? result : (result.message || result.error || JSON.stringify(result));
@@ -212,7 +233,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           message: errorMsg
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       setError({
         status: 'CLIENT_ERROR',
         message: err.message
@@ -266,7 +287,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           </div>
 
           <div className="flex flex-col gap-4">
-            {/* Secion input */}
+            {/* Input section */}
             <div className="grid grid-cols-1 gap-3">
               {(type === 'id' || method === 'delete' || method === 'put' || type === 'custom-league-players' || type === 'custom-league-generate' || type === 'users-custom-quests' || type === 'users-custom-stats' || type === 'social-accept' || type === 'social-list' || type === 'quest-complete' || type === 'quest-start' || type === 'quest-active' || type === 'mod-unmute' || type === 'mod-mute' || type === 'shop-buy-item' || type === 'shop-buy-title' || type === 'shop-user-items' || type === 'shop-user-titles') && (
                 <div className="flex flex-col gap-1">
@@ -283,7 +304,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
                     className="bg-white/5 border border-white/10 p-2 text-white w-full outline-none focus:border-orange-500/50 font-mono text-xs"
                     placeholder={type === 'custom-league-generate' ? "e.g. 5" : "e.g. 1"}
                     value={testId}
-                    onChange={(e) => setTestId(e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setTestId(e.target.value)}
                   />
                 </div>
               )}
@@ -295,13 +316,13 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
                     className="bg-white/5 border border-white/10 p-2 text-white w-full h-32 outline-none focus:border-orange-500/50 font-mono text-xs resize-none"
                     placeholder='{ "name": "New Entity", ... }'
                     value={requestBody}
-                    onChange={(e) => setRequestBody(e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setRequestBody(e.target.value)}
                   />
                 </div>
               )}
             </div>
 
-            {/* Secion respuesta */}
+            {/* Response section */}
             <div className="mt-2 border-t border-white/5 pt-4">
               <div className="flex items-center justify-between mb-2">
                 <label className="text-[8px] opacity-40 uppercase font-black block">Response</label>
@@ -321,7 +342,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
                 <div className="p-4 bg-red-950/40 border border-red-500/50 rounded animate-in slide-in-from-top-2">
                   <div className="text-red-500 font-black mb-1 text-xs">ERROR {error.status || '500'} {error.statusText || ''}</div>
                   <pre className="text-red-300 whitespace-pre-wrap text-[10px] leading-relaxed italic">
-                    {typeof error === 'string' ? error : (error.message || JSON.stringify(error, null, 2))}
+                    {error.message || JSON.stringify(error, null, 2)}
                   </pre>
                 </div>
               )}
@@ -339,7 +360,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                      {data.map((u, idx) => (
+                      {data.map((u: any, idx: number) => (
                         <tr key={u.id} className="hover:bg-white/5">
                           <td className="p-2 font-black text-orange-500">{idx + 1}</td>
                           <td className="p-2">
@@ -381,11 +402,16 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
   );
 };
 
-const AdminPage = () => {
-  const [selectedEntity, setSelectedEntity] = useState('users');
-  const [globalData, setGlobalData] = useState([]);
+interface Entity {
+  id: string;
+  name: string;
+}
 
-  const entities = [
+const AdminPage: FC = () => {
+  const [selectedEntity, setSelectedEntity] = useState<string>('users');
+  const [globalData, setGlobalData] = useState<any[]>([]);
+
+  const entities: Entity[] = [
     { id: 'users', name: 'Users' },
     { id: 'quests', name: 'Quests' },
     { id: 'exercises', name: 'Exercises' },
@@ -401,7 +427,7 @@ const AdminPage = () => {
     { id: 'shop', name: 'Shop & Inventory' },
   ];
 
-  const handleDeleteQuick = async (id) => {
+  const handleDeleteQuick = async (id: number): Promise<void> => {
     if (!window.confirm('Are you sure you want to delete this record?')) return;
     const token = localStorage.getItem('lockin_token');
     try {
@@ -658,7 +684,7 @@ const AdminPage = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {(globalData || []).map((item) => (
+                  {(globalData || []).map((item: any) => (
                     <tr key={item.id} className="hover:bg-white/[0.02] transition-colors group/row">
                       <td className="p-4 font-mono text-[11px] text-orange-500/70 font-bold">#{item.id}</td>
                       <td className="p-4">
@@ -678,10 +704,10 @@ const AdminPage = () => {
                     </tr>
                   ))}
                   {(globalData && globalData.length === 0) && (
-                    <tr><td colSpan="3" className="p-10 text-center text-white/20 italic text-xs tracking-widest uppercase">Select an operation above and click EXECUTE to browse data</td></tr>
+                    <tr><td colSpan={3} className="p-10 text-center text-white/20 italic text-xs tracking-widest uppercase">Select an operation above and click EXECUTE to browse data</td></tr>
                   )}
                   {globalData === null && (
-                    <tr><td colSpan="3" className="p-10 text-center text-white/10 italic text-xs tracking-widest uppercase">System ready. Establish connection with API...</td></tr>
+                    <tr><td colSpan={3} className="p-10 text-center text-white/10 italic text-xs tracking-widest uppercase">System ready. Establish connection with API...</td></tr>
                   )}
                 </tbody>
               </table>

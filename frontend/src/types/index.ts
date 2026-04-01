@@ -93,3 +93,59 @@ export interface LoginResponse {
   role: UserRole;
   id: number;
 }
+
+// --- Shared component types ---
+
+export interface PlayerStats {
+  [key: string]: number;
+}
+
+export interface PlayerProfile {
+  userId?: number;
+  rank?: string;
+  level?: number;
+  xp?: number;
+  coins?: number;
+  stats?: PlayerStats;
+  username?: string;
+  biometria?: Record<string, unknown>;
+}
+
+export interface AppUser {
+  id: number;
+  username: string;
+  email?: string;
+  rank?: string;
+  isGuest?: boolean;
+  role?: UserRole;
+}
+
+export interface PageProps {
+  user?: AppUser | null;
+  profile?: PlayerProfile | null;
+  onNavigate?: (tab: string) => void;
+  onLogout?: () => void;
+}
+
+export interface DailyQuestDTO {
+  questId: number;
+  title: string;
+  rank: string;
+  xpReward: number;
+  goldReward: number;
+  completed: boolean;
+  completedRepetitions: number;
+  totalRepetitions: number;
+  exercises: DailyQuestExercise[];
+}
+
+export interface DailyQuestExercise {
+  exerciseName: string;
+  series: number;
+  repetitionsPerSeries: number;
+}
+
+export interface SystemStatusResponse {
+  status: string;
+  message: string;
+}

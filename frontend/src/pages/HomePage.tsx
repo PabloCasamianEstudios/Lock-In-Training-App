@@ -1,7 +1,9 @@
+import { type FC } from 'react';
 import { Activity, Zap, Shield, Target, Award, Star } from 'lucide-react';
+import type { PageProps, PlayerStats } from '../types';
 
-const HomePage = ({ user, profile }) => {
-  const stats = profile?.stats || { STR: 10, AGI: 10, VIT: 10, INT: 10, DEX: 10, DISC: 10 };
+const HomePage: FC<PageProps> = ({ user, profile }) => {
+  const stats: PlayerStats = profile?.stats || { STR: 10, AGI: 10, VIT: 10, INT: 10, DEX: 10, DISC: 10 };
 
   return (
     <div className="space-y-12 p-8">

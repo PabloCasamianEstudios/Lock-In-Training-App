@@ -1,6 +1,8 @@
+import { type FC } from 'react';
 import { User, ShieldCheck, Mail, Database, Award, Settings, LogOut } from 'lucide-react';
+import type { PageProps } from '../types';
 
-const ProfilePage = ({ user, profile, onLogout }) => {
+const ProfilePage: FC<PageProps> = ({ user, profile, onLogout }) => {
   return (
     <div className="p-10 space-y-12">
       <div className="flex border-b-4 border-white/10 pb-8 gap-10 items-end">
