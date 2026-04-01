@@ -26,7 +26,6 @@ const JSON_TEMPLATES = {
     rankDifficulty: "C",
     goldReward: 50,
     xpReward: 100,
-    /* --- SAMPLE STEPS ZONE --- */
     steps: [
       {
         exercise: { id: 1 },
@@ -58,6 +57,9 @@ const JSON_TEMPLATES = {
     reward: 500,
     xpReward: 1000
   },
+  "quest-start": {
+    userId: 1
+  },
   tips: {
     title: "Hydration Tip",
     description: "Drink at least 2L of water daily",
@@ -66,6 +68,10 @@ const JSON_TEMPLATES = {
   titles: {
     name: "Iron Soul",
     description: "Unlocked after 100 workouts"
+  },
+  social: {
+    senderId: 1,
+    receiverId: 2
   }
 };
 
@@ -92,7 +98,7 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
     try {
       /* --- URL CONSTRUCTION ZONE --- */
       let url = `${API_BASE_URL}/api/admin/${entity}`;
-      
+
       if (type === 'custom-top10') {
         url = `${API_BASE_URL}/api/admin/users/top10`;
       } else if (type === 'custom-league-players') {
@@ -101,6 +107,27 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
       } else if (type === 'custom-league-generate') {
         const max = testId || 5;
         url = `${API_BASE_URL}/api/leagues/generate?maxUsersPerLeague=${max}`;
+      } else if (type === 'users-custom-quests') {
+        if (!testId) throw new Error("User ID is required");
+        url = `${API_BASE_URL}/api/admin/users/${testId}/custom-quests`;
+      } else if (type === 'social-request') {
+        const body = JSON.parse(requestBody);
+        url = `${API_BASE_URL}/api/social/friends/request?senderId=${body.senderId}&receiverId=${body.receiverId}`;
+      } else if (type === 'social-accept') {
+        if (!testId) throw new Error("Request ID is required");
+        url = `${API_BASE_URL}/api/social/friends/accept/${testId}`;
+      } else if (type === 'social-list') {
+        if (!testId) throw new Error("User ID is required");
+        url = `${API_BASE_URL}/api/social/friends/${testId}`;
+      } else if (type === 'quest-complete') {
+        if (!testId) throw new Error("Progress ID is required");
+        url = `${API_BASE_URL}/api/quests/progress/${testId}/complete`;
+      } else if (type === 'quest-start') {
+        const body = JSON.parse(requestBody);
+        url = `${API_BASE_URL}/api/quests/${testId}/start?userId=${body.userId}`;
+      } else if (type === 'quest-active') {
+        if (!testId) throw new Error("User ID is required");
+        url = `${API_BASE_URL}/api/quests/active/${testId}`;
       } else if (type === 'id' || method === 'delete' || method === 'put') {
         if (!testId) throw new Error("ID is required for this operation");
         url += `/${testId}`;
@@ -170,6 +197,13 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           {type === 'custom-top10' ? '/api/admin/users/top10' : 
            type === 'custom-league-players' ? `/api/admin/leagues/{id}/players` :
            type === 'custom-league-generate' ? `/api/leagues/generate?maxUsersPerLeague={n}` :
+           type === 'users-custom-quests' ? `/api/admin/users/{id}/custom-quests` :
+           type === 'social-request' ? `/api/social/friends/request?senderId={n}&receiverId={n}` :
+           type === 'social-accept' ? `/api/social/friends/accept/{id}` :
+           type === 'social-list' ? `/api/social/friends/{id}` :
+           type === 'quest-complete' ? `/api/quests/progress/{id}/complete` :
+           type === 'quest-start' ? `/api/quests/{questId}/start?userId={n}` :
+           type === 'quest-active' ? `/api/quests/active/{id}` :
            `/api/admin/${entity}${ (type === 'id' || method === 'delete' || method === 'put') ? '/{id}' : ''}`}
         </span>
         <span className="text-[10px] opacity-60 ml-auto uppercase font-black">{title}</span>
@@ -192,10 +226,12 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           <div className="flex flex-col gap-4">
             {/* Secion input */}
             <div className="grid grid-cols-1 gap-3">
-              {(type === 'id' || method === 'delete' || method === 'put' || type === 'custom-league-players' || type === 'custom-league-generate') && (
+              {(type === 'id' || method === 'delete' || method === 'put' || type === 'custom-league-players' || type === 'custom-league-generate' || type === 'users-custom-quests' || type === 'social-accept' || type === 'social-list' || type === 'quest-complete' || type === 'quest-start' || type === 'quest-active') && (
                 <div className="flex flex-col gap-1">
                   <label className="text-[8px] opacity-40 uppercase font-black">
-                    {type === 'custom-league-generate' ? 'Max Players Per League' : 'Record ID (Required)'}
+                    {type === 'custom-league-generate' ? 'Max Players Per League' : 
+                     (type === 'quest-complete' || type === 'quest-start' || type === 'quest-active') ? 'Progress / Quest / User ID (Required)' :
+                     'Record / User / Request ID (Required)'}
                   </label>
                   <input
                     className="bg-white/5 border border-white/10 p-2 text-white w-full outline-none focus:border-orange-500/50 font-mono text-xs"
@@ -264,6 +300,8 @@ const AdminPage = () => {
     { id: 'leagues', name: 'Leagues' },
     { id: 'tips', name: 'Tips' },
     { id: 'titles', name: 'Titles' },
+    { id: 'social', name: 'Social' },
+    { id: 'quest-progress', name: 'Quest Progression' },
   ];
 
   const handleDeleteQuick = async (id) => {
@@ -319,7 +357,7 @@ const AdminPage = () => {
         <div className="lg:col-span-3">
           <div className="flex flex-col mb-8 gap-1">
             <h2 className="text-3xl font-black uppercase tracking-tight leading-none">{selectedEntity}</h2>
-            <div className="flex items-center gap-2 text-[10px] opacity-40 font-mono italic">
+            <div className="flex items-center gap-2 text-[10px] opacity-100 font-mono italic">
               <span>Endpoint Base:</span>
               <span className="text-orange-500/80">/api/admin/{selectedEntity}</span>
             </div>
@@ -328,11 +366,18 @@ const AdminPage = () => {
           <div className="flex flex-col gap-1">
             {/* --- SPECIAL ENDPOINTS ZONE --- */}
             {selectedEntity === 'users' && (
-              <SwaggerBlock
-                key="users-custom-top10"
-                method="get" title="Ranking: Top 10 Users" entity="users" type="custom-top10"
-                colorClass="bg-purple-600" borderClass="border-purple-600/20" bgClass="bg-purple-600/10 hover:bg-purple-600/20"
-              />
+              <>
+                <SwaggerBlock
+                  key="users-custom-top10"
+                  method="get" title="Ranking: Top 10 Users" entity="users" type="custom-top10"
+                  colorClass="bg-purple-600" borderClass="border-purple-600/20" bgClass="bg-purple-600/10 hover:bg-purple-600/20"
+                />
+                <SwaggerBlock
+                  key="users-custom-quests"
+                  method="get" title="Profile: User Custom Quests" entity="users" type="users-custom-quests"
+                  colorClass="bg-blue-600" borderClass="border-blue-600/20" bgClass="bg-blue-600/10 hover:bg-blue-600/20"
+                />
+              </>
             )}
 
             {selectedEntity === 'leagues' && (
@@ -350,7 +395,47 @@ const AdminPage = () => {
               </>
             )}
 
-            /* --- STANDARD CRUD ZONE --- */
+            {selectedEntity === 'social' && (
+              <>
+                <SwaggerBlock
+                  key="social-request"
+                  method="post" title="Friends: Send Request" entity="social" type="social-request"
+                  colorClass="bg-pink-600" borderClass="border-pink-600/20" bgClass="bg-pink-600/10 hover:bg-pink-600/20"
+                />
+                <SwaggerBlock
+                  key="social-accept"
+                  method="post" title="Friends: Accept Request" entity="social" type="social-accept"
+                  colorClass="bg-pink-700" borderClass="border-pink-700/20" bgClass="bg-pink-700/10 hover:bg-pink-700/20"
+                />
+                <SwaggerBlock
+                  key="social-list"
+                  method="get" title="Friends: List Accepted" entity="social" type="social-list"
+                  colorClass="bg-pink-800" borderClass="border-pink-800/20" bgClass="bg-pink-800/10 hover:bg-pink-800/20"
+                />
+              </>
+            )}
+
+            {selectedEntity === 'quest-progress' && (
+              <>
+                <SwaggerBlock
+                  key="quest-start"
+                  method="post" title="Flow: Start/Accept Quest" entity="quest-start" type="quest-start"
+                  colorClass="bg-yellow-500" borderClass="border-yellow-500/20" bgClass="bg-yellow-500/10 hover:bg-yellow-500/20"
+                />
+                <SwaggerBlock
+                  key="quest-active"
+                  method="get" title="Flow: List Active Quests" entity="quests" type="quest-active"
+                  colorClass="bg-yellow-700" borderClass="border-yellow-700/20" bgClass="bg-yellow-700/10 hover:bg-yellow-700/20"
+                />
+                <SwaggerBlock
+                  key="quest-complete"
+                  method="post" title="Rewards: Complete Quest" entity="quests" type="quest-complete"
+                  colorClass="bg-yellow-600" borderClass="border-yellow-600/20" bgClass="bg-yellow-600/10 hover:bg-yellow-600/20"
+                />
+              </>
+            )}
+
+            {/* --- STANDARD CRUD ZONE --- */}
             <SwaggerBlock
               key={`${selectedEntity}-get-all`}
               method="get" title="List all records" entity={selectedEntity} type="all"

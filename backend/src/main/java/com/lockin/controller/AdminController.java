@@ -22,6 +22,7 @@ public class AdminController {
     @Autowired private LeagueRepository leagueRepository;
     @Autowired private UserLeagueRepository userLeagueRepository;
     @Autowired private UserTitleRepository userTitleRepository;
+    @Autowired private UserQuestProgressRepository userQuestProgressRepository;
 
     /* --- SPECIAL QUERIES ZONE --- */
     @GetMapping("/users/top10")
@@ -40,6 +41,14 @@ public class AdminController {
                 .map(ul -> mapToRankingDTO(ul.getUser()))
                 .toList();
         return ResponseEntity.ok(players);
+    }
+
+    @GetMapping("/users/{id}/custom-quests")
+    public ResponseEntity<Object> getCustomQuests(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.status(404).body("El id no existe");
+        }
+        return ResponseEntity.ok(userQuestProgressRepository.findByUserIdAndQuestType(id, Quest.QuestType.CUSTOM));
     }
 
     private com.lockin.model.dtos.RankingUserDTO mapToRankingDTO(User user) {
@@ -70,13 +79,17 @@ public class AdminController {
     }
 
     @PostMapping("/users")
-    public User createUser(@RequestBody User entity) { return userRepository.save(entity); }
+    public ResponseEntity<Object> createUser(@RequestBody User entity) {
+        if (entity.getUsername() == null || entity.getUsername().isEmpty()) return ResponseEntity.badRequest().body("Nombre de usuario requerido");
+        if (entity.getEmail() == null || entity.getEmail().isEmpty()) return ResponseEntity.badRequest().body("Email requerido");
+        if (entity.getPassword() == null || entity.getPassword().isEmpty()) return ResponseEntity.badRequest().body("Contraseña requerida");
+        return ResponseEntity.ok(userRepository.save(entity));
+    }
 
     @PutMapping("/users/{id}")
     public ResponseEntity<Object> updateUser(@PathVariable Long id, @RequestBody User entity) {
-        if (!userRepository.existsById(id)) {
-            return ResponseEntity.status(404).body("El id no existe");
-        }
+        if (!userRepository.existsById(id)) return ResponseEntity.status(404).body("El id no existe");
+        if (entity.getUsername() == null || entity.getUsername().isEmpty()) return ResponseEntity.badRequest().body("Nombre de usuario requerido");
         entity.setId(id);
         return ResponseEntity.ok(userRepository.save(entity));
     }
@@ -90,7 +103,7 @@ public class AdminController {
         return ResponseEntity.ok("Eliminado correctamente");
     }
 
-    // --- QUESTS ---
+    /* --- CRUD ZONE: QUESTS --- */
     @GetMapping("/quests")
     public List<Quest> getAllQuests() { return questRepository.findAll(); }
 
@@ -102,19 +115,22 @@ public class AdminController {
     }
 
     @PostMapping("/quests")
-    public Quest createQuest(@RequestBody Quest entity) {
+    public ResponseEntity<Object> createQuest(@RequestBody Quest entity) {
+        if (entity.getTitle() == null || entity.getTitle().isEmpty()) return ResponseEntity.badRequest().body("Título requerido");
+        if (entity.getType() == null) return ResponseEntity.badRequest().body("Tipo de quest requerido");
+        
         /* --- NESTED STEPS BINDING ZONE --- */
         if (entity.getSteps() != null) {
             entity.getSteps().forEach(step -> step.setQuest(entity));
         }
-        return questRepository.save(entity);
+        return ResponseEntity.ok(questRepository.save(entity));
     }
 
     @PutMapping("/quests/{id}")
     public ResponseEntity<Object> updateQuest(@PathVariable Long id, @RequestBody Quest entity) {
-        if (!questRepository.existsById(id)) {
-            return ResponseEntity.status(404).body("El id no existe");
-        }
+        if (!questRepository.existsById(id)) return ResponseEntity.status(404).body("El id no existe");
+        if (entity.getTitle() == null || entity.getTitle().isEmpty()) return ResponseEntity.badRequest().body("Título requerido");
+        
         entity.setId(id);
         /* --- NESTED STEPS BINDING ZONE --- */
         if (entity.getSteps() != null) {
@@ -132,7 +148,7 @@ public class AdminController {
         return ResponseEntity.ok("Eliminado correctamente");
     }
 
-    // --- EXERCISES ---
+    /* --- CRUD ZONE: EXERCISES --- */
     @GetMapping("/exercises")
     public List<Exercise> getAllExercises() { return exerciseRepository.findAll(); }
 
@@ -144,7 +160,10 @@ public class AdminController {
     }
 
     @PostMapping("/exercises")
-    public Exercise createExercise(@RequestBody Exercise entity) { return exerciseRepository.save(entity); }
+    public ResponseEntity<Object> createExercise(@RequestBody Exercise entity) {
+        if (entity.getName() == null || entity.getName().isEmpty()) return ResponseEntity.badRequest().body("Nombre requerido");
+        return ResponseEntity.ok(exerciseRepository.save(entity));
+    }
 
     @DeleteMapping("/exercises/{id}")
     public ResponseEntity<Object> deleteExercise(@PathVariable Long id) {
@@ -155,7 +174,7 @@ public class AdminController {
         return ResponseEntity.ok("Eliminado correctamente");
     }
 
-    // --- ACHIEVEMENTS ---
+    /* --- CRUD ZONE: ACHIEVEMENTS --- */
     @GetMapping("/achievements")
     public List<Achievement> getAllAchievements() { return achievementRepository.findAll(); }
 
@@ -167,7 +186,10 @@ public class AdminController {
     }
 
     @PostMapping("/achievements")
-    public Achievement createAchievement(@RequestBody Achievement entity) { return achievementRepository.save(entity); }
+    public ResponseEntity<Object> createAchievement(@RequestBody Achievement entity) {
+        if (entity.getTitle() == null || entity.getTitle().isEmpty()) return ResponseEntity.badRequest().body("Título requerido");
+        return ResponseEntity.ok(achievementRepository.save(entity));
+    }
 
     @DeleteMapping("/achievements/{id}")
     public ResponseEntity<Object> deleteAchievement(@PathVariable Long id) {
@@ -178,7 +200,7 @@ public class AdminController {
         return ResponseEntity.ok("Eliminado correctamente");
     }
 
-    // --- STATS ---
+    /* --- CRUD ZONE: STATS --- */
     @GetMapping("/stats")
     public List<Stat> getAllStats() { return statRepository.findAll(); }
 
@@ -189,7 +211,13 @@ public class AdminController {
                 .orElse(ResponseEntity.status(404).body("El id no existe"));
     }
 
-    // --- LEAGUES ---
+    @PostMapping("/stats")
+    public ResponseEntity<Object> createStat(@RequestBody Stat entity) {
+        if (entity.getName() == null || entity.getName().isEmpty()) return ResponseEntity.badRequest().body("Nombre requerido");
+        return ResponseEntity.ok(statRepository.save(entity));
+    }
+
+    /* --- CRUD ZONE: LEAGUES --- */
     @GetMapping("/leagues")
     public List<League> getAllLeagues() { return leagueRepository.findAll(); }
 
@@ -200,7 +228,13 @@ public class AdminController {
                 .orElse(ResponseEntity.status(404).body("El id no existe"));
     }
 
-    // --- TIPS ---
+    @PostMapping("/leagues")
+    public ResponseEntity<Object> createLeague(@RequestBody League entity) {
+        if (entity.getRank() == null || entity.getRank().isEmpty()) return ResponseEntity.badRequest().body("Rango requerido");
+        return ResponseEntity.ok(leagueRepository.save(entity));
+    }
+
+    /* --- CRUD ZONE: TIPS --- */
     @GetMapping("/tips")
     public List<Tip> getAllTips() { return tipRepository.findAll(); }
 
@@ -211,7 +245,13 @@ public class AdminController {
                 .orElse(ResponseEntity.status(404).body("El id no existe"));
     }
 
-    // --- TITLES ---
+    @PostMapping("/tips")
+    public ResponseEntity<Object> createTip(@RequestBody Tip entity) {
+        if (entity.getTitle() == null || entity.getTitle().isEmpty()) return ResponseEntity.badRequest().body("Título requerido");
+        return ResponseEntity.ok(tipRepository.save(entity));
+    }
+
+    /* --- CRUD ZONE: TITLES --- */
     @GetMapping("/titles")
     public List<Title> getAllTitles() { return titleRepository.findAll(); }
 
@@ -220,5 +260,11 @@ public class AdminController {
         return titleRepository.findById(id)
                 .map(entity -> ResponseEntity.ok((Object) entity))
                 .orElse(ResponseEntity.status(404).body("El id no existe"));
+    }
+
+    @PostMapping("/titles")
+    public ResponseEntity<Object> createTitle(@RequestBody Title entity) {
+        if (entity.getName() == null || entity.getName().isEmpty()) return ResponseEntity.badRequest().body("Nombre requerido");
+        return ResponseEntity.ok(titleRepository.save(entity));
     }
 }
