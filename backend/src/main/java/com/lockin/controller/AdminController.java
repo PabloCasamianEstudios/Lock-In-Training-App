@@ -20,8 +20,45 @@ public class AdminController {
     @Autowired private TipRepository tipRepository;
     @Autowired private TitleRepository titleRepository;
     @Autowired private LeagueRepository leagueRepository;
+    @Autowired private UserLeagueRepository userLeagueRepository;
+    @Autowired private UserTitleRepository userTitleRepository;
 
-    // --- USERS ---
+    /* --- SPECIAL QUERIES ZONE --- */
+    @GetMapping("/users/top10")
+    public List<com.lockin.model.dtos.RankingUserDTO> getTop10Users() {
+        return userRepository.findTop10ByOrderByTotalPointsDesc().stream()
+                .map(this::mapToRankingDTO)
+                .toList();
+    }
+
+    @GetMapping("/leagues/{id}/players")
+    public ResponseEntity<Object> getLeaguePlayers(@PathVariable Long id) {
+        if (!leagueRepository.existsById(id)) {
+            return ResponseEntity.status(404).body("La liga no existe");
+        }
+        List<com.lockin.model.dtos.RankingUserDTO> players = userLeagueRepository.findByLeagueId(id).stream()
+                .map(ul -> mapToRankingDTO(ul.getUser()))
+                .toList();
+        return ResponseEntity.ok(players);
+    }
+
+    private com.lockin.model.dtos.RankingUserDTO mapToRankingDTO(User user) {
+        String titleName = userTitleRepository.findByUserIdAndIsEquippedTrue(user.getId())
+                .map(ut -> ut.getTitle().getName())
+                .orElse("Sin Título");
+        
+        return com.lockin.model.dtos.RankingUserDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .profilePic(user.getProfilePic())
+                .title(titleName)
+                .level(user.getLevel())
+                .rank(user.getRank())
+                .totalPoints(user.getTotalPoints())
+                .build();
+    }
+
+    /* --- CRUD ZONE: USERS --- */
     @GetMapping("/users")
     public List<User> getAllUsers() { return userRepository.findAll(); }
 

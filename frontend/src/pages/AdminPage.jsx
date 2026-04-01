@@ -82,8 +82,18 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
     const token = localStorage.getItem('lockin_token');
 
     try {
+      /* --- URL CONSTRUCTION ZONE --- */
       let url = `${API_BASE_URL}/api/admin/${entity}`;
-      if (type === 'id' || method === 'delete' || method === 'put') {
+      
+      if (type === 'custom-top10') {
+        url = `${API_BASE_URL}/api/admin/users/top10`;
+      } else if (type === 'custom-league-players') {
+        if (!testId) throw new Error("League ID is required");
+        url = `${API_BASE_URL}/api/admin/leagues/${testId}/players`;
+      } else if (type === 'custom-league-generate') {
+        const max = testId || 5;
+        url = `${API_BASE_URL}/api/leagues/generate?maxUsersPerLeague=${max}`;
+      } else if (type === 'id' || method === 'delete' || method === 'put') {
         if (!testId) throw new Error("ID is required for this operation");
         url += `/${testId}`;
       }
@@ -149,7 +159,10 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           {method.toUpperCase()}
         </span>
         <span className="text-xs font-bold font-mono">
-          /api/admin/{entity}{(type === 'id' || method === 'delete' || method === 'put') ? '/{id}' : ''}
+          {type === 'custom-top10' ? '/api/admin/users/top10' : 
+           type === 'custom-league-players' ? `/api/admin/leagues/{id}/players` :
+           type === 'custom-league-generate' ? `/api/leagues/generate?maxUsersPerLeague={n}` :
+           `/api/admin/${entity}${ (type === 'id' || method === 'delete' || method === 'put') ? '/{id}' : ''}`}
         </span>
         <span className="text-[10px] opacity-60 ml-auto uppercase font-black">{title}</span>
         {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
@@ -171,12 +184,14 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           <div className="flex flex-col gap-4">
             {/* Secion input */}
             <div className="grid grid-cols-1 gap-3">
-              {(type === 'id' || method === 'delete' || method === 'put') && (
+              {(type === 'id' || method === 'delete' || method === 'put' || type === 'custom-league-players' || type === 'custom-league-generate') && (
                 <div className="flex flex-col gap-1">
-                  <label className="text-[8px] opacity-40 uppercase font-black">Record ID (Required)</label>
+                  <label className="text-[8px] opacity-40 uppercase font-black">
+                    {type === 'custom-league-generate' ? 'Max Players Per League' : 'Record ID (Required)'}
+                  </label>
                   <input
                     className="bg-white/5 border border-white/10 p-2 text-white w-full outline-none focus:border-orange-500/50 font-mono text-xs"
-                    placeholder="e.g. 1"
+                    placeholder={type === 'custom-league-generate' ? "e.g. 5" : "e.g. 1"}
                     value={testId}
                     onChange={(e) => setTestId(e.target.value)}
                   />
@@ -303,6 +318,31 @@ const AdminPage = () => {
           </div>
 
           <div className="flex flex-col gap-1">
+            {/* --- SPECIAL ENDPOINTS ZONE --- */}
+            {selectedEntity === 'users' && (
+              <SwaggerBlock
+                key="users-custom-top10"
+                method="get" title="Ranking: Top 10 Users" entity="users" type="custom-top10"
+                colorClass="bg-purple-600" borderClass="border-purple-600/20" bgClass="bg-purple-600/10 hover:bg-purple-600/20"
+              />
+            )}
+
+            {selectedEntity === 'leagues' && (
+              <>
+                <SwaggerBlock
+                  key="leagues-custom-players"
+                  method="get" title="Ranking: League Players" entity="leagues" type="custom-league-players"
+                  colorClass="bg-purple-700" borderClass="border-purple-700/20" bgClass="bg-purple-700/10 hover:bg-purple-700/20"
+                />
+                <SwaggerBlock
+                  key="leagues-custom-generate"
+                  method="post" title="System: Generate Leagues" entity="leagues" type="custom-league-generate"
+                  colorClass="bg-red-700" borderClass="border-red-700/20" bgClass="bg-red-700/10 hover:bg-red-700/20"
+                />
+              </>
+            )}
+
+            /* --- STANDARD CRUD ZONE --- */
             <SwaggerBlock
               key={`${selectedEntity}-get-all`}
               method="get" title="List all records" entity={selectedEntity} type="all"
