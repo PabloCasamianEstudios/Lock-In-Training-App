@@ -1,8 +1,12 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, FC } from 'react';
 
-const SplashScreen = ({ onComplete }) => {
-  const [progress, setProgress] = useState(0);
+interface SplashScreenProps {
+  onComplete: () => void;
+}
+
+const SplashScreen: FC<SplashScreenProps> = ({ onComplete }) => {
+  const [progress, setProgress] = useState<number>(0);
 
   useEffect(() => {
     const timer = setInterval(() => {

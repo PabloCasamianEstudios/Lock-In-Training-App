@@ -1,13 +1,14 @@
 import { useState, useCallback, useEffect } from 'react';
 import { authService } from '../services/authService';
+import { User, LoginResponse } from '../types';
 
 export const useAuth = () => {
-  const [user, setUser] = useState(() => {
+  const [user, setUser] = useState<LoginResponse | null>(() => {
     const saved = localStorage.getItem('lockin_user');
     return saved ? JSON.parse(saved) : null;
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -17,29 +18,31 @@ export const useAuth = () => {
     }
   }, [user]);
 
-  const login = useCallback(async (credentials) => {
+  const login = useCallback(async (credentials: any): Promise<LoginResponse> => {
     setLoading(true);
     setError(null);
     try {
       const userData = await authService.login(credentials);
       setUser(userData);
       return userData;
-    } catch (err) {
-      setError(err.message);
+    } catch (err: any) {
+      const msg = err.message || 'Login failed';
+      setError(msg);
       throw err;
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const register = useCallback(async (userData) => {
+  const register = useCallback(async (userData: any): Promise<LoginResponse> => {
     setLoading(true);
     setError(null);
     try {
       await authService.register(userData);
       return await login({ email: userData.email, password: userData.password });
-    } catch (err) {
-      setError(err.message);
+    } catch (err: any) {
+      const msg = err.message || 'Registration failed';
+      setError(msg);
       throw err;
     } finally {
       setLoading(false);

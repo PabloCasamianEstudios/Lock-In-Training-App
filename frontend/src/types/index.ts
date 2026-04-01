@@ -1,0 +1,95 @@
+export type UserRole = 'USER' | 'ADMIN';
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  profilePic?: string;
+  registrationDate: string;
+  streak: number;
+  totalPoints: number;
+  seasonPoints: number;
+  level: number;
+  xp: number;
+  coins: number;
+  rank?: string;
+  seasonRank: string;
+  role: UserRole;
+  weight?: number;
+  height?: number;
+  birthDate?: string;
+  gender?: string;
+  energy: number;
+  fatigue: number;
+  completedWorkouts: number;
+  totalTrainingTime: number;
+  achievedChallenges: number;
+  imc?: number;
+}
+
+export interface SurveyData {
+  pushUps: string;
+  runTime: string;
+  goal: string;
+  frequency: string;
+  weight: string;
+  height: string;
+  gender?: string;
+  age?: string;
+}
+
+export interface Stat {
+  id: number;
+  name: string;
+  description: string;
+}
+
+export interface Quest {
+  id: number;
+  title: string;
+  description: string;
+  type: 'DAILY' | 'CHALLENGE' | 'BOSS' | 'CUSTOM';
+  rankDifficulty: string;
+  goldReward: number;
+  xpReward: number;
+  steps?: QuestStep[];
+}
+
+export interface QuestStep {
+  id: number;
+  exercise: Exercise;
+  series: number;
+  repetitions: number;
+  duration?: number;
+  weight?: number;
+}
+
+export interface Exercise {
+  id: number;
+  name: string;
+  type: string;
+  difficulty: string;
+  baseReps: number;
+  baseDuration?: number;
+  baseWeight?: number;
+}
+
+export interface RankingUserDTO {
+  id: number;
+  username: string;
+  profilePic?: string;
+  title?: string;
+  level: number;
+  rank?: string;
+  seasonRank: string;
+  totalPoints: number;
+  seasonPoints: number;
+}
+
+export interface LoginResponse {
+  token: string;
+  username: string;
+  email: string;
+  role: UserRole;
+  id: number;
+}

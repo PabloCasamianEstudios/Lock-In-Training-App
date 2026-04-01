@@ -1,20 +1,26 @@
-import { useState } from 'react';
+import { useState, FC, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
-import { User, Mail, Lock, LogIn, UserPlus, Globe } from 'lucide-react';
+import { User as UserIcon, Mail, Lock, LogIn, UserPlus, Globe } from 'lucide-react';
+import { LoginResponse } from '../../types';
 
-const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
+interface AuthScreenProps {
+  onAuthComplete: (userData: LoginResponse) => void;
+  onGuestEntry: () => void;
+}
+
+const AuthScreen: FC<AuthScreenProps> = ({ onAuthComplete, onGuestEntry }) => {
   const [isLogin, setIsLogin] = useState(true);
   const { login, register, loading, error, setError } = useAuth();
-  const [localError, setLocalError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [localError, setLocalError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: ''
   });
 
-  const validate = () => {
+  const validate = (): string | null => {
     if (!formData.email || !formData.password) return 'Protocol failure: Missing required credentials';
     if (!isLogin && !formData.username) return 'Identity failure: Username is mandatory';
     if (!formData.email.includes('@')) return 'Data corruption: Invalid email protocol format';
@@ -22,7 +28,7 @@ const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
     return null;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLocalError(null);
     setError(null);
@@ -49,7 +55,7 @@ const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
           });
 
       if (isLogin) {
-        onAuthComplete(response);
+        onAuthComplete(response as LoginResponse);
       } else {
         setIsLogin(true);
         setFormData({ username: '', email: '', password: '' });
@@ -130,7 +136,7 @@ const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
                 >
                   <label className="text-xs text-white font-black uppercase italic tracking-widest">Username Profile</label>
                   <div className="flex items-center bg-white transform -skew-x-12 px-4 focus-within:ring-4 focus-within:ring-main transition-all">
-                    <User className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />
+                    <UserIcon className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />
                     <input
                       type="text"
                       className="w-full bg-transparent border-none p-4 text-black font-black italic focus:outline-none transform skew-x-12"
@@ -178,6 +184,7 @@ const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                type="submit"
                 className="button-neon w-full flex items-center justify-center gap-4 text-2xl"
                 disabled={loading}
               >
@@ -220,4 +227,3 @@ const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
 };
 
 export default AuthScreen;
-

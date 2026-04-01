@@ -1,5 +1,5 @@
-const formatError = (error) => {
-  const msg = error.message || String(error);
+const formatError = (error: Error | string): string => {
+  const msg = typeof error === 'string' ? error : (error.message || String(error));
   
   if (msg.includes('ECONNREFUSED')) return 'Error de conexión: El servidor no responde.';
   if (msg.includes('already registered')) return 'Este email ya está en uso por otro usuario.';
@@ -12,20 +12,24 @@ const formatError = (error) => {
   return msg;
 };
 
-const apiClient = async (endpoint, { body, ...customConfig } = {}) => {
+interface ApiClientConfig extends RequestInit {
+  body?: any;
+}
+
+const apiClient = async <T = any>(endpoint: string, { body, ...customConfig }: ApiClientConfig = {}): Promise<T> => {
   const token = localStorage.getItem('lockin_token');
-  const headers = { 'Content-Type': 'application/json' };
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const config = {
+  const config: RequestInit = {
     method: body ? 'POST' : 'GET',
     ...customConfig,
     headers: {
       ...headers,
-      ...customConfig.headers,
+      ...customConfig.headers as Record<string, string>,
     },
   };
 
@@ -40,7 +44,7 @@ const apiClient = async (endpoint, { body, ...customConfig } = {}) => {
     const contentType = response.headers.get('content-type');
     const isJson = contentType && contentType.includes('application/json');
     
-    let data;
+    let data: any;
     try {
       data = isJson ? await response.json() : await response.text();
     } catch (parseError) {
@@ -49,16 +53,16 @@ const apiClient = async (endpoint, { body, ...customConfig } = {}) => {
 
     if (!response.ok) {
       const errorMessage = (typeof data === 'object' ? data.message || data.error : data) || response.statusText;
-      throw new Error(formatError(new Error(errorMessage)));
+      throw new Error(formatError(errorMessage));
     }
 
     if (response.status === 204) {
-      return null;
+      return null as any;
     }
 
-    return data;
+    return data as T;
   } catch (error) {
-    throw new Error(formatError(error));
+    throw new Error(formatError(error as Error));
   }
 };
 
