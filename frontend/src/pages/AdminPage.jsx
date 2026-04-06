@@ -152,12 +152,6 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
         const [uId, iId] = testId.split(',');
         if (!uId || !iId) throw new Error("Format: userId,itemId");
         url = `${API_BASE_URL}/api/shop/purchase/item/${uId}/${iId}`;
-      } else if (type === 'shop-user-items') {
-        if (!testId) throw new Error("User ID is required");
-        url = `${API_BASE_URL}/api/shop/items/user/${testId}`;
-      } else if (type === 'shop-user-titles') {
-        if (!testId) throw new Error("User ID is required");
-        url = `${API_BASE_URL}/api/shop/titles/user/${testId}`;
       } else if (type === 'shop-buy-title') {
         const [uId, tId] = testId.split(',');
         if (!uId || !tId) throw new Error("Format: userId,titleId");
@@ -165,6 +159,12 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
       } else if (type === 'users-custom-stats') {
         if (!testId) throw new Error("User ID is required");
         url = `${API_BASE_URL}/api/user/${testId}/stats`;
+      } else if (type === 'users-items') {
+        if (!testId) throw new Error("User ID is required");
+        url = `${API_BASE_URL}/api/user/${testId}/items`;
+      } else if (type === 'users-titles') {
+        if (!testId) throw new Error("User ID is required");
+        url = `${API_BASE_URL}/api/user/${testId}/titles`;
       } else if (type === 'id' || method === 'delete' || method === 'put') {
         if (!testId) throw new Error("ID is required for this operation");
         url += `/${testId}`;
@@ -237,7 +237,9 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
               type === 'custom-league-generate' ? `/api/leagues/generate?maxUsersPerLeague={n}` :
                 type === 'users-custom-quests' ? `/api/admin/users/{id}/custom-quests` :
                   type === 'users-custom-stats' ? `/api/user/{id}/stats` :
-                    type === 'social-request' ? `/api/social/friends/request?senderId={n}&receiverId={n}` :
+                    type === 'users-items' ? `/api/user/{id}/items` :
+                      type === 'users-titles' ? `/api/user/{id}/titles` :
+                        type === 'social-request' ? `/api/social/friends/request?senderId={n}&receiverId={n}` :
                       type === 'social-accept' ? `/api/social/friends/accept/{id}` :
                         type === 'social-list' ? `/api/social/friends/{id}` :
                           type === 'quest-complete' ? `/api/quests/progress/{id}/complete` :
@@ -268,15 +270,14 @@ const SwaggerBlock = ({ method, title, colorClass, borderClass, bgClass, entity,
           <div className="flex flex-col gap-4">
             {/* Secion input */}
             <div className="grid grid-cols-1 gap-3">
-              {(type === 'id' || method === 'delete' || method === 'put' || type === 'custom-league-players' || type === 'custom-league-generate' || type === 'users-custom-quests' || type === 'users-custom-stats' || type === 'social-accept' || type === 'social-list' || type === 'quest-complete' || type === 'quest-start' || type === 'quest-active' || type === 'mod-unmute' || type === 'mod-mute' || type === 'shop-buy-item' || type === 'shop-buy-title' || type === 'shop-user-items' || type === 'shop-user-titles') && (
+              {(type === 'id' || method === 'delete' || method === 'put' || type === 'custom-league-players' || type === 'custom-league-generate' || type === 'users-custom-quests' || type === 'users-custom-stats' || type === 'users-items' || type === 'users-titles' || type === 'social-accept' || type === 'social-list' || type === 'quest-complete' || type === 'quest-start' || type === 'quest-active' || type === 'mod-unmute' || type === 'mod-mute' || type === 'shop-buy-item' || type === 'shop-buy-title') && (
                 <div className="flex flex-col gap-1">
                   <label className="text-[8px] opacity-40 uppercase font-black">
                     {type === 'custom-league-generate' ? 'Max Players Per League' :
                       (type === 'quest-complete' || type === 'quest-start' || type === 'quest-active') ? 'Progress / Quest / User ID (Required)' :
                         (type === 'mod-unmute' || type === 'mod-mute') ? 'Target User ID (Required)' :
-                      (type === 'shop-buy-item' || type === 'shop-buy-title') ? 'Target IDs (Format: userId,itemId/titleId)' :
-                      (type === 'shop-user-items' || type === 'shop-user-titles') ? 'User ID (Required)' :
-                          type === 'users-custom-stats' ? 'User ID (Required)' :
+                        (type === 'shop-buy-item' || type === 'shop-buy-title') ? 'Target IDs (Format: userId,itemId/titleId)' :
+                          (type === 'users-custom-stats' || type === 'users-items' || type === 'users-titles') ? 'User ID (Required)' :
                             'Record / User / Request ID (Required)'}
                   </label>
                   <input
@@ -479,6 +480,16 @@ const AdminPage = () => {
                   method="get" title="Profile: User Physical Stats" entity="users" type="users-custom-stats"
                   colorClass="bg-teal-600" borderClass="border-teal-600/20" bgClass="bg-teal-600/10 hover:bg-teal-600/20"
                 />
+                <SwaggerBlock
+                  key="users-items"
+                  method="get" title="Inventory: User Owned Items" entity="users" type="users-items"
+                  colorClass="bg-cyan-600" borderClass="border-cyan-600/20" bgClass="bg-cyan-600/10 hover:bg-cyan-600/20"
+                />
+                <SwaggerBlock
+                  key="users-titles"
+                  method="get" title="Inventory: User Owned Titles" entity="users" type="users-titles"
+                  colorClass="bg-cyan-700" borderClass="border-cyan-700/20" bgClass="bg-cyan-700/10 hover:bg-cyan-700/20"
+                />
               </>
             )}
 
@@ -543,16 +554,6 @@ const AdminPage = () => {
                   key="shop-list"
                   method="get" title="Shop: List All Items" entity="shop" type="shop-list"
                   colorClass="bg-amber-600" borderClass="border-amber-600/20" bgClass="bg-amber-600/10 hover:bg-amber-600/20"
-                />
-                <SwaggerBlock
-                  key="shop-user-items"
-                  method="get" title="Shop: Get User Items" entity="shop" type="shop-user-items"
-                  colorClass="bg-amber-700" borderClass="border-amber-700/20" bgClass="bg-amber-700/10 hover:bg-amber-700/20"
-                />
-                <SwaggerBlock
-                  key="shop-user-titles"
-                  method="get" title="Shop: Get User Titles" entity="shop" type="shop-user-titles"
-                  colorClass="bg-amber-500" borderClass="border-amber-500/20" bgClass="bg-amber-500/10 hover:bg-amber-500/20"
                 />
                 <SwaggerBlock
                   key="shop-buy-item"

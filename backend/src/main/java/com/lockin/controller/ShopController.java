@@ -20,16 +20,6 @@ public class ShopController {
         return ResponseEntity.ok(shopService.getAllItems());
     }
 
-    @GetMapping("/items/user/{userId}")
-    public ResponseEntity<?> getUserItems(@PathVariable Long userId) {
-        return ResponseEntity.ok(shopService.getUserItems(userId));
-    }
-
-    @GetMapping("/titles/user/{userId}")
-    public ResponseEntity<?> getUserTitles(@PathVariable Long userId) {
-        return ResponseEntity.ok(shopService.getUserTitles(userId));
-    }
-
     @PostMapping("/purchase/item/{userId}/{itemId}")
     public ResponseEntity<?> buyItem(@PathVariable Long userId, @PathVariable Long itemId) {
         try {

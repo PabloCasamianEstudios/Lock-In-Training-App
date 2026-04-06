@@ -9,6 +9,10 @@ import com.lockin.model.QuestStep;
 import com.lockin.model.dtos.UserSurveyDTO;
 import com.lockin.repository.UserRepository;
 import com.lockin.repository.UserQuestProgressRepository;
+import com.lockin.repository.UserItemRepository;
+import com.lockin.repository.UserTitleRepository;
+import com.lockin.model.UserItem;
+import com.lockin.model.UserTitle;
 import com.lockin.service.UserSurveyService;
 
 import java.util.ArrayList;
@@ -27,17 +31,23 @@ public class UserController {
     private final UserQuestProgressRepository userQuestProgressRepository;
     private final com.lockin.repository.QuestRepository questRepository;
     private final com.lockin.repository.UserStatRepository userStatRepository;
+    private final UserItemRepository userItemRepository;
+    private final UserTitleRepository userTitleRepository;
 
     public UserController(UserSurveyService userSurveyService,
             UserRepository userRepository,
             UserQuestProgressRepository userQuestProgressRepository,
             com.lockin.repository.QuestRepository questRepository,
-            com.lockin.repository.UserStatRepository userStatRepository) {
+            com.lockin.repository.UserStatRepository userStatRepository,
+            UserItemRepository userItemRepository,
+            UserTitleRepository userTitleRepository) {
         this.userSurveyService = userSurveyService;
         this.userRepository = userRepository;
         this.userQuestProgressRepository = userQuestProgressRepository;
         this.questRepository = questRepository;
         this.userStatRepository = userStatRepository;
+        this.userItemRepository = userItemRepository;
+        this.userTitleRepository = userTitleRepository;
     }
 
     @PostMapping("/survey")
@@ -119,11 +129,13 @@ public class UserController {
         LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
 
+        // Muestras: todas las quests diarias definidas en DB.
         List<com.lockin.model.Quest> dailyQuests = questRepository.findByType(com.lockin.model.Quest.QuestType.DAILY);
 
         List<Map<String, Object>> response = new ArrayList<>();
 
         for (com.lockin.model.Quest quest : dailyQuests) {
+            // Si existen varios registros, cogemos el más reciente.
             List<UserQuestProgress> progressRows = userQuestProgressRepository
                     .findByUserIdAndQuestId(id, quest.getId());
 
@@ -200,7 +212,7 @@ public class UserController {
         if (!userRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        
+
         List<com.lockin.model.UserStat> stats = userStatRepository.findByUser(userRepository.getReferenceById(id));
 
         List<Map<String, Object>> response = new ArrayList<>();
@@ -211,6 +223,45 @@ public class UserController {
             statData.put("description", us.getStat().getDescription());
             statData.put("value", us.getCurrentValue());
             response.add(statData);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/items")
+    public ResponseEntity<List<Map<String, Object>>> getUserItems(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        List<UserItem> items = userItemRepository.findByUserId(id);
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (UserItem ui : items) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("id", ui.getId());
+            data.put("itemId", ui.getItem().getId());
+            data.put("name", ui.getItem().getName());
+            data.put("description", ui.getItem().getDescription());
+            data.put("type", ui.getItem().getType() != null ? ui.getItem().getType().name() : null);
+            data.put("quantity", ui.getQuantity());
+            response.add(data);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/titles")
+    public ResponseEntity<List<Map<String, Object>>> getUserTitles(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        List<UserTitle> titles = userTitleRepository.findByUserId(id);
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (UserTitle ut : titles) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("id", ut.getId());
+            data.put("titleId", ut.getTitle().getId());
+            data.put("name", ut.getTitle().getName());
+            data.put("description", ut.getTitle().getDescription());
+            data.put("isEquipped", ut.isEquipped());
+            response.add(data);
         }
         return ResponseEntity.ok(response);
     }

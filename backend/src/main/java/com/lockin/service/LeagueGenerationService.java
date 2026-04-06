@@ -25,8 +25,8 @@ public class LeagueGenerationService {
     private final UserLeagueRepository userLeagueRepository;
 
     public LeagueGenerationService(UserRepository userRepository,
-            LeagueRepository leagueRepository,
-            UserLeagueRepository userLeagueRepository) {
+                                   LeagueRepository leagueRepository,
+                                   UserLeagueRepository userLeagueRepository) {
         this.userRepository = userRepository;
         this.leagueRepository = leagueRepository;
         this.userLeagueRepository = userLeagueRepository;
@@ -36,11 +36,13 @@ public class LeagueGenerationService {
     public Map<String, Object> generateLeaguesByRank(int maxUsersPerLeague) {
         int safeMaxUsersPerLeague = Math.max(1, maxUsersPerLeague);
 
+        // Regeneración completa: limpiamos ligas/asignaciones previas.
         userLeagueRepository.deleteAllInBatch();
         leagueRepository.deleteAllInBatch();
 
         List<User> users = userRepository.findAll();
 
+        // Agrupar por rango (si falta rango, se asigna E por defecto).
         Map<String, List<User>> usersByRank = users.stream()
                 .collect(Collectors.groupingBy(user -> normalizeRank(user.getRank())));
 
@@ -139,3 +141,4 @@ public class LeagueGenerationService {
         };
     }
 }
+

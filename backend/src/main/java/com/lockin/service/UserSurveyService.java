@@ -25,8 +25,8 @@ public class UserSurveyService {
     private final Random random = new Random();
 
     public UserSurveyService(UserRepository userRepository,
-            StatRepository statRepository,
-            UserStatRepository userStatRepository) {
+                             StatRepository statRepository,
+                             UserStatRepository userStatRepository) {
         this.userRepository = userRepository;
         this.statRepository = statRepository;
         this.userStatRepository = userStatRepository;
@@ -37,18 +37,24 @@ public class UserSurveyService {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        
         user.setWeight(dto.getWeight());
         user.setHeight(dto.getHeight());
 
         Map<String, Integer> statValues = calculateStats(dto);
 
+        
         persistUserStats(user, statValues);
 
+        
         int total = statValues.values().stream().mapToInt(Integer::intValue).sum();
         String rank = calculateRank(total);
         user.setLevel(1);
         user.setTotalPoints(total);
         user.setRank(rank);
+        
+       
+        // por ahora dejamos el campo leagueId comentado como en el modelo.
 
         return userRepository.save(user);
     }
@@ -93,7 +99,7 @@ public class UserSurveyService {
         values.put("DISC", disc);
 
         // LUK
-        int luk = 1 + random.nextInt(10);
+        int luk = 1 + random.nextInt(10); // 1-10
         values.put("LUK", luk);
 
         return values;
@@ -135,3 +141,4 @@ public class UserSurveyService {
         }
     }
 }
+

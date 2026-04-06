@@ -21,14 +21,6 @@ public class ShopService {
         return itemRepository.findAll();
     }
 
-    public List<UserItem> getUserItems(Long userId) {
-        return userItemRepository.findByUserId(userId);
-    }
-
-    public List<UserTitle> getUserTitles(Long userId) {
-        return userTitleRepository.findByUserId(userId);
-    }
-
     @Transactional
     public User buyItem(Long userId, Long itemId) {
         User user = userRepository.findById(userId)
