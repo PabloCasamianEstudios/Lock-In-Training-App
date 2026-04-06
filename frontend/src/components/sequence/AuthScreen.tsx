@@ -1,31 +1,77 @@
-import { useState } from 'react';
+import { useState, FC, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { authService } from '../../services/mockApi';
-import { User, Mail, Lock, LogIn, UserPlus, Globe } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
+import { User as UserIcon, Mail, Lock, LogIn, UserPlus, Globe } from 'lucide-react';
+import { LoginResponse } from '../../types';
 
-const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
+interface AuthScreenProps {
+  onAuthComplete: (userData: LoginResponse) => void;
+  onGuestEntry: () => void;
+}
+
+const AuthScreen: FC<AuthScreenProps> = ({ onAuthComplete, onGuestEntry }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const { login, register, loading, error, setError } = useAuth();
+  const [localError, setLocalError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: ''
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const response = isLogin
-        ? await authService.login(formData)
-        : await authService.register(formData);
+  const validate = (): string | null => {
+    if (!formData.email || !formData.password) return 'Protocol failure: Missing required credentials';
+    if (!isLogin && !formData.username) return 'Identity failure: Username is mandatory';
+    if (!formData.email.includes('@')) return 'Data corruption: Invalid email protocol format';
+    if (formData.password.length < 6) return 'Security alert: Key must be at least 6 characters';
+    return null;
+  };
 
-      onAuthComplete(response);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setLocalError(null);
+    setError(null);
+
+    const vError = validate();
+    if (vError) {
+      setLocalError(vError);
+      return;
     }
+
+    try {
+      if (!isLogin) {
+        setSuccessMessage('Profile alignment complete. Initializing neural link...');
+      } else {
+        setSuccessMessage('Credentials accepted. Accessing system...');
+      }
+
+      const response = isLogin
+        ? await login(formData)
+        : await register({
+            username: formData.username,
+            email: formData.email,
+            password: formData.password
+          });
+
+      if (isLogin) {
+        onAuthComplete(response as LoginResponse);
+      } else {
+        setIsLogin(true);
+        setFormData({ username: '', email: '', password: '' });
+      }
+    } catch (err) {
+      setSuccessMessage(null);
+    }
+  };
+
+  const activeError = localError || error;
+
+  const toggleMode = () => {
+    setIsLogin(!isLogin);
+    setLocalError(null);
+    setError(null);
+    setSuccessMessage(null);
   };
 
   return (
@@ -49,6 +95,36 @@ const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
+            <AnimatePresence mode="wait">
+              {activeError ? (
+                <motion.div
+                  key="error"
+                  initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                  exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                  className="bg-red-500/10 border-l-4 border-red-500 p-4 mb-4 transform -skew-x-12 flex items-start gap-4"
+                >
+                  <div className="bg-red-500 text-white font-black text-[10px] px-2 py-0.5 rounded-sm">ALERT</div>
+                  <p className="text-red-500 font-bold italic text-xs uppercase tracking-tighter leading-tight">
+                    {activeError}
+                  </p>
+                </motion.div>
+              ) : successMessage ? (
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                  exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                  className="bg-green-500/10 border-l-4 border-green-500 p-4 mb-4 transform -skew-x-12 flex items-start gap-4"
+                >
+                  <div className="bg-green-500 text-black font-black text-[10px] px-2 py-0.5 rounded-sm">SYSTEM</div>
+                  <p className="text-green-500 font-bold italic text-xs uppercase tracking-tighter leading-tight">
+                    {successMessage}
+                  </p>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+
             <AnimatePresence mode='wait'>
               {!isLogin && (
                 <motion.div
@@ -59,11 +135,11 @@ const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
                   className="space-y-2"
                 >
                   <label className="text-xs text-white font-black uppercase italic tracking-widest">Username Profile</label>
-                  <div className="relative group">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-black z-10" />
+                  <div className="flex items-center bg-white transform -skew-x-12 px-4 focus-within:ring-4 focus-within:ring-main transition-all">
+                    <UserIcon className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />
                     <input
                       type="text"
-                      className="input-neon text-lg pl-12"
+                      className="w-full bg-transparent border-none p-4 text-black font-black italic focus:outline-none transform skew-x-12"
                       placeholder="e.g. SUNG_JIN_WOO"
                       value={formData.username}
                       onChange={(e) => setFormData({ ...formData, username: e.target.value })}
@@ -76,11 +152,11 @@ const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
 
             <div className="space-y-2">
               <label className="text-xs text-white font-black uppercase italic tracking-widest">Email Protocol</label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-black z-10" />
+              <div className="flex items-center bg-white transform -skew-x-12 px-4 focus-within:ring-4 focus-within:ring-main transition-all">
+                <Mail className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />
                 <input
                   type="email"
-                  className="input-neon text-lg pl-12"
+                  className="w-full bg-transparent border-none p-4 text-black font-black italic focus:outline-none transform skew-x-12"
                   placeholder="ID@PLAYER.NET"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -91,11 +167,11 @@ const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
 
             <div className="space-y-2">
               <label className="text-xs text-white font-black uppercase italic tracking-widest">Secure Key</label>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-black z-10" />
+              <div className="flex items-center bg-white transform -skew-x-12 px-4 focus-within:ring-4 focus-within:ring-main transition-all">
+                <Lock className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />
                 <input
                   type="password"
-                  className="input-neon text-lg pl-12"
+                  className="w-full bg-transparent border-none p-4 text-black font-black italic focus:outline-none transform skew-x-12"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -108,6 +184,7 @@ const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                type="submit"
                 className="button-neon w-full flex items-center justify-center gap-4 text-2xl"
                 disabled={loading}
               >
@@ -124,7 +201,7 @@ const AuthScreen = ({ onAuthComplete, onGuestEntry }) => {
               <div className="flex flex-col md:flex-row gap-4 justify-between items-center px-2">
                 <button
                   type="button"
-                  onClick={() => setIsLogin(!isLogin)}
+                  onClick={toggleMode}
                   className="text-[10px] text-white/50 uppercase hover:text-main transition-colors font-black tracking-[0.2em] italic"
                 >
                   {isLogin ? "No data? Create initialization protocol" : "Already registered? Access system"}

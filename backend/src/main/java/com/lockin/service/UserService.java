@@ -27,7 +27,10 @@ public class UserService {
 
     public User registerNewUser(UserRegistrationDTO dto) {
         if(userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("El email ya está registrado.");
+            throw new RuntimeException("Email already registered");
+        }
+        if(userRepository.existsByUsername(dto.getUsername())) {
+            throw new RuntimeException("Username already taken");
         }
 
         User user = new User();

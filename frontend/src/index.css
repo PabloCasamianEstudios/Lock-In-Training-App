@@ -104,13 +104,14 @@ body,
 .input-neon {
   background-color: var(--neutral-white);
   border: none;
-  padding: 1.2rem 1.5rem;
+  padding: 1rem 1rem 1rem 3.5rem;
   color: var(--neutral-black);
   font-weight: 800;
   font-style: italic;
   width: 100%;
   transform: skewX(-10deg);
   transition: all 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+  display: block;
 }
 
 .input-neon:focus {

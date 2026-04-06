@@ -1,17 +1,29 @@
-import { useState } from 'react';
+import { useState, FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, Target, Activity, Ruler, Dumbbell } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Target, Activity, Ruler, Dumbbell, X } from 'lucide-react';
+import { SurveyData } from '../../types';
 
-const steps = [
+interface Step {
+  id: string;
+  title: string;
+  icon: any;
+}
+
+const steps: Step[] = [
   { id: 'biometry', title: 'CONTAINER', icon: Ruler },
   { id: 'performance', title: 'CAPACITY', icon: Activity },
   { id: 'frequency', title: 'TUNING', icon: Dumbbell },
   { id: 'goal', title: 'OBJECTIVE', icon: Target }
 ];
 
-const SurveyStepper = ({ onComplete }) => {
+interface SurveyStepperProps {
+  onComplete: (data: SurveyData) => void;
+  onLogout: () => void;
+}
+
+const SurveyStepper: FC<SurveyStepperProps> = ({ onComplete, onLogout }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<SurveyData>({
     gender: '',
     age: '',
     weight: '',
@@ -36,7 +48,7 @@ const SurveyStepper = ({ onComplete }) => {
     }
   };
 
-  const updateData = (field, value) => {
+  const updateData = (field: keyof SurveyData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -52,28 +64,28 @@ const SurveyStepper = ({ onComplete }) => {
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
               {[
-                { label: 'GENDER', field: 'gender', type: 'select', opts: [{v:'M', l:'MALE'}, {v:'F', l:'FEMALE'}, {v:'O', l:'OTHER'}] },
-                { label: 'AGE', field: 'age', type: 'number', placeholder: '24' },
-                { label: 'WEIGHT (KG)', field: 'weight', type: 'number', placeholder: '85' },
-                { label: 'HEIGHT (CM)', field: 'height', type: 'number', placeholder: '185' }
+                { label: 'GENDER', field: 'gender' as const, type: 'select', opts: [{v:'M', l:'MALE'}, {v:'F', l:'FEMALE'}, {v:'O', l:'OTHER'}] },
+                { label: 'AGE', field: 'age' as const, type: 'number', placeholder: '24' },
+                { label: 'WEIGHT (KG)', field: 'weight' as const, type: 'number', placeholder: '85' },
+                { label: 'HEIGHT (CM)', field: 'height' as const, type: 'number', placeholder: '185' }
               ].map(item => (
                 <div key={item.field} className="space-y-3">
                   <label className="text-sm font-black italic text-white uppercase tracking-widest">{item.label}</label>
                   {item.type === 'select' ? (
                     <div className="relative">
                       <select 
-                        className="input-neon text-lg"
+                        className="input-neon text-lg w-full"
                         value={formData[item.field]}
                         onChange={(e) => updateData(item.field, e.target.value)}
                       >
                         <option value="">SELECT...</option>
-                        {item.opts.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
+                        {item.opts?.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
                       </select>
                     </div>
                   ) : (
                     <input 
                       type="number" 
-                      className="input-neon text-lg"
+                      className="input-neon text-lg w-full"
                       placeholder={item.placeholder}
                       value={formData[item.field]}
                       onChange={(e) => updateData(item.field, e.target.value)}
@@ -100,7 +112,7 @@ const SurveyStepper = ({ onComplete }) => {
                     key={val}
                     type="button"
                     onClick={() => updateData('pushUps', val)}
-                    className={`button-neon text-xl ${formData.pushUps === val ? 'bg-white text-black' : 'bg-main/10 text-white border-2 border-white/20'}`}
+                    className="button-neon text-xl"
                     style={{ 
                       backgroundColor: formData.pushUps === val ? 'white' : 'rgba(255,255,255,0.05)',
                       color: formData.pushUps === val ? 'black' : 'white',
@@ -120,7 +132,7 @@ const SurveyStepper = ({ onComplete }) => {
                     key={val}
                     type="button"
                     onClick={() => updateData('runTime', val)}
-                    className={`button-neon text-xl ${formData.runTime === val ? 'bg-white text-black' : 'bg-main/10 text-white border-2 border-white/20'}`}
+                    className="button-neon text-xl"
                     style={{ 
                       backgroundColor: formData.runTime === val ? 'white' : 'rgba(255,255,255,0.05)',
                       color: formData.runTime === val ? 'black' : 'white',
@@ -218,7 +230,14 @@ const SurveyStepper = ({ onComplete }) => {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-5xl z-10"
       >
-        <div className="system-card border-white shadow-[15px_15px_0px_var(--main-color)] p-0">
+        <div className="system-card border-white shadow-[15px_15px_0px_var(--main-color)] p-0 relative">
+          <button
+            onClick={onLogout}
+            className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-red-500 transition-all duration-300 transform -skew-x-12 z-50 group"
+            title="LOGOUT"
+          >
+            <X className="w-6 h-6 text-white group-hover:scale-110" />
+          </button>
           <div className="p-12 md:p-20 space-y-16">
             <div className="flex justify-between items-center gap-4">
               {steps.map((s, idx) => (
@@ -251,7 +270,7 @@ const SurveyStepper = ({ onComplete }) => {
                 disabled={currentStep === 0}
                 className={`text-xl font-black italic uppercase tracking-tighter ${currentStep === 0 ? 'opacity-0' : 'text-white/40 hover:text-white transition-colors'}`}
               >
-                {">"} BACK TO PROTOCOL
+                BACK TO PROTOCOL
               </button>
               
               <button

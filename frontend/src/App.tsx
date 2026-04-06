@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import SplashScreen from './components/sequence/SplashScreen';
 import AuthScreen from './components/sequence/AuthScreen';
@@ -6,64 +6,95 @@ import SurveyStepper from './components/sequence/SurveyStepper';
 import AnalyzingScreen from './components/sequence/AnalyzingScreen';
 import RankAssignment from './components/sequence/RankAssignment';
 import MainLayout from './components/MainLayout';
-import { userService } from './services/mockApi';
+import { useAuth } from './hooks/useAuth';
+import { useUser } from './hooks/useUser';
 
 function App() {
   const [screen, setScreen] = useState('splash');
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
+  const { user, setUser, logout } = useAuth();
+  const { profile, setProfile, submitSurvey, fetchProfile } = useUser();
 
-  const handleSplashComplete = () => {
-    const savedToken = localStorage.getItem('lockin_token');
-    const savedUser = JSON.parse(localStorage.getItem('lockin_user'));
-
-    if (savedToken && savedUser) {
-      setUser(savedUser);
-      if (savedUser.hasCompletedSurvey) {
-        const savedProfile = JSON.parse(localStorage.getItem('lockin_profile'));
-        setProfile(savedProfile);
+  const handleSplashComplete = useCallback(async () => {
+    if (user) {
+      if (profile && profile.stats && profile.rank) {
         setScreen('hub');
-      } else {
-        setScreen('survey');
+        return;
+      }
+      try {
+        const upToDateProfile = await fetchProfile(user.id);
+        if (upToDateProfile && (upToDateProfile.stats || upToDateProfile.rank)) {
+          setScreen('hub');
+        } else {
+          setScreen('survey');
+        }
+      } catch (err) {
+        if (profile && (profile.stats || profile.rank)) {
+          setScreen('hub');
+        } else {
+          setScreen('survey');
+        }
       }
     } else {
       setScreen('auth');
     }
-  };
+  }, [user, profile, fetchProfile]);
 
-  /* --- AUTH HANDLERS --- */
-  const handleAuthComplete = (userData) => {
+  const handleAuthComplete = useCallback(async (userData) => {
     setUser(userData);
-    if (userData.hasCompletedSurvey) {
-      const savedProfile = JSON.parse(localStorage.getItem('lockin_profile'));
-      setProfile(savedProfile);
+    if (profile && userData.id === profile.userId && (profile.stats || profile.rank)) {
       setScreen('hub');
-    } else {
+      return;
+    }
+    try {
+      const upToDateProfile = await fetchProfile(userData.id);
+      if (upToDateProfile && (upToDateProfile.stats || upToDateProfile.rank)) {
+        setScreen('hub');
+      } else {
+        setScreen('survey');
+      }
+    } catch (err) {
       setScreen('survey');
     }
-  };
+  }, [setUser, profile, fetchProfile]);
 
-  const handleGuestEntry = () => {
-    setUser({ username: 'GuestPlayer', rank: 'E', isGuest: true });
-    setProfile({
+  const handleGuestEntry = useCallback(() => {
+    const guestUser = { id: 0, username: 'GuestPlayer', rank: 'E', isGuest: true };
+    const guestProfile = {
       rank: 'E',
       level: 1,
       xp: 0,
       coins: 0,
       stats: { STR: 5, VIT: 5, AGI: 5, INT: 5, DISC: 5, LUK: 5 }
-    });
+    };
+    setUser(guestUser);
+    setProfile(guestProfile);
     setScreen('hub');
-  };
-  /* --- SURVEY HANDLERS --- */
+  }, [setUser, setProfile]);
 
   const handleSurveyComplete = async (surveyData) => {
     setScreen('analyzing');
-    const playerProfile = await userService.submitSurvey(surveyData);
-    setProfile(playerProfile);
+    try {
+      const playerProfile = await submitSurvey(user?.id, surveyData);
+      setProfile(playerProfile);
+    } catch (err) {
+      const defaultProfile = {
+        userId: user?.id,
+        rank: 'E',
+        level: 1,
+        xp: 0,
+        coins: 0,
+        stats: { STR: 0, VIT: 0, AGI: 0, INT: 0, DISC: 0, LUK: 0 }
+      };
+      setProfile(defaultProfile);
+    }
   };
 
   const handleAnalysisComplete = () => {
-    setScreen('result');
+    if (profile) {
+      setScreen('result');
+    } else {
+      setScreen('hub');
+    }
   };
 
   const handleEnterHub = () => {
@@ -71,9 +102,7 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
-    setUser(null);
-    setProfile(null);
+    logout();
     setScreen('splash');
   };
 
@@ -114,7 +143,10 @@ function App() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, y: -50 }}
           >
-            <SurveyStepper onComplete={handleSurveyComplete} />
+            <SurveyStepper 
+              onComplete={handleSurveyComplete} 
+              onLogout={handleLogout}
+            />
           </motion.div>
         )}
 

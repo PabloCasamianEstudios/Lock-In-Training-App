@@ -1,24 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Terminal, ShieldCheck, Activity, Cpu, Search, Zap, BarChart3 } from "lucide-react";
+import { ShieldCheck, Search, Zap, BarChart3 } from "lucide-react";
 
-const AnalyzingScreen = ({ onAnalysisComplete }) => {
-  const [progress, setProgress] = useState(0);
-  const [currentTask, setCurrentTask] = useState("");
-  const [completed, setCompleted] = useState(false);
+interface AnalyzingScreenProps {
+  onAnalysisComplete: () => void;
+}
 
-  const tasks = [
-    "SCANNING BIOMETRIC DATA...",
-    "CALIBRATING ATTRIBUTE MATRIX...",
-    "ANALYZING PERFORMANCE LOGS...",
-    "MAPPING NEURAL PATHWAYS...",
-    "CALCULATING INITIAL RANK...",
-    "SYNCHRONIZING WITH SERVER...",
-    "FINALIZING PROFILE..."
-  ];
+const tasks: string[] = [
+  "SCANNING BIOMETRIC DATA...",
+  "CALIBRATING ATTRIBUTE MATRIX...",
+  "ANALYZING PERFORMANCE LOGS...",
+  "MAPPING NEURAL PATHWAYS...",
+  "CALCULATING INITIAL RANK...",
+  "SYNCHRONIZING WITH SERVER...",
+  "FINALIZING PROFILE..."
+];
+
+const AnalyzingScreen: FC<AnalyzingScreenProps> = ({ onAnalysisComplete }) => {
+  const [progress, setProgress] = useState<number>(0);
+  const [currentTask, setCurrentTask] = useState<string>("");
+  const [completed, setCompleted] = useState<boolean>(false);
 
   useEffect(() => {
-    let currentTaskIndex = 0;
     const totalDuration = 4000;
     const interval = totalDuration / 100;
     
@@ -88,12 +91,12 @@ const AnalyzingScreen = ({ onAnalysisComplete }) => {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
+                {([
                   { icon: Search, label: 'SCAN', active: progress > 10 },
                   { icon: BarChart3, label: 'DATA', active: progress > 35 },
                   { icon: Zap, label: 'SYNC', active: progress > 65 },
                   { icon: ShieldCheck, label: 'VALID', active: progress > 90 },
-                ].map((item, i) => (
+                ] as const).map((item, i) => (
                   <div 
                     key={i} 
                     className={`p-4 border-2 transform -skew-x-12 flex items-center gap-3 transition-colors ${item.active ? 'bg-white border-white text-black' : 'bg-transparent border-white/20 text-white/20'}`}

@@ -1,5 +1,6 @@
 package com.lockin.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.lockin.model.dtos.*;
@@ -15,22 +16,22 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserRegistrationDTO registrationDTO) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserRegistrationDTO registrationDTO) {
         try {
             User registeredUser = userService.registerNewUser(registrationDTO);
-            return ResponseEntity.ok("Usuario registrado. ID: " + registeredUser.getId());
+            return ResponseEntity.ok("User registered. ID: " + registeredUser.getId());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             java.util.Map<String, Object> responseData = userService.authenticate(loginRequest);
             return ResponseEntity.ok(responseData);
         } catch (Exception e) {
-            return ResponseEntity.status(401).body("Error de autenticación: " + e.getMessage());
+            return ResponseEntity.status(401).body("Authentication failure: " + e.getMessage());
         }
     }
 }

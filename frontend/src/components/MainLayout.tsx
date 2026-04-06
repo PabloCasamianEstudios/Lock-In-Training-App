@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, type FC, type ComponentType } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Scroll, Swords, Trophy, User, ChevronDown, LogOut, Database, Lock } from 'lucide-react';
+import type { AppUser, PlayerProfile, PageProps } from '../types';
 
 /* --- PAGES MAP --- */
 import HomePage from '../pages/HomePage';
@@ -8,9 +9,15 @@ import QuestsPage from '../pages/QuestsPage';
 import PlayPage from '../pages/PlayPage';
 import RankingsPage from '../pages/RankingsPage';
 import ProfilePage from '../pages/ProfilePage';
-import AdminPage from '../pages/AdminPage';
+import AdminPage from '@/pages/AdminPage';
 
-const tabs = [
+interface Tab {
+  id: string;
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+}
+
+const tabs: Tab[] = [
   { id: 'home', label: 'HOME', icon: Home },
   { id: 'quests', label: 'QUESTS', icon: Scroll },
   { id: 'play', label: 'PLAY', icon: Swords },
@@ -18,7 +25,7 @@ const tabs = [
   { id: 'profile', label: 'PROFILE', icon: User },
 ];
 
-const pageMap = {
+const pageMap: Record<string, ComponentType<PageProps>> = {
   home: HomePage,
   quests: QuestsPage,
   play: PlayPage,
@@ -28,7 +35,11 @@ const pageMap = {
 };
 
 /* --- RESTRICTED VIEW --- */
-const RestrictedAccess = ({ onLogout }) => (
+interface RestrictedAccessProps {
+  onLogout: () => void;
+}
+
+const RestrictedAccess: FC<RestrictedAccessProps> = ({ onLogout }) => (
   <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-6">
     <div className="relative">
       <div className="absolute inset-0 bg-main blur-3xl opacity-20 animate-pulse" />
@@ -52,9 +63,15 @@ const RestrictedAccess = ({ onLogout }) => (
 );
 
 /* --- MAIN LAYOUT --- */
-const MainLayout = ({ user, profile, onLogout }) => {
-  const [activeTab, setActiveTab] = useState('home');
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+interface MainLayoutProps {
+  user: AppUser | null;
+  profile: PlayerProfile | null;
+  onLogout: () => void;
+}
+
+const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout }) => {
+  const [activeTab, setActiveTab] = useState<string>('home');
+  const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
 
   const ActivePage = pageMap[activeTab];
   const rank = profile?.rank || 'E';

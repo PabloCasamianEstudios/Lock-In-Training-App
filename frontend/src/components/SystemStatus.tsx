@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type FC } from 'react';
+import type { SystemStatusResponse } from '../types';
 
-const SystemStatus = () => {
-    const [status, setStatus] = useState({ status: 'OFFLINE', message: 'Connecting to system...' });
-    const [loading, setLoading] = useState(true);
+const SystemStatus: FC = () => {
+    const [status, setStatus] = useState<SystemStatusResponse>({ status: 'OFFLINE', message: 'Connecting to system...' });
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        const fetchStatus = async () => {
+        const fetchStatus = async (): Promise<void> => {
             try {
                 const response = await fetch('http://localhost:8081/api/system/status');
-                const data = await response.json();
+                const data: SystemStatusResponse = await response.json();
                 setStatus(data);
             } catch (error) {
                 console.error('System connection failed:', error);

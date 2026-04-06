@@ -1,38 +1,52 @@
+import { type FC } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Zap, Heart, Brain, Target, Star, Swords, RefreshCw } from 'lucide-react';
+import type { PlayerProfile, PlayerStats } from '../../types';
 
-const RankAssignment = ({ profile, onRestart, onEnterHub }) => {
-  const { stats, rank, level, username, biometria } = profile;
+interface RankAssignmentProps {
+  profile: PlayerProfile | null;
+  onRestart: () => void;
+  onEnterHub: () => void;
+}
 
-  const statIcons = {
-    STR: Swords,
-    AGI: Zap,
-    VIT: Heart,
-    INT: Brain,
-    DEX: Target,
-    LUK: Star,
-    DISC: Shield
-  };
+const statIcons: Record<string, FC<{ className?: string }>> = {
+  STR: Swords,
+  AGI: Zap,
+  VIT: Heart,
+  INT: Brain,
+  DEX: Target,
+  LUK: Star,
+  DISC: Shield
+};
 
-  const containerVariants = {
-    hidden: { opacity: 0, scale: 1.2, x: 200 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      x: 0,
-      transition: {
-        type: 'spring',
-        duration: 0.8,
-        bounce: 0.3,
-        staggerChildren: 0.1
-      }
+const containerVariants = {
+  hidden: { opacity: 0, scale: 1.2, x: 200 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    x: 0,
+    transition: {
+      type: 'spring' as const,
+      duration: 0.8,
+      bounce: 0.3,
+      staggerChildren: 0.1
     }
-  };
+  }
+};
 
-  const itemVariants = {
-    hidden: { opacity: 0, x: 50 },
-    visible: { opacity: 1, x: 0 }
-  };
+const itemVariants = {
+  hidden: { opacity: 0, x: 50 },
+  visible: { opacity: 1, x: 0 }
+};
+
+const RankAssignment: FC<RankAssignmentProps> = ({ profile, onRestart, onEnterHub }) => {
+  const { 
+    stats = { STR: 1, AGI: 1, VIT: 1, INT: 1, DEX: 1, LUK: 1, DISC: 1 } as PlayerStats, 
+    rank = 'E', 
+    level = 1, 
+    username = 'HUNTER',
+    biometria = {} 
+  } = profile || {};
 
   return (
     <div className="fixed inset-0 bg-black flex items-center justify-center p-6 z-50 overflow-hidden">
@@ -92,7 +106,7 @@ const RankAssignment = ({ profile, onRestart, onEnterHub }) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                 {Object.entries(stats).map(([key, val]) => {
-                  const Icon = statIcons[key];
+                  const Icon = statIcons[key] || Shield;
                   return (
                     <motion.div key={key} variants={itemVariants} className="space-y-3">
                       <div className="flex justify-between items-end">
