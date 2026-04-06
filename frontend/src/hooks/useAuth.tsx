@@ -1,9 +1,9 @@
 import { useState, useCallback, useEffect } from 'react';
 import { authService } from '../services/authService';
-import { User, LoginResponse } from '../types';
+import { AppUser, LoginResponse } from '../types';
 
 export const useAuth = () => {
-  const [user, setUser] = useState<LoginResponse | null>(() => {
+  const [user, setUser] = useState<AppUser | null>(() => {
     const saved = localStorage.getItem('lockin_user');
     return saved ? JSON.parse(saved) : null;
   });
@@ -23,7 +23,7 @@ export const useAuth = () => {
     setError(null);
     try {
       const userData = await authService.login(credentials);
-      setUser(userData);
+      setUser(userData as unknown as AppUser);
       return userData;
     } catch (err: any) {
       const msg = err.message || 'Login failed';

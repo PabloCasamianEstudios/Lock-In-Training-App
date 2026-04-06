@@ -39,7 +39,7 @@ function App() {
     }
   }, [user, profile, fetchProfile]);
 
-  const handleAuthComplete = useCallback(async (userData) => {
+  const handleAuthComplete = useCallback(async (userData: any) => {
     setUser(userData);
     if (profile && userData.id === profile.userId && (profile.stats || profile.rank)) {
       setScreen('hub');
@@ -71,10 +71,11 @@ function App() {
     setScreen('hub');
   }, [setUser, setProfile]);
 
-  const handleSurveyComplete = async (surveyData) => {
+  const handleSurveyComplete = async (surveyData: any) => {
+    if (!user?.id) return;
     setScreen('analyzing');
     try {
-      const playerProfile = await submitSurvey(user?.id, surveyData);
+      const playerProfile = await submitSurvey(user.id, surveyData);
       setProfile(playerProfile);
     } catch (err) {
       const defaultProfile = {

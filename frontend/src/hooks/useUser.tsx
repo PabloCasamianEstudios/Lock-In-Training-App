@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { userService } from '../services/userService';
-import { User, SurveyData } from '../types';
+import { PlayerProfile, SurveyData } from '../types';
 
 const mapPushUps = (val: string): number => {
   const mapping: Record<string, number> = { '0-10': 5, '10-30': 20, '30-50': 40, '50+': 60 };
@@ -13,7 +13,7 @@ const mapRunTime = (val: string): number => {
 };
 
 export const useUser = () => {
-  const [profile, setProfile] = useState<User | null>(() => {
+  const [profile, setProfile] = useState<PlayerProfile | null>(() => {
     const saved = localStorage.getItem('lockin_profile');
     return saved ? JSON.parse(saved) : null;
   });
@@ -28,7 +28,7 @@ export const useUser = () => {
     }
   }, [profile]);
 
-  const submitSurvey = useCallback(async (userId: number, surveyData: SurveyData): Promise<User> => {
+  const submitSurvey = useCallback(async (userId: number, surveyData: SurveyData): Promise<PlayerProfile> => {
     setLoading(true);
     setError(null);
     try {
@@ -42,8 +42,8 @@ export const useUser = () => {
         height: parseFloat(surveyData.height) || 0
       };
       const data = await userService.submitSurvey(formattedData);
-      setProfile(data);
-      return data;
+      setProfile(data as PlayerProfile);
+      return data as PlayerProfile;
     } catch (err: any) {
       const msg = err.message || 'Survey submission failed';
       setError(msg);
@@ -53,12 +53,12 @@ export const useUser = () => {
     }
   }, []);
 
-  const fetchProfile = useCallback(async (userId: number): Promise<User | undefined> => {
+  const fetchProfile = useCallback(async (userId: number): Promise<PlayerProfile | undefined> => {
     setLoading(true);
     try {
       const data = await userService.getUserProfile(userId);
-      setProfile(data);
-      return data;
+      setProfile(data as PlayerProfile);
+      return data as PlayerProfile;
     } catch (err: any) {
       setError(err.message || 'Failed to fetch profile');
     } finally {
