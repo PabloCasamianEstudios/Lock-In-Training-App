@@ -1,9 +1,13 @@
 import { type FC } from 'react';
 import { useQuests } from '../hooks/useQuests';
-import { Scroll, CheckCircle2, Circle } from 'lucide-react';
+import { Scroll, CheckCircle2, Circle, Camera } from 'lucide-react';
 import type { PageProps } from '../types';
 
-const QuestsPage: FC<PageProps> = ({ user }) => {
+interface QuestsPageProps extends PageProps {
+  onNavigate?: (tab: string, params?: any) => void;
+}
+
+const QuestsPage: FC<QuestsPageProps> = ({ user, onNavigate }) => {
   const { quests, loading, error } = useQuests(user?.id ?? null);
 
   if (loading) return <div className="p-10 text-main animate-pulse">LOADING PROTOCOL...</div>;
@@ -48,6 +52,20 @@ const QuestsPage: FC<PageProps> = ({ user }) => {
                   style={{ width: `${(quest.completedRepetitions / quest.totalRepetitions) * 100}%` }}
                 />
               </div>
+
+              {!quest.completed && (
+                <button 
+                  onClick={() => onNavigate?.('workout', { 
+                    questId: quest.questId, 
+                    targetReps: quest.totalRepetitions,
+                    exerciseType: quest.exercises[0]?.exerciseName || 'PUSHUPS'
+                  })}
+                  className="p-2 border border-main text-main hover:bg-main hover:text-black transition-all rounded"
+                  title="Verificar con cámara"
+                >
+                  <Camera className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
         ))}

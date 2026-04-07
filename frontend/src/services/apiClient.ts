@@ -12,6 +12,8 @@ const formatError = (error: Error | string): string => {
   return msg;
 };
 
+const BASE_URL = import.meta.env.DEV ? '' : 'http://localhost:8081';
+
 interface ApiClientConfig extends RequestInit {
   body?: any;
 }
@@ -40,7 +42,7 @@ const apiClient = async <T = any>(endpoint: string, { body, ...customConfig }: A
   const url = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
 
   try {
-    const response = await fetch(url, config);
+    const response = await fetch(`${BASE_URL}${url}`, config);
     const contentType = response.headers.get('content-type');
     const isJson = contentType && contentType.includes('application/json');
     

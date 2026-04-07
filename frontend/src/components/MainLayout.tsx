@@ -10,6 +10,7 @@ import PlayPage from '../pages/PlayPage';
 import RankingsPage from '../pages/RankingsPage';
 import ProfilePage from '../pages/ProfilePage';
 import AdminPage from '@/pages/AdminPage';
+import WorkoutCameraPage from '../pages/WorkoutCameraPage';
 
 interface Tab {
   id: string;
@@ -32,6 +33,7 @@ const pageMap: Record<string, ComponentType<PageProps>> = {
   rankings: RankingsPage,
   profile: ProfilePage,
   admin: AdminPage,
+  workout: WorkoutCameraPage,
 };
 
 /* --- RESTRICTED VIEW --- */
@@ -72,6 +74,12 @@ interface MainLayoutProps {
 const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout }) => {
   const [activeTab, setActiveTab] = useState<string>('home');
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
+  const [navParams, setNavParams] = useState<any>({});
+
+  const handleNavigate = (tab: string, params: any = {}) => {
+    setActiveTab(tab);
+    setNavParams(params);
+  };
 
   const ActivePage = pageMap[activeTab];
   const rank = profile?.rank || 'E';
@@ -165,7 +173,12 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout }) => {
             {isRestricted ? (
               <RestrictedAccess onLogout={onLogout} />
             ) : (
-              <ActivePage user={user} profile={profile} onNavigate={setActiveTab} />
+              <ActivePage 
+                user={user} 
+                profile={profile} 
+                onNavigate={handleNavigate} 
+                {...navParams}
+              />
             )}
           </motion.div>
         </AnimatePresence>

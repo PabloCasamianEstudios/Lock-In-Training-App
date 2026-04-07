@@ -4,6 +4,7 @@ import checker from 'vite-plugin-checker'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './',
   plugins: [
     react(),
     checker({
@@ -22,6 +23,18 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': '/src',
+    },
+  },
+  optimizeDeps: {
+    exclude: [
+      '@mediapipe/pose',
+      '@mediapipe/drawing_utils',
+      '@mediapipe/camera_utils'
+    ],
+  },
+  build: {
+    commonjsOptions: {
+      include: [/node_modules/],
     },
   },
 })
