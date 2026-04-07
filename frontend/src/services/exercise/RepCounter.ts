@@ -15,14 +15,9 @@ export class RepCounter {
     return this.count;
   }
 
-  /**
-   * Procesa los puntos de referencia para Flexiones (Pushups)
-   * Se basa en el ángulo del codo o la posición vertical de los hombros.
-   */
   public updatePushups(landmarks: any): boolean {
     if (!landmarks || landmarks.length < 15) return false;
 
-    // Landmark 11/12 (Hombros), 13/14 (Codos), 15/16 (Muñecas)
     const leftShoulder = landmarks[11];
     const leftElbow = landmarks[13];
     const leftWrist = landmarks[15];
@@ -39,7 +34,7 @@ export class RepCounter {
     if (angle < 90 && this.stage === 'UP') {
       this.stage = 'DOWN';
       this.count++;
-      return true; // Se ha completado una repetición (bajada detectada)
+      return true;
     }
 
     return false;

@@ -23,7 +23,7 @@ public class UserActivityLog {
 
     private double amount;
     private LocalDateTime timestamp = LocalDateTime.now();
-    private String metadata; // For storing reasons or quest IDs
+    private String metadata;
 
     public enum ActivityType {
         XP_GAIN, LEVEL_UP, STAT_GAIN, QUEST_COMPLETED
