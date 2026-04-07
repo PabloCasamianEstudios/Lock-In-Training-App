@@ -17,6 +17,8 @@ public class QuestService {
     private UserRepository userRepository;
     @Autowired
     private ProtectionService protectionService;
+    @Autowired
+    private AdventureSessionRepository adventureSessionRepository;
 
     /* --- REWARDS & PROGRESSION ZONE --- */
     @Transactional
@@ -55,6 +57,15 @@ public class QuestService {
         protectionService.logActivity(user, UserActivityLog.ActivityType.XP_GAIN, quest.getXpReward(), "Quest reward");
 
         progressRepository.save(progress);
+
+        // AUTO-UNLOCK ADVENTURE IF APPLICABLE
+        adventureSessionRepository.findByUserAndIsActiveTrue(user).ifPresent(session -> {
+            if (quest.getId().equals(session.getPendingQuestId())) {
+                session.setPendingQuestId(null);
+                adventureSessionRepository.save(session);
+            }
+        });
+
         return userRepository.save(user);
     }
 

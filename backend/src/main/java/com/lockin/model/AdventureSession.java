@@ -31,7 +31,19 @@ public class AdventureSession {
 
     private Long pendingQuestId;
     
+    private int roomCount = 0;
+
+    private String currentRoomType;
+
+    @Column(columnDefinition = "TEXT")
+    private String pastRooms;
+
     private String lastImagePrompt;
+
+    @Column(columnDefinition = "TEXT")
+    private String recommendedStats;
+
+    private String currentLeague;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

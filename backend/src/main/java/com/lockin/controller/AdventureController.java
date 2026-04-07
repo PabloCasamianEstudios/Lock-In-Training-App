@@ -19,8 +19,8 @@ public class AdventureController {
     private final UserRepository userRepository;
 
     public AdventureController(AdventureService adventureService,
-                               AdventureSessionRepository sessionRepository,
-                               UserRepository userRepository) {
+            AdventureSessionRepository sessionRepository,
+            UserRepository userRepository) {
         this.adventureService = adventureService;
         this.sessionRepository = sessionRepository;
         this.userRepository = userRepository;
@@ -37,7 +37,8 @@ public class AdventureController {
     }
 
     @PostMapping("/action/{userId}")
-    public ResponseEntity<AdventureSession> makeChoice(@PathVariable Long userId, @RequestBody Map<String, String> body) {
+    public ResponseEntity<AdventureSession> makeChoice(@PathVariable Long userId,
+            @RequestBody Map<String, String> body) {
         try {
             String choice = body.get("choice");
             if (choice == null || choice.isEmpty()) {
@@ -47,18 +48,19 @@ public class AdventureController {
             return ResponseEntity.ok(session);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().build(); // Can also return e.getMessage() in response
+            return ResponseEntity.badRequest().build();
         }
     }
 
     @GetMapping("/current/{userId}")
     public ResponseEntity<AdventureSession> getCurrentSession(@PathVariable Long userId) {
         var userOpt = userRepository.findById(userId);
-        if (userOpt.isEmpty()) return ResponseEntity.notFound().build();
-        
+        if (userOpt.isEmpty())
+            return ResponseEntity.notFound().build();
+
         Optional<AdventureSession> session = sessionRepository.findByUserAndIsActiveTrue(userOpt.get());
         return session.map(ResponseEntity::ok)
-                      .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/stats/{userId}")
@@ -76,6 +78,16 @@ public class AdventureController {
         try {
             adventureService.resetCampaign(userId);
             return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("/skip/{userId}")
+    public ResponseEntity<AdventureSession> skipQuest(@PathVariable Long userId) {
+        try {
+            AdventureSession session = adventureService.skipQuest(userId);
+            return ResponseEntity.ok(session);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
