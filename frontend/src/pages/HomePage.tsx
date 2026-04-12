@@ -1,93 +1,230 @@
-import { type FC } from 'react';
-import { Activity, Zap, Shield, Target, Award, Star } from 'lucide-react';
-import type { PageProps, PlayerStats } from '../types';
+import { useState, type FC } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  MoreVertical, 
+  Shield, 
+  Trophy, 
+  Flame, 
+  ChevronRight, 
+  Bell, 
+  Users, 
+  Lightbulb, 
+  Activity as ActivityIcon 
+} from 'lucide-react';
+import type { PageProps } from '../types';
+import { useHomeData } from '../hooks/useHomeData';
 
-const HomePage: FC<PageProps> = ({ user, profile }) => {
-  const stats: PlayerStats = profile?.stats || { STR: 10, AGI: 10, VIT: 10, INT: 10, DEX: 10, DISC: 10 };
+const HomePage: FC<PageProps> = ({ user }) => {
+  const { 
+    username,
+    profilePic,
+    activeQuestsCount, 
+    friends, 
+    activity, 
+    tips,
+    streak, 
+    level, 
+    xp, 
+    seasonRank, 
+    loading 
+  } = useHomeData(user?.id);
+
+  const [activeTab, setActiveTab] = useState<'FEED' | 'ACTIVITY' | 'TIPS' | 'FRIENDS'>('FEED');
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-main animate-pulse font-black italic uppercase tracking-widest">
+          Loading System Data...
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-12 p-8">
-      <div className="flex flex-col md:flex-row justify-between items-start gap-10">
-        <div className="space-y-2">
-          <h1 className="text-8xl font-black italic text-white leading-none tracking-tighter uppercase">{user?.username || 'HUNTER'}</h1>
-          <div className="flex items-center gap-4">
-            <span className="bg-main text-black px-4 py-1 text-sm font-black transform -skew-x-12 italic uppercase">RANK {profile?.rank || 'E'}</span>
-            <span className="text-white/40 text-xs font-black uppercase tracking-widest">Level {profile?.level || 1} Awakened</span>
+    <div className="max-w-md mx-auto space-y-6 pb-20">
+      {/* --- HEADER --- */}
+      <header className="flex justify-between items-center bg-black/40 p-4 border-b border-white/10">
+        <h1 className="text-3xl font-black italic tracking-tighter text-white uppercase">HOME</h1>
+        <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
+          <MoreVertical className="w-6 h-6 text-white" />
+        </button>
+      </header>
+
+      {/* --- USER PROFILE CARD --- */}
+      <section className="bg-black border-2 border-white p-4 relative shadow-[6px_6px_0px_white]">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-full border-2 border-white flex items-center justify-center bg-zinc-800 overflow-hidden">
+            {profilePic ? (
+              <img src={profilePic} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              <Users className="w-8 h-8 text-white/50" />
+            )}
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-black text-white leading-tight">{username}</h2>
+            <div className="flex items-end justify-between">
+              <span className="text-sm font-bold text-white/60">lv.{level}</span>
+              <span className="text-sm font-black text-white/40 uppercase tracking-widest">RANK {seasonRank}</span>
+            </div>
+            {/* XP Bar */}
+            <div className="h-1.5 bg-white/10 mt-1 w-full relative overflow-hidden">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: `${(xp % 1000) / 10}%` }}
+                className="absolute top-0 left-0 h-full bg-main shadow-[0_0_10px_var(--main-color)]"
+              />
+            </div>
           </div>
         </div>
+      </section>
 
-        <div className="w-full md:w-96 space-y-4">
-          <div className="flex justify-between text-xs font-black uppercase tracking-widest text-white/60 italic">
-            <span>Progress to Next Rank</span>
-            <span>{profile?.xp || 0} / 1000 XP</span>
+      {/* --- STATS BAR --- */}
+      <section className="grid grid-cols-3 border-2 border-white bg-black shadow-[6px_6px_0px_var(--main-color)] overflow-hidden">
+        <div className="flex flex-col items-center justify-center p-4 border-r-2 border-white group hover:bg-main/5 transition-colors">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xl font-black italic text-white leading-none tracking-tighter">
+              {activeQuestsCount}/3
+            </span>
+            <Shield className="w-4 h-4 text-main fill-main" />
           </div>
-          <div className="h-6 bg-white/5 border border-white/10 transform -skew-x-12 overflow-hidden shadow-[inset_0px_0px_20px_rgba(255,255,255,0.05)]">
-            <div 
-              className="bg-main h-full shadow-[0_0_20px_var(--main-color)] transition-all duration-1000" 
-              style={{ width: `${((profile?.xp || 0) % 1000) / 10}%` }}
-            />
-          </div>
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/40">QUESTS</span>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div className="system-card p-10 space-y-10 bg-gradient-to-br from-black to-neutral-900 border-white/20">
-          <div className="flex items-center gap-4 border-b border-white/10 pb-4">
-            <Activity className="w-6 h-6 text-main" />
-            <h2 className="text-xl font-black uppercase italic tracking-tighter text-white">Attribute Score</h2>
+        <div className="flex flex-col items-center justify-center p-4 border-r-2 border-white group hover:bg-main/5 transition-colors">
+          <div className="flex items-center gap-2 mb-1">
+            <Trophy className="w-5 h-5 text-main" />
           </div>
-          <div className="grid grid-cols-2 gap-y-10 gap-x-12">
-            {Object.entries(stats).map(([key, val]) => (
-              <div key={key} className="space-y-1 group">
-                <span className="text-[10px] font-black uppercase tracking-widest text-white/20 group-hover:text-main transition-colors">{key}</span>
-                <div className="flex items-end gap-3">
-                  <span className="text-4xl font-black italic text-white leading-none tracking-tighter">{val}</span>
-                  <div className="h-1 w-full bg-white/5 transform -skew-x-12 mb-1 overflow-hidden">
-                    <div className="bg-white/20 h-full w-1/3" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/40 whitespace-nowrap">RANK {seasonRank}</span>
+        </div>
+
+        <div className="flex flex-col items-center justify-center p-4 group hover:bg-main/5 transition-colors">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xl font-black italic text-white leading-none tracking-tighter">
+              {streak}
+            </span>
+            <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
+          </div>
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/40">STREAK</span>
+        </div>
+      </section>
+
+      {/* --- TABS --- */}
+      <nav className="flex items-center justify-between gap-1 overflow-x-auto no-scrollbar py-2">
+        {(['FEED', 'ACTIVITY', 'TIPS', 'FRIENDS'] as const).map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 py-1.5 text-[10px] font-black border-2 transition-all uppercase tracking-widest whitespace-nowrap
+              ${activeTab === tab 
+                ? 'bg-main text-black border-main' 
+                : 'bg-black text-white/40 border-white/20 hover:border-white/40'}`}
+          >
+            {tab}
+          </button>
+        ))}
+      </nav>
+
+      {/* --- TAB CONTENT --- */}
+      <main className="min-h-[300px]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            {activeTab === 'FEED' && (
+              <div className="space-y-4">
+                {/* Featured Card */}
+                <div className="bg-black border-4 border-white p-6 relative overflow-hidden shadow-[10px_10px_0px_white]">
+                  <div className="absolute -top-10 -right-10 w-40 h-40 bg-main/10 rounded-full blur-3xl" />
+                  <h3 className="text-5xl font-black italic tracking-tighter text-white leading-none mb-4">LAUNCH!</h3>
+                  <div className="space-y-2 mb-6">
+                    <p className="text-sm text-white/60 leading-relaxed italic">
+                      Texto de muestra, esto solo es relleno. Empieza tu entrenamiento hoy mismo para subir de rango.
+                    </p>
+                    <p className="text-sm text-white/60 leading-relaxed italic">
+                      Todos los cazadores han empezado desde abajo. Despierta tu verdadero potencial.
+                    </p>
+                  </div>
+                  <div className="flex justify-between items-end">
+                    <button className="button-neon !px-4 !py-2 !text-[10px] !shadow-[4px_4px_0px_white]">
+                      READ MORE
+                    </button>
+                    <span className="text-[10px] font-black text-white/30 tracking-widest italic">156/03</span>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        <div className="system-card p-10 space-y-8 bg-black/40 border-main/40">
-          <div className="flex items-center gap-4 border-b border-white/10 pb-4">
-            <Target className="w-6 h-6 text-main" />
-            <h2 className="text-xl font-black uppercase italic tracking-tighter text-white">Daily Conditioning</h2>
-          </div>
-          <div className="space-y-6">
-            <div className="flex items-center gap-6 p-4 bg-white/5 border border-white/5 hover:border-main/50 transition-colors transform -skew-x-6">
-              <Zap className="w-8 h-8 text-main" />
-              <div>
-                <p className="text-xs font-black uppercase text-white/40 tracking-widest">Active Quests</p>
-                <p className="text-2xl font-black italic text-white uppercase italic tracking-tighter">3 Protocols</p>
+                {/* Additional feed items could go here */}
               </div>
-            </div>
-            <div className="flex items-center gap-6 p-4 bg-white/5 border border-white/5 hover:border-main/50 transition-colors transform -skew-x-6">
-              <Shield className="w-8 h-8 text-main" />
-              <div>
-                <p className="text-xs font-black uppercase text-white/40 tracking-widest">Fatigue Level</p>
-                <p className="text-2xl font-black italic text-white uppercase italic tracking-tighter">0% Hazard</p>
-              </div>
-            </div>
-          </div>
-        </div>
+            )}
 
-        <div className="system-card p-10 flex flex-col justify-between items-center text-center border-white/5 shadow-2xl relative overflow-hidden group">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--main-color),transparent)] opacity-0 group-hover:opacity-5 transition-opacity duration-700" />
-          <Award className="w-20 h-20 text-white/10 mb-6 group-hover:text-main transition-colors duration-500" />
-          <div className="space-y-4">
-            <h3 className="text-2xl font-black uppercase italic text-white/80 leading-tight">Achievement<br/><span className="text-main">Incipient</span></h3>
-            <p className="text-xs text-white/30 uppercase tracking-[0.2em] font-black italic">Next Trophy: First Blood</p>
-          </div>
-          <div className="mt-10 flex gap-2">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className={`w-4 h-4 ${i < 1 ? 'text-main fill-main' : 'text-white/10'}`} />
-            ))}
-          </div>
-        </div>
-      </div>
+            {activeTab === 'ACTIVITY' && (
+              <div className="space-y-3">
+                {activity.length > 0 ? (activity.slice(0, 5).map((act, i) => (
+                  <div key={i} className="bg-black/40 border border-white/10 p-4 flex items-center justify-between group hover:border-main transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-main/10 rounded-sm">
+                        <ActivityIcon className="w-4 h-4 text-main" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-black text-white uppercase italic">{act.title}</p>
+                        <p className="text-[10px] text-white/30 uppercase tracking-widest">{new Date(act.completionTime).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-black text-main italic">+{act.xpReward} XP</span>
+                  </div>
+                ))) : (
+                  <div className="text-center py-10 text-white/20 italic font-black uppercase tracking-widest">No activity recorded</div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'TIPS' && (
+              <div className="space-y-4">
+                {tips.map((tip, i) => (
+                  <div key={i} className="bg-black border-2 border-white/20 p-4 relative group hover:border-main transition-colors shadow-[4px_4px_0px_rgba(255,255,255,0.1)] hover:shadow-[4px_4px_0px_var(--main-color)]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Lightbulb className="w-4 h-4 text-main" />
+                      <h4 className="text-xs font-black text-white uppercase italic">{tip.title}</h4>
+                    </div>
+                    <p className="text-xs text-white/50 leading-relaxed">{tip.description}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'FRIENDS' && (
+              <div className="space-y-3">
+                {friends.length > 0 ? (friends.map((friend, i) => (
+                  <div key={i} className="bg-black border border-white/10 p-3 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full border border-white/20 bg-zinc-800 flex items-center justify-center text-xs font-black text-white/40">
+                        {friend.username[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-xs font-black text-white italic">{friend.username}</p>
+                        <p className="text-[10px] text-white/30 uppercase tracking-widest">RANK {friend.seasonRank || 'E'}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-white/20" />
+                  </div>
+                ))) : (
+                  <div className="flex flex-col items-center justify-center py-12 gap-4">
+                    <Users className="w-12 h-12 text-white/10" />
+                    <p className="text-xs font-black text-white/20 uppercase tracking-[0.2em]">Alone in the shadows...</p>
+                    <button className="text-[10px] font-black text-main border-b border-main pb-1 hover:text-white hover:border-white transition-all uppercase italic">
+                      FIND HUNTERS
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </main>
     </div>
   );
 };
