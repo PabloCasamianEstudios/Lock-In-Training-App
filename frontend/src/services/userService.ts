@@ -12,9 +12,6 @@ export const userService = {
     const data = await apiClient<User>(`/api/user/${id}`);
     localStorage.setItem('lockin_profile', JSON.stringify(data));
     return data;
-  },
-
-  getDailyQuests: async (userId: number): Promise<Quest[]> => {
-    return await apiClient<Quest[]>(`/api/user/${userId}/quests/daily/today`);
   }
 };
+

@@ -15,25 +15,32 @@ import java.util.Optional;
 @RequestMapping("/api/quests")
 public class UserQuestController {
 
-    @Autowired private QuestService questService;
-    @Autowired private UserQuestProgressRepository progressRepository;
-    @Autowired private FriendshipRepository friendshipRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private com.lockin.repository.QuestRepository questRepository;
+    @Autowired
+    private QuestService questService;
+    @Autowired
+    private UserQuestProgressRepository progressRepository;
+    @Autowired
+    private FriendshipRepository friendshipRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private com.lockin.repository.QuestRepository questRepository;
 
     /* --- QUEST PLAYER ACTIONS ZONE --- */
     @PostMapping("/{questId}/start")
     public ResponseEntity<Object> startQuest(@PathVariable Long questId, @RequestParam Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         Quest quest = questRepository.findById(questId).orElse(null);
-        if (user == null || quest == null) return ResponseEntity.status(404).body("Usuario o Quest no encontrada");
+        if (user == null || quest == null)
+            return ResponseEntity.status(404).body("Usuario o Quest no encontrada");
 
         if ("MUTE".equals(user.getRole())) {
             return ResponseEntity.status(403).body("Tu cuenta está silenciada. No puedes iniciar misiones.");
         }
 
         // Check for existing active progress
-        List<UserQuestProgress> active = progressRepository.findByUserIdAndStatus(userId, UserQuestProgress.QuestStatus.ACTIVE);
+        List<UserQuestProgress> active = progressRepository.findByUserIdAndStatus(userId,
+                UserQuestProgress.QuestStatus.ACTIVE);
         if (active.stream().anyMatch(p -> p.getQuest().getId().equals(questId))) {
             return ResponseEntity.badRequest().body("Ya tienes esta misión activa");
         }
@@ -42,7 +49,7 @@ public class UserQuestController {
         progress.setUser(user);
         progress.setQuest(quest);
         progress.setStatus(UserQuestProgress.QuestStatus.ACTIVE);
-        
+
         return ResponseEntity.ok(progressRepository.save(progress));
     }
 
@@ -50,6 +57,7 @@ public class UserQuestController {
     public List<UserQuestProgress> getActiveQuests(@PathVariable Long userId) {
         return progressRepository.findByUserIdAndStatus(userId, UserQuestProgress.QuestStatus.ACTIVE);
     }
+
     @PostMapping("/progress/{progressId}/complete")
     public ResponseEntity<Object> completeQuest(@PathVariable Long progressId) {
         try {
@@ -61,11 +69,13 @@ public class UserQuestController {
     }
 
     @GetMapping("/friends/{targetUserId}/custom")
-    public ResponseEntity<Object> getFriendsCustomQuests(@RequestParam Long requesterId, @PathVariable Long targetUserId) {
+    public ResponseEntity<Object> getFriendsCustomQuests(@RequestParam Long requesterId,
+            @PathVariable Long targetUserId) {
         Optional<Friendship> friendship = friendshipRepository.findExistingFriendship(requesterId, targetUserId);
-        
+
         if (friendship.isPresent() && friendship.get().getStatus() == Friendship.FriendshipStatus.ACCEPTED) {
-            List<UserQuestProgress> custom = progressRepository.findByUserIdAndQuestType(targetUserId, Quest.QuestType.CUSTOM);
+            List<UserQuestProgress> custom = progressRepository.findByUserIdAndQuestType(targetUserId,
+                    Quest.QuestType.CUSTOM);
             return ResponseEntity.ok(custom);
         } else {
             return ResponseEntity.status(403).body("Solo puedes ver las misiones de tus amigos");

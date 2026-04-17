@@ -1,7 +1,11 @@
 import { useState, useEffect, type FC, useRef } from 'react';
 import type { PageProps } from '../types';
 import { Swords, Heart, Shield, Activity, Skull, BarChart2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import apiClient from '../services/apiClient';
+import AppHeader from '../components/common/AppHeader';
+import BrutalistCard from '../components/common/BrutalistCard';
+import ProgressBar from '../components/common/ProgressBar';
 
 interface AdventureSession {
   id: number;
@@ -44,7 +48,6 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
       const data = await apiClient<AdventureSession>(`/api/adventure/current/${user!.id}`);
       setSession(data);
     } catch (err) {
-      // No active session yet, that's fine
     }
   };
 
@@ -100,7 +103,7 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
   if (!user || user.isGuest) {
     return (
       <div className="flex items-center justify-center h-full text-white/50 text-xs tracking-widest font-mono">
-        RÉGIMEN DE INVITADOS NO AUTORIZADO
+        INVITADOS NO
       </div>
     );
   }
@@ -108,48 +111,42 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
   const optionsArray = session?.lastOptions ? session.lastOptions.split('|') : [];
 
   return (
-    <div className="h-full w-full flex flex-col md:flex-row gap-4 p-4 lg:p-8 bg-black font-mono overflow-y-auto pb-24">
-      {/* LEFT COLUMN: HERO STATS */}
-      <div className="w-full md:w-1/3 flex flex-col gap-4">
-        <div className="border border-white/10 bg-white/5 p-4 flex flex-col gap-3">
-          <div className="flex items-center justify-between border-b border-white/10 pb-2">
-            <h2 className="text-white font-black text-xl italic uppercase">STATUS</h2>
+    <div className="max-w-md mx-auto space-y-6 pb-24 relative p-4 bg-black overflow-y-auto">
+      <AppHeader title="ADVENTURE" />
+
+      <div className="flex flex-col gap-6">
+        <BrutalistCard padding="p-4" className="flex flex-col gap-3">
+          <div className="flex items-center justify-between border-b-2 border-white/10 pb-2">
+            <h2 className="text-white font-black text-2xl italic uppercase tracking-widest">STATUS</h2>
             <div className="flex flex-col items-end">
-              <div className="text-orange-500 font-black text-sm">LVL {profile?.level || 1}</div>
+              <div className="text-main font-black text-lg italic">LVL {profile?.level || 1}</div>
               {session?.currentLeague && (
-                <div className="text-[10px] text-white/40 uppercase tracking-tighter">LIGA {session.currentLeague}</div>
+                <div className="text-xs text-white/40 uppercase tracking-widest font-bold">LIGA {session.currentLeague}</div>
               )}
             </div>
           </div>
           
-          {/* Health Bar */}
-          <div className="flex flex-col gap-1">
-            <div className="flex justify-between text-xs text-white/70">
-              <span className="flex items-center gap-1"><Heart className="w-3 h-3 text-red-500"/> HP</span>
-              <span>{session ? session.hp : (profile?.stats?.VIT ? 50 + (Number(profile.stats.VIT) * 10) : 100)} / {session ? session.maxHp : (profile?.stats?.VIT ? 50 + (Number(profile.stats.VIT) * 10) : 100)}</span>
-            </div>
-            <div className="h-2 w-full bg-white/10 overflow-hidden">
-              <div 
-                className={`h-full transition-all duration-500 ${session && session.hp <= 0 ? 'bg-red-600' : 'bg-green-500 shadow-[0_0_10px_#22c55e]'}`}
-                style={{ width: `${session ? Math.max(0, (session.hp / session.maxHp) * 100) : 100}%` }}
-              />
-            </div>
-          </div>
-        </div>
+          <ProgressBar 
+            progress={session ? session.hp : 100} 
+            max={session ? session.maxHp : 100}
+            color={session && session.hp <= 25 ? 'bg-red-600' : 'bg-green-500'}
+            height="h-4"
+            label={<><Heart className="w-4 h-4 text-red-500 fill-red-500"/> HP</>}
+            valueLabel={`${session ? session.hp : 100} / ${session ? session.maxHp : 100}`}
+          />
+        </BrutalistCard>
 
-        {/* EQUIPMENT */}
-        <div className="border border-white/10 bg-white/5 p-4 flex flex-col gap-3">
-          <h2 className="text-white font-black text-sm italic uppercase border-b border-white/10 pb-2 flex items-center gap-2">
+        <BrutalistCard padding="p-4" className="flex flex-col gap-3" variant="accent">
+          <h2 className="text-white font-black text-xl italic uppercase border-b-2 border-white/10 pb-2 flex items-center gap-2 tracking-widest">
             <Shield className="w-4 h-4"/> EQUIPAMIENTO
           </h2>
-          <div className="text-[10px] text-white/40 leading-relaxed italic">
+          <div className="text-xs text-white/40 leading-relaxed italic font-bold uppercase tracking-wider">
             (Tus objetos de la tienda aparecerán aquí)
           </div>
-        </div>
+        </BrutalistCard>
 
-        {/* STATS */}
-        <div className="border border-white/10 bg-white/5 p-4 flex flex-col gap-3 flex-grow">
-          <h2 className="text-white font-black text-sm italic uppercase border-b border-white/10 pb-2 flex items-center gap-2">
+        <BrutalistCard padding="p-4" className="flex flex-col gap-3 flex-grow" variant="white">
+          <h2 className="text-white font-black text-xl italic uppercase border-b-2 border-white/10 pb-2 flex items-center gap-2 tracking-widest">
             <BarChart2 className="w-4 h-4 text-orange-500"/> ESTADÍSTICAS
           </h2>
           <div className="grid grid-cols-1 gap-2">
@@ -158,43 +155,43 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
               const isAdequate = v >= recommended;
               
               return (
-                <div key={k} className={`flex justify-between items-center text-xs p-2 bg-black/50 border transition-colors ${
-                  recommended > 0 ? (isAdequate ? 'border-green-500/30' : 'border-red-500/50 animate-pulse') : 'border-white/5'
-                }`}>
+                <div key={k} className={`flex justify-between items-center text-sm p-3 bg-black border-2 transition-colors ${
+                  recommended > 0 ? (isAdequate ? 'border-green-500/50 hover:border-green-500' : 'border-red-500 animate-pulse') : 'border-white/20 hover:border-main'
+                } shadow-[4px_4px_0_rgba(255,255,255,0.1)]`}>
                   <div className="flex flex-col">
-                    <span className="text-white/50 uppercase font-mono text-[10px]">{k}</span>
+                    <span className="text-white/50 uppercase font-black italic text-xs tracking-widest">{k}</span>
                     <span className="text-white font-black">{v}</span>
                   </div>
                   {recommended > 0 && (
                     <div className="text-right">
-                      <div className="text-[9px] text-white/30 uppercase">REQ</div>
+                      <div className="text-[10px] text-white/30 uppercase">REQ</div>
                       <div className={`font-black ${isAdequate ? 'text-green-500' : 'text-red-500'}`}>{recommended}</div>
                     </div>
                   )}
                 </div>
               );
             }) : (
-              <div className="col-span-2 text-[10px] text-white/30 italic">Cargando estadísticas...</div>
+              <div className="col-span-2 text-[10px] text-main/50 italic uppercase font-black tracking-widest animate-pulse">CARGANDO ESTADÍSTICAS...</div>
             )}
           </div>
-        </div>
+        </BrutalistCard>
       </div>
 
-      {/* RIGHT COLUMN: MAIN ADVENTURE TEXT */}
-      <div className="w-full md:w-2/3 flex flex-col border border-white/20 bg-black shadow-[0_0_30px_rgba(249,115,22,0.1)] relative">
-        <div className="p-3 border-b border-white/20 flex justify-between items-center bg-white/5">
-          <h1 className="text-orange-500 font-black italic tracking-widest text-lg flex items-center gap-2">
-            <Swords className="w-5 h-5"/> GAME MASTER
-          </h1>
+      {/* MAIN ADVENTURE TEXT */}
+      <BrutalistCard padding="p-0" variant="heavy" className="w-full flex flex-col relative mt-4">
+        <div className="p-4 border-b-4 border-white flex justify-between items-center bg-black">
+          <h2 className="text-main font-black italic tracking-widest text-2xl flex items-center gap-2 uppercase">
+            <Swords className="w-6 h-6"/> GAME MASTER
+          </h2>
           {session && (
             <div className="flex gap-4 items-center">
               <div className="flex flex-col items-end">
-                <span className="text-[10px] text-white/40 uppercase">SALA</span>
-                <span className="text-white font-black text-sm tracking-widest">{session.roomCount}</span>
+                <span className="text-[10px] text-white/40 uppercase font-black">SALA</span>
+                <span className="text-white font-black text-lg tracking-widest">{session.roomCount}</span>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-[10px] text-white/40 uppercase">TIPO</span>
-                <span className={`font-black text-sm tracking-widest ${
+                <span className="text-[10px] text-white/40 uppercase font-black">TIPO</span>
+                <span className={`font-black text-lg tracking-widest ${
                   session.currentRoomType === 'BOSS' ? 'text-red-500 animate-pulse' : 
                   session.currentRoomType === 'COMBATE' ? 'text-orange-500' : 
                   'text-blue-400'
@@ -210,19 +207,19 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
         {/* TEXT LOG */}
         <div 
           ref={scrollRef}
-          className="flex-grow p-4 md:p-6 overflow-y-auto text-sm md:text-base text-white/90 leading-relaxed font-serif whitespace-pre-wrap"
+          className="flex-grow p-4 md:p-6 overflow-y-auto text-sm md:text-base text-white/90 leading-relaxed uppercase whitespace-pre-wrap bg-black/80 font-bold tracking-wider"
           style={{ maxHeight: '50vh' }}
         >
-          {error && <div className="text-red-500 mb-4 font-mono text-xs">{error}</div>}
+          {error && <div className="text-red-500 mb-4 font-black italic text-sm uppercase tracking-widest border-2 border-red-500 p-2 bg-red-500/10">{error}</div>}
           
           {!session ? (
-            <div className="text-white/50 italic text-center mt-10 font-mono">
-              The darkness awaits. Are you prepared to step into the dungeon?
+            <div className="text-white/50 italic text-center mt-10 font-black uppercase tracking-widest text-sm">
+              THE DARKNESS AWAITS. ARE YOU PREPARED TO STEP INTO THE DUNGEON?
             </div>
           ) : (
             <>
               {session.contextHistory.split('\n').map((line, idx) => (
-                <p key={idx} className={`mb-3 ${line.startsWith('User chose:') ? 'text-orange-400 font-bold ml-4 border-l-2 border-orange-500 pl-2 font-mono text-xs uppercase my-4' : 'text-gray-300'}`}>
+                <p key={idx} className={`mb-4 ${line.startsWith('User chose:') ? 'text-main font-black ml-4 border-l-4 border-main pl-3 text-sm uppercase my-6 tracking-widest italic' : 'text-gray-300'}`}>
                   {line}
                 </p>
               ))}
@@ -237,14 +234,14 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
         </div>
 
         {/* CHOICES / CONTROLS */}
-        <div className="p-4 bg-white/5 border-t border-white/20 mt-auto min-h-[100px]">
+        <div className="p-4 bg-black border-t-4 border-white mt-auto min-h-[100px]">
           {!session || (!session.isActive && session.hp <= 0) ? (
              <button 
                 onClick={handleStart}
                 disabled={loading}
-                className="w-full py-4 bg-orange-600 hover:bg-orange-500 text-black font-black uppercase tracking-widest transition-all skew-x-[-10deg] shadow-[5px_5px_0_white]"
+                className="w-full py-4 bg-main hover:bg-white text-black font-black uppercase tracking-widest transition-all transform -skew-x-12 border-4 border-transparent hover:border-black shadow-[6px_6px_0px_white] hover:shadow-[8px_8px_0px_var(--main-color)] hover:-translate-y-1 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed group text-lg"
               >
-               <span className="skew-x-[10deg] inline-block">{session && session.hp <= 0 ? 'START NEW CAMPAIGN' : 'ENTER DUNGEON'}</span>
+               <span className="skew-x-12 inline-block group-hover:scale-110 transition-transform">{session && session.hp <= 0 ? 'START NEW CAMPAIGN' : 'ENTER DUNGEON'}</span>
              </button>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -256,7 +253,7 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
                   <button 
                     onClick={handleSkip}
                     disabled={loading}
-                    className="py-2 bg-white/10 hover:bg-white/20 text-white/40 hover:text-white text-[10px] font-bold uppercase tracking-tighter transition-all border border-white/5"
+                    className="py-3 bg-black hover:bg-main text-white/50 hover:text-black font-black uppercase tracking-widest transition-all border-2 border-white/20 hover:border-main transform -skew-x-6 text-[10px]"
                   >
                     DEBUG: SKIP TRIAL (ADVANCE STORY)
                   </button>
@@ -267,20 +264,20 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
                     key={i}
                     disabled={loading}
                     onClick={() => handleAction(opt)}
-                    className="p-3 border border-white/20 text-white/80 hover:bg-white/10 hover:text-white hover:border-white transition-all text-xs font-bold uppercase tracking-wider text-left disabled:opacity-50"
+                    className="p-4 bg-black border-2 border-white text-white hover:bg-main hover:text-black hover:border-main shadow-[4px_4px_0_white] hover:shadow-[4px_4px_0_var(--main-color)] transition-all font-black uppercase italic tracking-wider text-left disabled:opacity-50 disabled:shadow-none hover:-translate-y-1 active:translate-y-1 active:shadow-none text-xs md:text-sm"
                   >
                     {opt.replace(/"/g, '')}
                   </button>
                 ))
               ) : (
-                <div className="col-span-1 md:col-span-2 text-white/50 text-xs text-center italic">
-                  No options available...
+                <div className="col-span-1 md:col-span-2 text-main/50 text-xs text-center italic font-black uppercase tracking-widest animate-pulse mt-4">
+                  NO OPTIONS AVAILABLE...
                 </div>
               )}
             </div>
           )}
         </div>
-      </div>
+      </BrutalistCard>
     </div>
   );
 };

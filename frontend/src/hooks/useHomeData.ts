@@ -1,13 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useStreak } from './useStreak';
-import apiClient from '../services/apiClient';
-import { User, Quest, PlayerProfile } from '../types';
-
-interface Tip {
-  id: number;
-  title: string;
-  description: string;
-}
+import { userService } from '../services/userService';
+import { questService } from '../services/questService';
+import { socialService } from '../services/socialService';
+import { adminService, Tip } from '../services/adminService';
+import { User } from '../types';
 
 interface HomeData {
   username: string;
@@ -26,6 +23,10 @@ interface HomeData {
 
 export const useHomeData = (userId: number | undefined) => {
   const localStreak = useStreak();
+  // Use a ref so fetchData can read the latest streak value without it being a dep
+  const streakRef = useRef(localStreak);
+  useEffect(() => { streakRef.current = localStreak; }, [localStreak]);
+
   const [data, setData] = useState<HomeData>({
     username: 'HUNTER',
     profilePic: null,
@@ -48,49 +49,90 @@ export const useHomeData = (userId: number | undefined) => {
     }
 
     setData(prev => ({ ...prev, loading: true, error: null }));
-    
+
     try {
-      const results = await Promise.allSettled([
-        apiClient<User>(`/api/user/${userId}`),
-        apiClient<any[]>(`/api/quests/active/${userId}`),
-        apiClient<User[]>(`/api/social/friends/${userId}`),
-        apiClient<any[]>(`/api/user/${userId}/quests`),
-        apiClient<Tip[]>('/api/admin/tips'),
+      const fetchProfile = async () => {
+        try {
+          return await userService.getUserProfile(userId);
+        } catch (e) {
+          console.error('[API Failure] User Profile:', e);
+          return null;
+        }
+      };
+
+      const fetchActiveQuests = async () => {
+        try {
+          return await questService.getActiveQuests(userId);
+        } catch (e) {
+          console.error('[API Failure] Active Quests:', e);
+          return [];
+        }
+      };
+
+      const fetchFriends = async () => {
+        try {
+          return await socialService.getFriends(userId);
+        } catch (e) {
+          console.error('[API Failure] Friends:', e);
+          return [];
+        }
+      };
+
+      const fetchActivity = async () => {
+        try {
+          return await questService.getUserQuests(userId);
+        } catch (e) {
+          console.error('[API Failure] Activity:', e);
+          return [];
+        }
+      };
+
+      const fetchTips = async () => {
+        try {
+          return await adminService.getTips();
+        } catch (e) {
+          console.error('[API Failure] Tips:', e);
+          return [];
+        }
+      };
+
+      const [profile, activeQuests, friends, activity, fetchedTips] = await Promise.all([
+        fetchProfile(),
+        fetchActiveQuests(),
+        fetchFriends(),
+        fetchActivity(),
+        fetchTips(),
       ]);
 
-      const [userRes, activeQuestRes, friendsRes, activityRes, tipsRes] = results;
-
-      const profile = userRes.status === 'fulfilled' ? userRes.value : null;
-      const activeQuests = activeQuestRes.status === 'fulfilled' ? activeQuestRes.value : [];
-      const friends = friendsRes.status === 'fulfilled' ? friendsRes.value : [];
-      const activity = activityRes.status === 'fulfilled' ? activityRes.value : [];
-      
       const defaultTips: Tip[] = [
         { id: 1, title: 'Consistency', description: 'Training daily is key to awakening your potential.' },
         { id: 2, title: 'Rest', description: 'Muscles grow when you sleep. Respect your recovery.' },
-        { id: 3, title: 'Hydration', description: 'Drink water during workouts to avoid fatigue.' }
+        { id: 3, title: 'Hydration', description: 'Drink water during workouts to avoid fatigue.' },
       ];
-      const fetchedTips = tipsRes.status === 'fulfilled' ? tipsRes.value : [];
-      const finalTips = (Array.isArray(fetchedTips) && fetchedTips.length > 0) ? fetchedTips : defaultTips;
+
+      const finalTips =
+        Array.isArray(fetchedTips) && fetchedTips.length > 0 ? fetchedTips : defaultTips;
 
       setData({
         username: profile?.username || 'HUNTER',
         profilePic: profile?.profilePic || null,
-        activeQuestsCount: activeQuests?.length || 0,
+        activeQuestsCount: Array.isArray(activeQuests) ? activeQuests.length : 0,
         friends: Array.isArray(friends) ? friends : [],
         activity: Array.isArray(activity) ? activity : [],
         tips: finalTips,
-        streak: localStreak,
+        streak: streakRef.current,
         level: profile?.level || 1,
         xp: profile?.xp || 0,
         seasonRank: profile?.seasonRank || 'E',
         loading: false,
-        error: userRes.status === 'rejected' ? 'Error al cargar perfil principal' : null,
+        error: null,
       });
     } catch (err: any) {
+      console.error('[Critical Error] useHomeData:', err);
       setData(prev => ({ ...prev, loading: false, error: 'Error crítico de conexión' }));
     }
-  }, [userId, localStreak]);
+  // localStreak intentionally excluded from deps – accessed via ref to avoid refetch loops
+  }, [userId]);
 
   useEffect(() => {
     fetchData();

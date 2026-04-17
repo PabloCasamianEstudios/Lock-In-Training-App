@@ -102,7 +102,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout }) => {
             LOCK <span style={{ color: 'var(--main-color)' }}>IN</span>
           </button>
 
-          <div className="hub-nav-links">
+          <div className="hub-nav-links items-center">
             {tabs.filter(t => t.id !== 'play').map(tab => {
               const restricted = isGuest && !['home', 'rankings'].includes(tab.id);
               return (
@@ -116,6 +116,22 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout }) => {
                 </button>
               );
             })}
+
+            <button
+              onClick={() => setActiveTab('play')}
+              disabled={isGuest}
+              className={`ml-4 px-4 py-1.5 font-black italic tracking-widest text-sm transform -skew-x-12 border-2 transition-all flex items-center gap-2
+                ${activeTab === 'play' 
+                  ? 'bg-main text-black border-main shadow-[4px_4px_0_white]' 
+                  : 'bg-black text-main border-main hover:bg-main hover:text-black hover:-translate-y-1 shadow-[4px_4px_0_var(--main-color)]'
+                }
+                ${isGuest ? 'grayscale opacity-50 cursor-not-allowed' : ''}
+              `}
+            >
+              <Swords className="w-4 h-4" />
+              ADVENTURE
+              {isGuest && <Lock className="w-3 h-3" />}
+            </button>
           </div>
 
           <div className="hub-user-menu-wrapper">

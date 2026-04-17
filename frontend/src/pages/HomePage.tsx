@@ -1,7 +1,6 @@
 import { useState, type FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  MoreVertical, 
   Shield, 
   Trophy, 
   Flame, 
@@ -13,6 +12,9 @@ import {
 } from 'lucide-react';
 import type { PageProps } from '../types';
 import { useHomeData } from '../hooks/useHomeData';
+import AppHeader from '../components/common/AppHeader';
+import BrutalistCard from '../components/common/BrutalistCard';
+import ProgressBar from '../components/common/ProgressBar';
 
 const HomePage: FC<PageProps> = ({ user }) => {
   const { 
@@ -43,16 +45,9 @@ const HomePage: FC<PageProps> = ({ user }) => {
 
   return (
     <div className="max-w-md mx-auto space-y-6 pb-20">
-      {/* --- HEADER --- */}
-      <header className="flex justify-between items-center bg-black/40 p-4 border-b border-white/10">
-        <h1 className="text-3xl font-black italic tracking-tighter text-white uppercase">HOME</h1>
-        <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
-          <MoreVertical className="w-6 h-6 text-white" />
-        </button>
-      </header>
+      <AppHeader title="HOME" />
 
-      {/* --- USER PROFILE CARD --- */}
-      <section className="bg-black border-2 border-white p-4 relative shadow-[6px_6px_0px_white]">
+      <BrutalistCard>
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-full border-2 border-white flex items-center justify-center bg-zinc-800 overflow-hidden">
             {profilePic ? (
@@ -67,20 +62,12 @@ const HomePage: FC<PageProps> = ({ user }) => {
               <span className="text-sm font-bold text-white/60">lv.{level}</span>
               <span className="text-sm font-black text-white/40 uppercase tracking-widest">RANK {seasonRank}</span>
             </div>
-            {/* XP Bar */}
-            <div className="h-1.5 bg-white/10 mt-1 w-full relative overflow-hidden">
-              <motion.div 
-                initial={{ width: 0 }}
-                animate={{ width: `${(xp % 1000) / 10}%` }}
-                className="absolute top-0 left-0 h-full bg-main shadow-[0_0_10px_var(--main-color)]"
-              />
-            </div>
+            <ProgressBar progress={xp % 1000} max={1000} className="mt-1" />
           </div>
         </div>
-      </section>
+      </BrutalistCard>
 
-      {/* --- STATS BAR --- */}
-      <section className="grid grid-cols-3 border-2 border-white bg-black shadow-[6px_6px_0px_var(--main-color)] overflow-hidden">
+      <BrutalistCard variant="accent" padding="p-0" className="grid grid-cols-3 overflow-hidden">
         <div className="flex flex-col items-center justify-center p-4 border-r-2 border-white group hover:bg-main/5 transition-colors">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xl font-black italic text-white leading-none tracking-tighter">
@@ -107,7 +94,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
           </div>
           <span className="text-[10px] font-black uppercase tracking-widest text-white/40">STREAK</span>
         </div>
-      </section>
+      </BrutalistCard>
 
       {/* --- TABS --- */}
       <nav className="flex items-center justify-between gap-1 overflow-x-auto no-scrollbar py-2">
@@ -143,10 +130,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
                   <h3 className="text-5xl font-black italic tracking-tighter text-white leading-none mb-4">LAUNCH!</h3>
                   <div className="space-y-2 mb-6">
                     <p className="text-sm text-white/60 leading-relaxed italic">
-                      Texto de muestra, esto solo es relleno. Empieza tu entrenamiento hoy mismo para subir de rango.
-                    </p>
-                    <p className="text-sm text-white/60 leading-relaxed italic">
-                      Todos los cazadores han empezado desde abajo. Despierta tu verdadero potencial.
+                      texto de launch launch launch
                     </p>
                   </div>
                   <div className="flex justify-between items-end">
@@ -170,11 +154,13 @@ const HomePage: FC<PageProps> = ({ user }) => {
                         <ActivityIcon className="w-4 h-4 text-main" />
                       </div>
                       <div>
-                        <p className="text-xs font-black text-white uppercase italic">{act.title}</p>
-                        <p className="text-[10px] text-white/30 uppercase tracking-widest">{new Date(act.completionTime).toLocaleDateString()}</p>
+                        <p className="text-xs font-black text-white uppercase italic">{act.title ?? 'Quest'}</p>
+                        <p className="text-[10px] text-white/30 uppercase tracking-widest">
+                          {act.completionTime ? new Date(act.completionTime).toLocaleDateString() : 'In progress'}
+                        </p>
                       </div>
                     </div>
-                    <span className="text-xs font-black text-main italic">+{act.xpReward} XP</span>
+                    <span className="text-xs font-black text-main italic">+{act.xpReward ?? 0} XP</span>
                   </div>
                 ))) : (
                   <div className="text-center py-10 text-white/20 italic font-black uppercase tracking-widest">No activity recorded</div>
@@ -202,10 +188,10 @@ const HomePage: FC<PageProps> = ({ user }) => {
                   <div key={i} className="bg-black border border-white/10 p-3 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full border border-white/20 bg-zinc-800 flex items-center justify-center text-xs font-black text-white/40">
-                        {friend.username[0].toUpperCase()}
+                        {(friend.username ?? '?').charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p className="text-xs font-black text-white italic">{friend.username}</p>
+                        <p className="text-xs font-black text-white italic">{friend.username ?? 'Hunter'}</p>
                         <p className="text-[10px] text-white/30 uppercase tracking-widest">RANK {friend.seasonRank || 'E'}</p>
                       </div>
                     </div>

@@ -12,7 +12,7 @@ const formatError = (error: Error | string): string => {
   return msg;
 };
 
-const BASE_URL = import.meta.env.DEV ? '' : 'http://localhost:8081';
+const BASE_URL = '';
 
 interface ApiClientConfig extends RequestInit {
   body?: any;
@@ -42,6 +42,7 @@ const apiClient = async <T = any>(endpoint: string, { body, ...customConfig }: A
   const url = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
 
   try {
+    console.log(`[API Request] Calling ${config.method || 'GET'} ${url}...`);
     const response = await fetch(`${BASE_URL}${url}`, config);
     const contentType = response.headers.get('content-type');
     const isJson = contentType && contentType.includes('application/json');
@@ -50,11 +51,21 @@ const apiClient = async <T = any>(endpoint: string, { body, ...customConfig }: A
     try {
       data = isJson ? await response.json() : await response.text();
     } catch (parseError) {
+      console.warn(`[API] Failed to parse response from ${url}`, parseError);
       data = response.statusText;
     }
 
     if (!response.ok) {
+      console.error(`[API Response Error] ${url} (Status: ${response.status})`, data);
       const errorMessage = (typeof data === 'object' ? data.message || data.error : data) || response.statusText;
+
+      if ((response.status === 401 || response.status === 403) && !url.includes('/api/auth')) {
+        console.warn('[API] Sesión caducada o acceso denegado. Cerrando sesión...');
+        localStorage.removeItem('lockin_user');
+        localStorage.removeItem('lockin_token');
+        window.location.href = '/';
+      }
+
       throw new Error(formatError(errorMessage));
     }
 
@@ -64,6 +75,7 @@ const apiClient = async <T = any>(endpoint: string, { body, ...customConfig }: A
 
     return data as T;
   } catch (error) {
+    console.error(`[API Network Error] ${endpoint}:`, error);
     throw new Error(formatError(error as Error));
   }
 };

@@ -49,7 +49,7 @@ export const authService = {
       throw new Error(errorText);
     }
 
-    const data = await response.json(); // { token, role, username, email, id }
+    const data = await response.json();
 
     const loggedUser = {
       id: data.id,

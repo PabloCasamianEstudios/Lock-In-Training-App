@@ -1,18 +1,21 @@
 import { useState, useEffect, useRef, type FC } from 'react';
 import Webcam from 'react-webcam';
-import * as mpPose from '@mediapipe/pose';
-import * as mpDrawing from '@mediapipe/drawing_utils';
-import * as mpCamera from '@mediapipe/camera_utils';
 import { RepCounter } from '../services/exercise/RepCounter';
 import { ArrowLeft, CheckCircle, Activity, Camera as CameraIcon } from 'lucide-react';
 import apiClient from '../services/apiClient';
 import type { PageProps } from '../types';
 
-const Pose = (mpPose as any).Pose || (mpPose as any).default?.Pose || (window as any).Pose;
-const POSE_CONNECTIONS = (mpPose as any).POSE_CONNECTIONS || (mpPose as any).default?.POSE_CONNECTIONS || (window as any).POSE_CONNECTIONS;
-const drawConnectors = (mpDrawing as any).drawConnectors || (mpDrawing as any).default?.drawConnectors || (window as any).drawConnectors;
-const drawLandmarks = (mpDrawing as any).drawLandmarks || (mpDrawing as any).default?.drawLandmarks || (window as any).drawLandmarks;
-const Camera = (mpCamera as any).Camera || (mpCamera as any).default?.Camera || (window as any).Camera;
+const mpPose: any = {};
+const mpDrawing: any = {};
+const mpCamera: any = {};
+
+const Pose = (mpPose as any).Pose || (window as any).Pose || class { setOptions() {}; onResults() {}; send() {}; close() {} };
+const POSE_CONNECTIONS = (mpPose as any).POSE_CONNECTIONS || (window as any).POSE_CONNECTIONS || [];
+const drawConnectors = (mpDrawing as any).drawConnectors || (window as any).drawConnectors || (() => {});
+const drawLandmarks = (mpDrawing as any).drawLandmarks || (window as any).drawLandmarks || (() => {});
+const Camera = (mpCamera as any).Camera || (window as any).Camera || class { start() {}; stop() {} };
+
+
 
 
 
