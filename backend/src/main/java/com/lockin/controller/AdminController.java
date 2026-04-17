@@ -79,6 +79,13 @@ public class AdminController {
                 .toList();
     }
 
+    @GetMapping("/users/all")
+    public List<com.lockin.model.dtos.RankingUserDTO> getAllRankedUsers() {
+        return userRepository.findAllByOrderBySeasonPointsDesc().stream()
+                .map(this::mapToRankingDTO)
+                .toList();
+    }
+
     @GetMapping("/leagues/{id}/players")
     public ResponseEntity<Object> getLeaguePlayers(@PathVariable Long id) {
         if (!leagueRepository.existsById(id)) {

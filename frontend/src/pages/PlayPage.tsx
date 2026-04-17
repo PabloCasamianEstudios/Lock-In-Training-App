@@ -111,7 +111,7 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
   const optionsArray = session?.lastOptions ? session.lastOptions.split('|') : [];
 
   return (
-    <div className="max-w-md mx-auto space-y-6 pb-24 relative p-4 bg-black overflow-y-auto">
+    <div className="max-w-md mx-auto space-y-8 pb-20 p-4">
       <AppHeader title="ADVENTURE" />
 
       <div className="flex flex-col gap-6">

@@ -59,7 +59,8 @@ const apiClient = async <T = any>(endpoint: string, { body, ...customConfig }: A
       console.error(`[API Response Error] ${url} (Status: ${response.status})`, data);
       const errorMessage = (typeof data === 'object' ? data.message || data.error : data) || response.statusText;
 
-      if ((response.status === 401 || response.status === 403) && !url.includes('/api/auth')) {
+      const isRankingCall = url.includes('/api/admin/users');
+      if ((response.status === 401 || response.status === 403) && !url.includes('/api/auth') && !isRankingCall) {
         console.warn('[API] Sesión caducada o acceso denegado. Cerrando sesión...');
         localStorage.removeItem('lockin_user');
         localStorage.removeItem('lockin_token');

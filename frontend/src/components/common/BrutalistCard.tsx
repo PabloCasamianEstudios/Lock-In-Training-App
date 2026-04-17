@@ -8,9 +8,6 @@ interface BrutalistCardProps {
   onClick?: () => void;
 }
 
-/**
- * Standard Brutalist Card with thick borders and project-specific shadows.
- */
 const BrutalistCard: FC<BrutalistCardProps> = ({ 
   children, 
   variant = 'white', 

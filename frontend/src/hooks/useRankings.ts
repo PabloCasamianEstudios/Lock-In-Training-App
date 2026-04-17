@@ -26,7 +26,7 @@ export const useRankings = (userId: number | undefined) => {
 
     const fetchGlobal = async () => {
       try {
-        return await rankingService.getTop10();
+        return await rankingService.getAll();
       } catch (e) {
         console.error('[Rankings] Global top10 failed:', e);
         return [];
