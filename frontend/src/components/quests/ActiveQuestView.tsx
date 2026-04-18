@@ -1,5 +1,5 @@
-import { useState, type FC, useEffect } from 'react';
-import { Timer, CheckCircle2, Trophy, Flame } from 'lucide-react';
+import { useState, type FC, useEffect, useMemo } from 'react';
+import { Timer, CheckCircle2, Square, CheckSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ActiveQuestViewProps {
@@ -10,6 +10,7 @@ interface ActiveQuestViewProps {
 
 const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdateProgress, onComplete }) => {
   const [seconds, setSeconds] = useState(0);
+  const [stepProgress, setStepProgress] = useState<Record<number, number>>({});
 
   useEffect(() => {
     const start = new Date(activeProgress.startTime).getTime();
@@ -27,8 +28,33 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
   };
 
   const quest = activeProgress.quest ?? {};
-  // steps may be under quest.steps (Spring JPA serialized) or not present at all
   const steps: any[] = quest.steps ?? [];
+
+  const getTarget = (step: any) => {
+    return (step.series ?? 1) * (step.repetitions || step.duration || 1);
+  };
+
+  const currentProgress = (index: number) => stepProgress[index] || 0;
+
+  const handleIncrement = (index: number, step: any) => {
+    const target = getTarget(step);
+    setStepProgress(prev => ({
+      ...prev,
+      [index]: Math.min(target, (prev[index] || 0) + 1)
+    }));
+  };
+
+  const handleDecrement = (index: number) => {
+    setStepProgress(prev => ({
+      ...prev,
+      [index]: Math.max(0, (prev[index] || 0) - 1)
+    }));
+  };
+
+  const allCompleted = useMemo(() => {
+    if (steps.length === 0) return true;
+    return steps.every((step, idx) => currentProgress(idx) >= getTarget(step));
+  }, [steps, stepProgress]);
 
   return (
     <div className="flex flex-col items-center justify-center p-4 min-h-[70vh]">
@@ -47,24 +73,53 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
           System-Generated Workout
         </p>
 
-        <div className="space-y-12 mb-12">
-          {steps.map((step: any, idx: number) => (
-            <div key={idx} className="flex flex-col gap-3 group">
-              <div className="flex justify-between items-end border-b-2 border-white/10 pb-1 group-hover:border-main transition-colors">
-                <span className="text-3xl font-black italic uppercase text-white tracking-tighter">
-                {step.exercise?.name ?? step.exerciseName ?? 'Exercise'}
-              </span>
-                <div className="flex flex-col items-end">
-                  <span className="text-[10px] font-bold text-white/40 uppercase">Target</span>
-                  <span className="text-2xl font-black italic text-main">{idx === 0 ? '1' : '0'} / {step.repetitions || step.duration}</span>
+        <div className="space-y-8 mb-12">
+          {steps.map((step: any, idx: number) => {
+            const target = getTarget(step);
+            const progress = currentProgress(idx);
+            const isCompleted = progress >= target;
+
+            return (
+              <div key={idx} className={`flex flex-col gap-3 group p-4 border-2 transition-colors ${isCompleted ? 'border-main bg-main/5' : 'border-white/10 hover:border-main/50'}`}>
+                <div className="flex justify-between items-center border-b-2 border-white/10 pb-2">
+                  <div className="flex items-center gap-3">
+                    {isCompleted ? (
+                      <CheckSquare className="w-8 h-8 text-main" />
+                    ) : (
+                      <Square className="w-8 h-8 text-white/40" />
+                    )}
+                    <span className={`text-2xl sm:text-3xl font-black italic uppercase tracking-tighter ${isCompleted ? 'text-main' : 'text-white'}`}>
+                      {step.exercise?.name ?? step.exerciseName ?? 'Exercise'}
+                    </span>
+                  </div>
+                  
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] font-bold text-white/40 uppercase">Progress</span>
+                    <span className={`text-2xl sm:text-3xl font-black italic ${isCompleted ? 'text-main' : 'text-white'}`}>
+                      {progress} <span className="text-lg text-white/50">/ {target}</span>
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex gap-2 mt-2">
+                  <button 
+                    onClick={() => handleDecrement(idx)}
+                    disabled={isCompleted && progress === target ? false : progress === 0}
+                    className="flex-1 bg-white/5 border-2 border-white/20 hover:border-red-500 hover:bg-red-500/10 p-3 text-xl font-black italic transition-all text-white/80 hover:text-red-500 disabled:opacity-30 flex items-center justify-center cursor-pointer shadow-[4px_4px_0px_transparent] hover:shadow-[4px_4px_0px_var(--red-500)] transform hover:-translate-y-1"
+                  >
+                    -
+                  </button>
+                  <button 
+                    onClick={() => handleIncrement(idx, step)}
+                    disabled={isCompleted}
+                    className="flex-[2] bg-white/5 border-2 border-white/20 hover:border-main hover:bg-main/10 p-3 text-xl font-black italic transition-all text-white/80 hover:text-main disabled:opacity-30 disabled:hover:border-white/20 disabled:hover:bg-white/5 disabled:hover:text-white/80 disabled:transform-none disabled:shadow-none flex items-center justify-center cursor-pointer shadow-[4px_4px_0px_transparent] hover:shadow-[4px_4px_0px_var(--main-color)] transform hover:-translate-y-1"
+                  >
+                    +
+                  </button>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <button className="flex-1 bg-white/5 border-2 border-white/20 hover:border-main hover:bg-main/10 p-3 text-xs font-black italic uppercase transition-all text-white/50 hover:text-white shadow-[4px_4px_0px_transparent] hover:shadow-[4px_4px_0px_var(--main-color)] transform hover:-translate-y-1">+1 {step.duration ? 'SEC' : 'REP'}</button>
-                <button className="flex-1 bg-white/5 border-2 border-white/20 hover:border-main hover:bg-main/10 p-3 text-xs font-black italic uppercase transition-all text-white/50 hover:text-white shadow-[4px_4px_0px_transparent] hover:shadow-[4px_4px_0px_var(--main-color)] transform hover:-translate-y-1">+5 {step.duration ? 'SEC' : 'REP'}</button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="text-center space-y-6">
@@ -80,7 +135,13 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
           
           <button 
             onClick={() => onComplete(activeProgress.id)}
-            className="w-full bg-main text-black font-black py-5 text-xl uppercase italic tracking-[0.3em] hover:bg-white transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-[8px_8px_0px_white] hover:shadow-[8px_8px_0px_var(--main-color)]"
+            disabled={!allCompleted}
+            className={`w-full font-black py-5 text-xl uppercase italic tracking-[0.3em] transition-all transform flex items-center justify-center gap-3
+              ${allCompleted 
+                ? 'bg-main text-black hover:bg-white hover:scale-[1.02] active:scale-[0.98] shadow-[8px_8px_0px_white] hover:shadow-[8px_8px_0px_var(--main-color)] cursor-pointer' 
+                : 'bg-white/10 text-white/30 border-2 border-white/20 cursor-not-allowed'
+              }
+            `}
           >
             COMPLETE ALL TASKS
           </button>

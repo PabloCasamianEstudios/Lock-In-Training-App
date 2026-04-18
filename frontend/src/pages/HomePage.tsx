@@ -21,6 +21,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
     username,
     profilePic,
     activeQuestsCount, 
+    dailyQuests,
     friends, 
     activity, 
     tips,
@@ -124,24 +125,32 @@ const HomePage: FC<PageProps> = ({ user }) => {
           >
             {activeTab === 'FEED' && (
               <div className="space-y-4">
-                {/* Featured Card */}
-                <div className="bg-black border-4 border-white p-6 relative overflow-hidden shadow-[10px_10px_0px_white]">
-                  <div className="absolute -top-10 -right-10 w-40 h-40 bg-main/10 rounded-full blur-3xl" />
-                  <h3 className="text-5xl font-black italic tracking-tighter text-white leading-none mb-4">LAUNCH!</h3>
-                  <div className="space-y-2 mb-6">
-                    <p className="text-sm text-white/60 leading-relaxed italic">
-                      texto de launch launch launch
-                    </p>
+                {dailyQuests.filter(q => !q.completed).map((quest, i) => (
+                  <div key={quest.id || i} className="bg-black border-4 border-white p-6 relative overflow-hidden shadow-[10px_10px_0px_white] group hover:border-main transition-colors">
+                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-main/5 text-main/5 rounded-full blur-3xl group-hover:bg-main/20 transition-all" />
+                    <h3 className="text-3xl font-black italic tracking-tighter text-white leading-none mb-2 uppercase group-hover:text-main transition-colors">{quest.title}</h3>
+                    <div className="space-y-2 mb-6">
+                      <p className="text-xs text-white/60 leading-relaxed italic uppercase font-bold">
+                        {quest.description || 'System-assigned daily protocol'}
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-end">
+                      <div className="flex gap-4">
+                        <span className="text-[10px] font-black text-main tracking-widest italic flex items-center gap-1">
+                          <Flame className="w-3 h-3" />
+                          EXP +{quest.xpReward}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-black text-white/30 tracking-widest italic">{quest.completedRepetitions || 0} / {quest.totalRepetitions || 1} REPS</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-end">
-                    <button className="button-neon !px-4 !py-2 !text-[10px] !shadow-[4px_4px_0px_white]">
-                      READ MORE
-                    </button>
-                    <span className="text-[10px] font-black text-white/30 tracking-widest italic">156/03</span>
-                  </div>
-                </div>
+                ))}
 
-                {/* Additional feed items could go here */}
+                {dailyQuests.filter(q => !q.completed).length === 0 && (
+                  <div className="text-center py-10 text-white/20 italic font-black uppercase tracking-widest border-2 border-dashed border-white/10">
+                    No pending daily protocol
+                  </div>
+                )}
               </div>
             )}
 

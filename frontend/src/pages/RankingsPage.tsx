@@ -7,7 +7,6 @@ import AppHeader from '../components/common/AppHeader';
 import BrutalistCard from '../components/common/BrutalistCard';
 import ProgressBar from '../components/common/ProgressBar';
 
-/* ── helpers ─────────────────────────────────────────── */
 const RANK_COLORS: Record<string, string> = {
   S: 'text-yellow-400',
   A: 'text-red-500',
@@ -35,7 +34,6 @@ const PODIUM_MEDAL = [
   { icon: Medal,  color: 'text-orange-600', size: 'w-5 h-5', label: '#3' },
 ];
 
-/* ── Avatar ─────────────────────────────────────────── */
 interface AvatarProps {
   src?: string;
   username: string;
@@ -50,7 +48,6 @@ const Avatar: FC<AvatarProps> = ({ src, username, size = 'w-14 h-14', className 
   </div>
 );
 
-/* ── Podium Card (top 3) ────────────────────────────── */
 interface PodiumCardProps {
   player: RankingUserDTO;
   position: 0 | 1 | 2;
@@ -76,7 +73,7 @@ const PodiumCard: FC<PodiumCardProps> = ({ player, position, isCurrentUser }) =>
           size={isCenter ? 'w-20 h-20' : 'w-14 h-14'}
           className={`border-2 ${isCurrentUser ? 'border-main' : 'border-white/60'}`}
         />
-        {isCenter && (
+        {isCurrentUser && (
           <span className="absolute -top-2 -right-2 w-5 h-5 bg-main flex items-center justify-center text-black text-[8px] font-black border border-black">
             YOU
           </span>
@@ -95,38 +92,53 @@ const PodiumCard: FC<PodiumCardProps> = ({ player, position, isCurrentUser }) =>
   );
 };
 
-/* ── Row entry (rank 4+) ────────────────────────────── */
+
 interface RankRowProps {
-  player: RankingUserDTO;
+  player: RankingUserDTO | null;
   position: number;
   isCurrentUser?: boolean;
+  onClick?: () => void;
 }
-const RankRow: FC<RankRowProps> = ({ player, position, isCurrentUser }) => (
-  <motion.div
-    initial={{ opacity: 0, x: -20 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ delay: (position - 3) * 0.05 }}
-    className={`flex items-center gap-3 p-3 border-b border-white/10 last:border-0 transition-colors
-      ${isCurrentUser ? 'bg-main/10 border-l-2 border-l-main' : 'hover:bg-white/5'}`}
-  >
-    <span className={`text-sm font-black italic w-6 text-right flex-shrink-0 ${isCurrentUser ? 'text-main' : 'text-white/40'}`}>
-      {position}
-    </span>
-    <Avatar src={player.profilePic} username={player.username} size="w-10 h-10" />
-    <div className="flex-1 min-w-0">
-      <p className="text-xs font-black text-white uppercase italic truncate">{player.username}</p>
-      <p className="text-[9px] italic text-white/30 truncate">"{player.title ?? 'the hunter'}"</p>
-    </div>
-    <div className="text-right flex-shrink-0">
-      <p className={`text-xs font-black uppercase ${rankColor(player.seasonRank)}`}>
-        RANK {player.seasonRank}
-      </p>
-      <p className="text-[10px] text-white/30">lv.{player.level}</p>
-    </div>
-  </motion.div>
-);
+const RankRow: FC<RankRowProps> = ({ player, position, isCurrentUser, onClick }) => {
+  if (!player) {
+    return (
+      <div className="flex items-center gap-3 p-3 border-b border-white/10 last:border-0 opacity-50">
+        <span className="text-sm font-black italic w-6 text-right flex-shrink-0 text-white/20">{position}</span>
+        <div className="w-10 h-10 rounded-full border-2 border-white/10 bg-zinc-900/50" />
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-black text-white/20 uppercase italic">---</p>
+        </div>
+      </div>
+    );
+  }
 
-/* ── Friend Row ─────────────────────────────────────── */
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: position * 0.05 }}
+      onClick={onClick}
+      className={`flex items-center gap-3 p-3 border-b border-white/10 last:border-0 transition-colors cursor-pointer
+        ${isCurrentUser ? 'bg-main/10 border-l-2 border-l-main' : 'hover:bg-white/5'}`}
+    >
+      <span className={`text-sm font-black italic w-6 text-right flex-shrink-0 ${isCurrentUser ? 'text-main' : 'text-white/40'}`}>
+        {position}
+      </span>
+      <Avatar src={player.profilePic} username={player.username} size="w-10 h-10" />
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-black text-white uppercase italic truncate">{player.username}</p>
+        <p className="text-[9px] italic text-white/30 truncate">"{player.title ?? 'the hunter'}"</p>
+      </div>
+      <div className="text-right flex-shrink-0">
+        <p className={`text-xs font-black uppercase ${rankColor(player.seasonRank)}`}>
+          RANK {player.seasonRank}
+        </p>
+        <p className="text-[10px] text-white/30">lv.{player.level}</p>
+      </div>
+    </motion.div>
+  );
+};
+
 interface FriendRowProps {
   friend: User;
   position: number;
@@ -160,7 +172,6 @@ const FriendRow: FC<FriendRowProps> = ({ friend, position }) => (
   </motion.div>
 );
 
-/* ── Empty state ─────────────────────────────────────── */
 const EmptyState: FC<{ message: string }> = ({ message }) => (
   <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
     <div className="relative">
@@ -171,7 +182,6 @@ const EmptyState: FC<{ message: string }> = ({ message }) => (
   </div>
 );
 
-/* ── Loading skeleton ────────────────────────────────── */
 const LoadingSkeleton = () => (
   <div className="space-y-3 animate-pulse">
     <div className="flex justify-around pt-4 pb-8">
@@ -197,8 +207,7 @@ const LoadingSkeleton = () => (
   </div>
 );
 
-/* ── Main Page ───────────────────────────────────────── */
-const RankingsPage: FC<PageProps> = ({ user }) => {
+const RankingsPage: FC<PageProps> = ({ user, onNavigate }) => {
   const { globalTop, friends, loading, activeTab, setActiveTab } = useRankings(user?.id);
   const currentUserId = user?.id;
 
@@ -208,11 +217,11 @@ const RankingsPage: FC<PageProps> = ({ user }) => {
     { id: 'YOUR_LEAGUE' as const, label: 'YOUR LEAGUE' },
   ];
 
-  /* sorted friends as RankingUserDTO-ish (already have seasonRank+level) */
   const sortedFriends = [...friends].sort((a, b) => (b.totalPoints ?? 0) - (a.totalPoints ?? 0));
 
   const podium  = globalTop.slice(0, 3);
-  const theRest = globalTop.slice(3);
+  
+  const top10 = Array.from({ length: 10 }, (_, i) => globalTop[i] || null);
 
   return (
     <div className="max-w-md mx-auto pb-24">
@@ -259,10 +268,10 @@ const RankingsPage: FC<PageProps> = ({ user }) => {
                   {/* reorder: 2nd | 1st | 3rd */}
                   <div className="flex items-end justify-around gap-2">
                     {[1, 0, 2].map(idx => {
-                      if (!podium[idx]) return <div key={idx} className="w-1/3" />;
+                      if (!podium[idx]) return <div key={`empty_${idx}`} className="w-1/3" />;
                       return (
                         <PodiumCard
-                          key={podium[idx].id}
+                          key={`podium_${podium[idx].id}_${idx}`}
                           player={podium[idx]}
                           position={idx as 0 | 1 | 2}
                           isCurrentUser={podium[idx].id === currentUserId}
@@ -273,18 +282,21 @@ const RankingsPage: FC<PageProps> = ({ user }) => {
                 </div>
 
                 {/* Rest of leaderboard */}
-                {theRest.length > 0 && (
-                  <BrutalistCard padding="p-0">
-                    {theRest.map((player, i) => (
-                      <RankRow
-                        key={player.id}
-                        player={player}
-                        position={i + 4}
-                        isCurrentUser={player.id === currentUserId}
-                      />
-                    ))}
-                  </BrutalistCard>
-                )}
+                <BrutalistCard padding="p-0">
+                  {top10.map((player, i) => (
+                    <RankRow
+                      key={player ? player.id : `empty_rank_${i}`}
+                      player={player}
+                      position={i + 1}
+                      isCurrentUser={player?.id === currentUserId}
+                      onClick={() => {
+                        if (player && onNavigate) {
+                          onNavigate('profile', { targetId: player.id });
+                        }
+                      }}
+                    />
+                  ))}
+                </BrutalistCard>
 
                 {/* Current user stats if they have points */}
                 {currentUserId && globalTop.find(p => p.id === currentUserId) && (

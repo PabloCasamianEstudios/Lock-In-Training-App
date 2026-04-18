@@ -25,6 +25,7 @@ export interface User {
   totalTrainingTime: number;
   achievedChallenges: number;
   imc?: number;
+  isGuest?: boolean;
 }
 
 export interface SurveyData {
@@ -53,6 +54,9 @@ export interface Quest {
   goldReward: number;
   xpReward: number;
   steps?: QuestStep[];
+  completed?: boolean;
+  completedRepetitions?: number;
+  totalRepetitions?: number;
 }
 
 export interface QuestStep {
@@ -109,6 +113,8 @@ export interface PlayerProfile {
   stats?: PlayerStats;
   username?: string;
   biometria?: Record<string, unknown>;
+  profilePic?: string;
+  seasonRank?: string;
 }
 
 export interface AppUser {
@@ -123,8 +129,9 @@ export interface AppUser {
 export interface PageProps {
   user?: AppUser | null;
   profile?: PlayerProfile | null;
-  onNavigate?: (tab: string) => void;
+  onNavigate?: (tab: string, params?: any) => void;
   onLogout?: () => void;
+  targetId?: number;
 }
 
 export interface DailyQuestDTO {

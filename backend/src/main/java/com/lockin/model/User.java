@@ -29,6 +29,7 @@ public class User {
     private LocalDateTime registrationDate = LocalDateTime.now();
 
     // --- PROGRESSION ZONE ---
+    private LocalDate lastLoginDate;
     private int streak = 0;
     private long totalPoints = 0;
     private long seasonPoints = 0;

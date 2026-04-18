@@ -8,9 +8,11 @@ export const userService = {
     return data;
   },
 
-  getUserProfile: async (id: number): Promise<User> => {
+  getUserProfile: async (id: number, saveLocal: boolean = true): Promise<User> => {
     const data = await apiClient<User>(`/api/user/${id}`);
-    localStorage.setItem('lockin_profile', JSON.stringify(data));
+    if (saveLocal) {
+      localStorage.setItem('lockin_profile', JSON.stringify(data));
+    }
     return data;
   }
 };

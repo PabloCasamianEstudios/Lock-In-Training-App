@@ -131,6 +131,10 @@ public class UserController {
 
         // Muestras: todas las quests diarias definidas en DB.
         List<com.lockin.model.Quest> dailyQuests = questRepository.findByType(com.lockin.model.Quest.QuestType.DAILY);
+        java.util.Collections.shuffle(dailyQuests, new java.util.Random(LocalDate.now().toEpochDay()));
+        if (dailyQuests.size() > 3) {
+            dailyQuests = dailyQuests.subList(0, 3);
+        }
 
         List<Map<String, Object>> response = new ArrayList<>();
 

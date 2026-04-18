@@ -65,6 +65,24 @@ export const questService = {
   },
 
   /**
+   * Creates a custom user quest.
+   * Path: /api/quests/custom
+   */
+  createCustomQuest: async (userId: number, data: any): Promise<any> => {
+    return await apiClient(`/api/quests/custom`, { 
+      method: 'POST', 
+      body: JSON.stringify(data)
+    });
+  },
+
+  /**
+   * Fetches global CUSTOM quests.
+   */
+  getGlobalCustomQuests: async (): Promise<Quest[]> => {
+    return await apiClient(`/api/quests/custom/all`);
+  },
+
+  /**
    * Fetches custom quests of a friend.
    * Path: /api/quests/friends/{targetUserId}/custom?requesterId={userId}
    */

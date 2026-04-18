@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class UserService {
 
@@ -47,6 +49,21 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            LocalDate today = LocalDate.now();
+            if (user.getLastLoginDate() == null) {
+                user.setStreak(1);
+                user.setLastLoginDate(today);
+                userRepository.save(user);
+            } else if (!user.getLastLoginDate().equals(today)) {
+                if (user.getLastLoginDate().plusDays(1).equals(today)) {
+                    user.setStreak(user.getStreak() + 1);
+                } else {
+                    user.setStreak(1);
+                }
+                user.setLastLoginDate(today);
+                userRepository.save(user);
+            }
+
             String token = jwtUtils.generateJwtToken(user.getEmail(), user.getRole());
             
             java.util.Map<String, Object> response = new java.util.HashMap<>();

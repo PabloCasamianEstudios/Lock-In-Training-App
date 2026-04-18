@@ -1,15 +1,15 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { useStreak } from './useStreak';
+import { useState, useEffect, useCallback } from 'react';
 import { userService } from '../services/userService';
 import { questService } from '../services/questService';
 import { socialService } from '../services/socialService';
 import { adminService, Tip } from '../services/adminService';
-import { User } from '../types';
+import { User, Quest } from '../types';
 
 interface HomeData {
   username: string;
   profilePic: string | null;
   activeQuestsCount: number;
+  dailyQuests: Quest[];
   friends: User[];
   activity: any[];
   tips: Tip[];
@@ -22,15 +22,11 @@ interface HomeData {
 }
 
 export const useHomeData = (userId: number | undefined) => {
-  const localStreak = useStreak();
-  // Use a ref so fetchData can read the latest streak value without it being a dep
-  const streakRef = useRef(localStreak);
-  useEffect(() => { streakRef.current = localStreak; }, [localStreak]);
-
   const [data, setData] = useState<HomeData>({
     username: 'HUNTER',
     profilePic: null,
     activeQuestsCount: 0,
+    dailyQuests: [],
     friends: [],
     activity: [],
     tips: [],
@@ -60,11 +56,11 @@ export const useHomeData = (userId: number | undefined) => {
         }
       };
 
-      const fetchActiveQuests = async () => {
+      const fetchDailies = async () => {
         try {
-          return await questService.getActiveQuests(userId);
+          return await questService.getDailyQuests(userId);
         } catch (e) {
-          console.error('[API Failure] Active Quests:', e);
+          console.error('[API Failure] Daily Quests:', e);
           return [];
         }
       };
@@ -96,9 +92,9 @@ export const useHomeData = (userId: number | undefined) => {
         }
       };
 
-      const [profile, activeQuests, friends, activity, fetchedTips] = await Promise.all([
+      const [profile, dailyQuests, friends, activity, fetchedTips] = await Promise.all([
         fetchProfile(),
-        fetchActiveQuests(),
+        fetchDailies(),
         fetchFriends(),
         fetchActivity(),
         fetchTips(),
@@ -110,17 +106,20 @@ export const useHomeData = (userId: number | undefined) => {
         { id: 3, title: 'Hydration', description: 'Drink water during workouts to avoid fatigue.' },
       ];
 
-      const finalTips =
-        Array.isArray(fetchedTips) && fetchedTips.length > 0 ? fetchedTips : defaultTips;
+      const finalTips = Array.isArray(fetchedTips) && fetchedTips.length > 0 ? fetchedTips : defaultTips;
+
+      const validDailies = Array.isArray(dailyQuests) ? dailyQuests : [];
+      const pendingDailies = validDailies.filter(q => !q.completed);
 
       setData({
         username: profile?.username || 'HUNTER',
         profilePic: profile?.profilePic || null,
-        activeQuestsCount: Array.isArray(activeQuests) ? activeQuests.length : 0,
+        activeQuestsCount: pendingDailies.length,
+        dailyQuests: validDailies,
         friends: Array.isArray(friends) ? friends : [],
         activity: Array.isArray(activity) ? activity : [],
         tips: finalTips,
-        streak: streakRef.current,
+        streak: profile?.streak || 0,
         level: profile?.level || 1,
         xp: profile?.xp || 0,
         seasonRank: profile?.seasonRank || 'E',
@@ -131,7 +130,6 @@ export const useHomeData = (userId: number | undefined) => {
       console.error('[Critical Error] useHomeData:', err);
       setData(prev => ({ ...prev, loading: false, error: 'Error crítico de conexión' }));
     }
-  // localStreak intentionally excluded from deps – accessed via ref to avoid refetch loops
   }, [userId]);
 
   useEffect(() => {

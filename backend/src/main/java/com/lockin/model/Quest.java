@@ -34,6 +34,6 @@ public class Quest {
     private List<QuestStep> steps;
 
     public enum QuestType {
-        DAILY, STORY, SIDE, CUSTOM
+        DAILY, STORY, SIDE, CUSTOM, SYSTEM
     }
 }
