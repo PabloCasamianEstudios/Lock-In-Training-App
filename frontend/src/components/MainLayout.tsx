@@ -9,7 +9,7 @@ import QuestsPage from '../pages/QuestsPage';
 import PlayPage from '../pages/PlayPage';
 import RankingsPage from '../pages/RankingsPage';
 import ProfilePage from '../pages/ProfilePage';
-import AdminPage from '@/pages/AdminPage';
+import AdminPage from '../pages/AdminPage';
 import WorkoutCameraPage from '../pages/WorkoutCameraPage';
 
 interface Tab {

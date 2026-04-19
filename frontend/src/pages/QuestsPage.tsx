@@ -1,36 +1,71 @@
 import { useState, type FC, useMemo } from 'react';
 import { useQuests } from '../hooks/useQuests';
-import { Plus, Search, Zap, Coins } from 'lucide-react';
-import type { PageProps } from '../types';
+import { Plus, Search, Zap, Coins, Info, AlertTriangle, Trophy } from 'lucide-react';
+import type { PageProps, Quest } from '../types';
 import CreateQuestModal from '../components/quests/CreateQuestModal';
 import ActiveQuestView from '../components/quests/ActiveQuestView';
 import AppHeader from '../components/common/AppHeader';
+import PopupWindow from '../components/common/PopupWindow';
+import BrutalistCard from '../components/common/BrutalistCard';
 
 interface QuestsPageProps extends PageProps {
   onNavigate?: (tab: string, params?: any) => void;
 }
 
 const QuestsPage: FC<QuestsPageProps> = ({ user, onNavigate }) => {
-  const { quests, activeQuest, loading, error, startQuest, completeQuest, createCustomQuest, updateCustomQuest, deleteCustomQuest, getCustomQuests } = useQuests(user?.id ?? null);
+  const { quests, activeQuest, loading, error, startQuest, cancelQuest, completeQuest, createCustomQuest, updateCustomQuest, deleteCustomQuest, getCustomQuests } = useQuests(user?.id ?? null);
   const [activeSubTab, setActiveSubTab] = useState<'ALL' | 'DAILY' | 'ACTIVE' | 'YOURS'>('ALL');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuest, setEditingQuest] = useState<any | null>(null);
+  const [systemPopup, setSystemPopup] = useState<{ 
+    isOpen: boolean; 
+    title: string; 
+    message?: string; 
+    type: 'INFO' | 'WARNING' | 'DANGER' | 'REWARDS'; 
+    onConfirm?: () => void;
+    rewards?: { gold: number; xp: number }
+  } | null>(null);
+
+  const closePopup = () => setSystemPopup(null);
 
   const customQuests = useMemo(() => getCustomQuests(), [getCustomQuests]);
 
-  const allQuestsCount = quests.length + customQuests.length;
-  const dailyQuestsCount = quests.length;
-  const activeQuestsCount = activeQuest ? 1 : 0;
+  const dailyQuests = useMemo(() => quests.filter(q => !q.completed), [quests]);
+  const allQuestsCount = dailyQuests.length + customQuests.length;
+  const dailyQuestsCount = dailyQuests.length;
   const yoursQuestsCount = customQuests.length;
+  const activeQuestsCount = activeQuest ? 1 : 0;
+
+  const handleCompleteQuest = async (id: number) => {
+    try {
+      const rewards: any = await completeQuest(id);
+      setSystemPopup({
+        isOpen: true,
+        title: 'PROTOCOL SUCCESSFUL',
+        type: 'REWARDS',
+        rewards: {
+          gold: rewards?.goldReward || 0,
+          xp: rewards?.xpReward || 0
+        }
+      });
+    } catch (err: any) {
+      setSystemPopup({
+        isOpen: true,
+        title: 'SYNC ERROR',
+        message: err.message || 'FAILED TO UPLOAD DATA TO COLISEUM.',
+        type: 'DANGER'
+      });
+    }
+  };
 
   const filteredQuests = useMemo(() => {
     switch (activeSubTab) {
-      case 'DAILY': return quests;
+      case 'DAILY': return dailyQuests;
       case 'YOURS': return customQuests;
-      case 'ALL': return [...quests, ...customQuests];
+      case 'ALL': return [...dailyQuests, ...customQuests];
       default: return [];
     }
-  }, [activeSubTab, quests, customQuests]);
+  }, [activeSubTab, dailyQuests, customQuests]);
 
   if (loading) return <div className="p-10 text-main animate-pulse font-black uppercase text-xl text-center mt-20">INITIALIZING QUEST PROTOCOL...</div>;
   if (error) return <div className="p-10 text-red-500 uppercase font-black text-center mt-20 border-4 border-red-500 bg-red-500/10">Error: {error}</div>;
@@ -66,7 +101,16 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, onNavigate }) => {
             <ActiveQuestView 
               activeProgress={activeQuest} 
               onUpdateProgress={() => {}} 
-              onComplete={(pid) => completeQuest(pid)} 
+              onComplete={(pid) => handleCompleteQuest(pid)} 
+              onCancel={(pid) => {
+                setSystemPopup({
+                  isOpen: true,
+                  title: 'ABORT PROTOCOL',
+                  message: 'ARE YOU SURE YOU WANT TO TERMINATE THIS MISSION? ALL CURRENT EXPERIMENT DATA WILL BE PURGED.',
+                  type: 'DANGER',
+                  onConfirm: () => cancelQuest(pid)
+                });
+              }}
             />
           ) : (
             <div className="text-center py-20 text-white/20 font-black italic uppercase tracking-widest border-2 border-dashed border-white/10">
@@ -112,7 +156,13 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, onNavigate }) => {
                         <button 
                           onClick={(e) => {
                             e.stopPropagation();
-                            if(confirm('Are you sure you want to delete this quest?')) deleteCustomQuest(quest.id);
+                            setSystemPopup({
+                              isOpen: true,
+                              title: 'PURGE PROTOCOL',
+                              message: 'YOU ARE ABOUT TO DELETE THIS QUEST. THIS ACTION CANNOT BE UNDONE. PROCEED?',
+                              type: 'DANGER',
+                              onConfirm: () => deleteCustomQuest(quest.id)
+                            });
                           }}
                           className="hover:text-red-500 text-white/40 transition-colors"
                         >
@@ -151,8 +201,22 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, onNavigate }) => {
 
                     <button 
                       onClick={() => {
-                        if (!activeQuest) startQuest(quest.id || quest.questId);
-                        else alert("You can only have one active quest!");
+                        if (!activeQuest) {
+                          setSystemPopup({
+                            isOpen: true,
+                            title: 'INITIALIZE PROTOCOL',
+                            message: 'ARE YOU READY TO COMMIT? THIS WILL LOCK YOUR ACTIVE QUEST SLOT UNTIL COMPLETION OR FAILURE.',
+                            type: 'INFO',
+                            onConfirm: () => startQuest(quest.id || quest.questId)
+                          });
+                        } else {
+                          setSystemPopup({
+                            isOpen: true,
+                            title: 'SYSTEM OVERLOAD',
+                            message: 'ONLY ONE ACTIVE QUEST IS PERMITTED. COMPLETE OR FAIL THE CURRENT PROTOCOL FIRST.',
+                            type: 'WARNING'
+                          });
+                        }
                       }}
                       className="bg-white text-black font-black text-xs px-4 py-2 transform -skew-x-12 hover:bg-main hover:text-white transition-all border-2 border-black"
                     >
@@ -185,6 +249,85 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, onNavigate }) => {
         initialData={editingQuest}
         onUpdate={(id, data) => updateCustomQuest(id, data)}
       />
+
+      <PopupWindow
+        isOpen={!!systemPopup?.isOpen}
+        onClose={closePopup}
+        title={systemPopup?.title}
+        maxWidth={systemPopup?.type === 'REWARDS' ? 'max-w-xs' : 'max-w-sm'}
+      >
+        <div className="flex flex-col items-center text-center space-y-6">
+          {systemPopup?.type === 'REWARDS' ? (
+            <>
+              <div className="w-20 h-20 bg-main flex items-center justify-center rounded-sm transform rotate-12 shadow-[8px_8px_0px_white]">
+                <Trophy className="w-12 h-12 text-black -rotate-12" />
+              </div>
+              
+              <div className="space-y-4 w-full">
+                <div className="bg-white/5 border-2 border-white/10 p-4 transform -skew-x-6 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Zap className="w-6 h-6 text-main" />
+                    <span className="font-black italic uppercase text-xs tracking-widest text-white/50">Experience</span>
+                  </div>
+                  <span className="text-2xl font-black text-main">+{systemPopup.rewards?.xp}</span>
+                </div>
+
+                <div className="bg-white/5 border-2 border-white/10 p-4 transform -skew-x-6 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Coins className="w-6 h-6 text-yellow-500" />
+                    <span className="font-black italic uppercase text-xs tracking-widest text-white/50">Coins Gained</span>
+                  </div>
+                  <span className="text-2xl font-black text-yellow-500">+{systemPopup.rewards?.gold}</span>
+                </div>
+              </div>
+
+              <button 
+                onClick={closePopup}
+                className="w-full py-4 bg-white text-black font-black uppercase italic tracking-widest hover:bg-main transition-all"
+              >
+                COLLECT & CONTINUE
+              </button>
+            </>
+          ) : (
+            <>
+              <div className={`p-4 rounded-full ${systemPopup?.type === 'DANGER' ? 'bg-red-500/20 text-red-500' : 'bg-main/20 text-main'}`}>
+                {systemPopup?.type === 'DANGER' ? <AlertTriangle className="w-12 h-12" /> : <Info className="w-12 h-12" />}
+              </div>
+              <p className="text-xs font-black uppercase italic tracking-widest text-white/70 leading-relaxed">
+                {systemPopup?.message}
+              </p>
+              <div className="flex gap-4 w-full">
+                {systemPopup?.onConfirm ? (
+                  <>
+                    <button 
+                      onClick={closePopup}
+                      className="flex-1 py-3 border-2 border-white/20 text-[10px] font-black uppercase italic hover:bg-white/10 transition-all"
+                    >
+                      ABORT
+                    </button>
+                    <button 
+                      onClick={() => {
+                        systemPopup.onConfirm?.();
+                        closePopup();
+                      }}
+                      className="flex-1 py-3 bg-red-600 text-black text-[10px] font-black uppercase italic hover:bg-red-500 transition-all"
+                    >
+                      CONFIRM
+                    </button>
+                  </>
+                ) : (
+                  <button 
+                    onClick={closePopup}
+                    className="w-full py-3 bg-main text-black text-[10px] font-black uppercase italic"
+                  >
+                    ACKNOWLEDGED
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </PopupWindow>
     </div>
   );
 };

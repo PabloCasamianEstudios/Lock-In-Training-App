@@ -108,13 +108,13 @@ export const useHomeData = (userId: number | undefined) => {
 
       const finalTips = Array.isArray(fetchedTips) && fetchedTips.length > 0 ? fetchedTips : defaultTips;
 
-      const validDailies = Array.isArray(dailyQuests) ? dailyQuests : [];
-      const pendingDailies = validDailies.filter(q => !q.completed);
+      const validDailies = Array.isArray(dailyQuests) ? dailyQuests.slice(0, 1) : [];
+      const completedDailies = validDailies.filter(q => q.completed).length;
 
       setData({
         username: profile?.username || 'HUNTER',
         profilePic: profile?.profilePic || null,
-        activeQuestsCount: pendingDailies.length,
+        activeQuestsCount: completedDailies,
         dailyQuests: validDailies,
         friends: Array.isArray(friends) ? friends : [],
         activity: Array.isArray(activity) ? activity : [],

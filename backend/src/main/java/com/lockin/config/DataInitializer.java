@@ -20,15 +20,21 @@ public class DataInitializer {
                 admin.setEmail(adminEmail);
                 admin.setPassword(passwordEncoder.encode("123456"));
                 admin.setRole("ADMIN");
-                
+
                 // Valores por defecto adicionales para evitar nulos si es necesario
                 admin.setRank("S");
                 admin.setLevel(100);
-                
+
                 userRepository.save(admin);
                 System.out.println(">>> Usuario administrador creado por defecto: " + adminEmail);
             } else {
-                System.out.println(">>> El usuario administrador ya existe: " + adminEmail);
+                userRepository.findByEmail(adminEmail).ifPresent(u -> {
+                    if (!"ADMIN".equals(u.getRole())) {
+                        u.setRole("ADMIN");
+                        userRepository.save(u);
+                        System.out.println(">>> Rol ADMIN restaurado para el administrador existente.");
+                    }
+                });
             }
         };
     }

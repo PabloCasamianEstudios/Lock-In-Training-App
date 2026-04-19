@@ -248,4 +248,16 @@ public class UserQuestController {
             return ResponseEntity.badRequest().body("Error al eliminar la misión: " + e.getMessage());
         }
     }
+    @DeleteMapping("/progress/{progressId}")
+    public ResponseEntity<Object> cancelQuest(@PathVariable Long progressId) {
+        try {
+            if (!progressRepository.existsById(progressId)) {
+                return ResponseEntity.status(404).body("Progreso no encontrado");
+            }
+            progressRepository.deleteById(progressId);
+            return ResponseEntity.ok("Misión cancelada correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al cancelar la misión: " + e.getMessage());
+        }
+    }
 }

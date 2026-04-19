@@ -1,5 +1,6 @@
 import { useState, useEffect, type FC, type ChangeEvent } from 'react';
-import { ChevronDown, ChevronRight, Trash2, Database, RefreshCw } from 'lucide-react';
+import { ChevronDown, ChevronRight, Trash2, Database, RefreshCw, AlertTriangle, CheckCircle } from 'lucide-react';
+import PopupWindow from '../components/common/PopupWindow';
 
 const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
 
@@ -411,6 +412,9 @@ interface Entity {
 const AdminPage: FC = () => {
   const [selectedEntity, setSelectedEntity] = useState<string>('users');
   const [globalData, setGlobalData] = useState<any[]>([]);
+  const [systemPopup, setSystemPopup] = useState<{ isOpen: boolean; title: string; message: string; type: 'INFO' | 'DANGER'; onConfirm?: () => void } | null>(null);
+
+  const closePopup = () => setSystemPopup(null);
 
   const entities: Entity[] = [
     { id: 'users', name: 'Users' },
@@ -429,7 +433,16 @@ const AdminPage: FC = () => {
   ];
 
   const handleDeleteQuick = async (id: number): Promise<void> => {
-    if (!window.confirm('Are you sure you want to delete this record?')) return;
+    setSystemPopup({
+      isOpen: true,
+      title: 'CONFIRM DELETION',
+      message: `ARE YOU SURE YOU WANT TO DELETE RECORD #${id} FROM ${selectedEntity.toUpperCase()}? THIS ACTION IS IRREVERSIBLE.`,
+      type: 'DANGER',
+      onConfirm: () => performDelete(id)
+    });
+  };
+
+  const performDelete = async (id: number): Promise<void> => {
     const token = localStorage.getItem('lockin_token');
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/${selectedEntity}/${id}`, {
@@ -437,7 +450,12 @@ const AdminPage: FC = () => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
-        alert('Deleted successfully. Refresh "List all" to see changes in the table.');
+        setSystemPopup({
+          isOpen: true,
+          title: 'PURGE COMPLETE',
+          message: 'THE RECORD HAS BEEN PERMANENTLY REMOVED FROM THE DATABASE.',
+          type: 'INFO'
+        });
       }
     } catch (error) {
       console.error('Error deleting record:', error);
@@ -716,6 +734,55 @@ const AdminPage: FC = () => {
           </div>
         </div>
       </div>
+      <PopupWindow
+        isOpen={!!systemPopup?.isOpen}
+        onClose={closePopup}
+        title={systemPopup?.title}
+        maxWidth="max-w-sm"
+      >
+        <div className="flex flex-col items-center text-center space-y-6 pt-2">
+          <div className={`p-4 rounded-sm transform rotate-45 border-2 ${systemPopup?.type === 'DANGER' ? 'border-red-500 bg-red-500/10' : 'border-main bg-main/10'}`}>
+            <div className="-rotate-45">
+              {systemPopup?.type === 'DANGER' ? <AlertTriangle className="w-10 h-10 text-red-500" /> : <CheckCircle className="w-10 h-10 text-main" />}
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <p className="text-[10px] font-black uppercase italic tracking-widest text-white/70 leading-relaxed font-mono">
+              {systemPopup?.message}
+            </p>
+          </div>
+
+          <div className="flex gap-4 w-full pt-4">
+            {systemPopup?.onConfirm ? (
+              <>
+                <button 
+                  onClick={closePopup}
+                  className="flex-1 py-3 border-2 border-white/20 text-[10px] font-black uppercase italic hover:bg-white/10 transition-all font-mono"
+                >
+                  ABORT
+                </button>
+                <button 
+                  onClick={() => {
+                    systemPopup.onConfirm?.();
+                    closePopup();
+                  }}
+                  className="flex-1 py-3 bg-red-600 text-black text-[10px] font-black uppercase italic hover:bg-red-500 transition-all"
+                >
+                  CONFIRM
+                </button>
+              </>
+            ) : (
+              <button 
+                onClick={closePopup}
+                className="w-full py-3 bg-main text-black text-[10px] font-black uppercase italic"
+              >
+                CLOSE TERMINAL
+              </button>
+            )}
+          </div>
+        </div>
+      </PopupWindow>
     </div>
   );
 };

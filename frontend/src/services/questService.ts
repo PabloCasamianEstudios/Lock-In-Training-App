@@ -55,6 +55,10 @@ export const questService = {
     return await apiClient(`/api/quests/progress/${progressId}/complete`, { method: 'POST' });
   },
 
+  cancelQuest: async (progressId: number): Promise<any> => {
+    return await apiClient(`/api/quests/progress/${progressId}`, { method: 'DELETE' });
+  },
+
   /**
    * Fetches all quest activity (progress history) for a user.
    * Path: /api/user/{id}/quests

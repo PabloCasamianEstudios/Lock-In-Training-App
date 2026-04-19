@@ -16,9 +16,13 @@ import java.util.List;
 @Service
 public class ProtectionService {
 
-    @Autowired private UserActivityLogRepository activityLogRepository;
-    @Autowired private UserRepository userRepository;
-    @Lazy @Autowired private ProtectionService self; // Self-injection for proxying transactions
+    @Autowired
+    private UserActivityLogRepository activityLogRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Lazy
+    @Autowired
+    private ProtectionService self; // Self-injection for proxying transactions
 
     // --- CONFIGURABLE THRESHOLDS ---
     private static final int MAX_QUESTS_PER_MINUTE = 3;
@@ -27,7 +31,8 @@ public class ProtectionService {
 
     @Transactional
     public void logActivity(User user, UserActivityLog.ActivityType type, double amount, String metadata) {
-        if ("MUTE".equals(user.getRole())) return; // Already banned
+        if ("MUTE".equals(user.getRole()))
+            return; // Already banned
 
         UserActivityLog log = new UserActivityLog();
         log.setUser(user);
@@ -41,10 +46,11 @@ public class ProtectionService {
     }
 
     public void validateQuestSpeed(UserQuestProgress progress) {
-        if (progress.getCompletionTime() == null || progress.getStartTime() == null) return;
+        if (progress.getCompletionTime() == null || progress.getStartTime() == null)
+            return;
 
         long durationSeconds = Duration.between(progress.getStartTime(), progress.getCompletionTime()).getSeconds();
-        
+
         if (durationSeconds < MIN_QUEST_DURATION_SECONDS) {
             self.muteUser(progress.getUser(), "Misión completada de forma instantánea (" + durationSeconds + "s)");
             throw new RuntimeException("Actividad sospechosa detectada. Proceso de integridad activado.");
@@ -58,7 +64,8 @@ public class ProtectionService {
         switch (type) {
             case QUEST_COMPLETED:
                 List<UserActivityLog> recentQuests = activityLogRepository
-                    .findByTypeAndUserIdAndTimestampAfter(UserActivityLog.ActivityType.QUEST_COMPLETED, user.getId(), oneMinuteAgo);
+                        .findByTypeAndUserIdAndTimestampAfter(UserActivityLog.ActivityType.QUEST_COMPLETED,
+                                user.getId(), oneMinuteAgo);
                 if (recentQuests.size() > MAX_QUESTS_PER_MINUTE) {
                     self.muteUser(user, "Exceso de misiones completadas (" + recentQuests.size() + " en 1min)");
                 }
@@ -66,12 +73,13 @@ public class ProtectionService {
 
             case LEVEL_UP:
                 List<UserActivityLog> recentLevels = activityLogRepository
-                    .findByTypeAndUserIdAndTimestampAfter(UserActivityLog.ActivityType.LEVEL_UP, user.getId(), fiveMinutesAgo);
+                        .findByTypeAndUserIdAndTimestampAfter(UserActivityLog.ActivityType.LEVEL_UP, user.getId(),
+                                fiveMinutesAgo);
                 if (recentLevels.size() > MAX_LEVELS_PER_5_MINUTES) {
                     self.muteUser(user, "Subida de nivel masiva detectada (" + recentLevels.size() + " en 5min)");
                 }
                 break;
-                
+
             default:
                 break;
         }
@@ -79,7 +87,10 @@ public class ProtectionService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void muteUser(User user, String reason) {
-        System.err.println("ALERT [ANTI-CHEAT]: Muting user " + user.getUsername() + " (ID: " + user.getId() + ") for: " + reason);
+        if ("ADMIN".equals(user.getRole())) return;
+        
+        System.err.println(
+                "ALERT [ANTI-CHEAT]: Muting user " + user.getUsername() + " (ID: " + user.getId() + ") for: " + reason);
         user.setRole("MUTE");
         userRepository.save(user);
     }

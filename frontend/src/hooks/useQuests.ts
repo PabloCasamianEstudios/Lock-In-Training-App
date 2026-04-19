@@ -27,7 +27,7 @@ export const useQuests = (userId: number | null) => {
       });
 
       const [daily, active, globalCustom] = await Promise.all([dailyPromise, activePromise, customPromise]);
-      setQuests(daily || []);
+      setQuests(Array.isArray(daily) ? daily.slice(0, 1) : []);
       setCustomQuests(globalCustom || []);
 
 
@@ -129,6 +129,19 @@ export const useQuests = (userId: number | null) => {
     }
   };
 
+  const cancelQuest = async (progressId: number) => {
+    setLoading(true);
+    try {
+      await questService.cancelQuest(progressId);
+      await fetchData();
+    } catch (err: any) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getCustomQuests = useCallback(() => {
     return customQuests;
   }, [customQuests]);
@@ -145,10 +158,10 @@ export const useQuests = (userId: number | null) => {
     fetchQuests: fetchData, 
     startQuest, 
     completeQuest,
+    cancelQuest,
     createCustomQuest,
     updateCustomQuest,
     deleteCustomQuest,
     getCustomQuests
   };
 };
-

@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/admin/moderation")
 public class AdminModeratorController {
 
-    @Autowired private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/muted")
     public List<User> getMutedUsers() {

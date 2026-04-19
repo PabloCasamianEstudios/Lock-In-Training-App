@@ -1,14 +1,15 @@
 import { useState, type FC, useEffect, useMemo } from 'react';
-import { Timer, CheckCircle2, Square, CheckSquare } from 'lucide-react';
+import { Timer, CheckCircle2, Square, CheckSquare, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ActiveQuestViewProps {
   activeProgress: any;
   onUpdateProgress: (progressId: number, data: any) => void;
   onComplete: (progressId: number) => void;
+  onCancel: (progressId: number) => void;
 }
 
-const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdateProgress, onComplete }) => {
+const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdateProgress, onComplete, onCancel }) => {
   const [seconds, setSeconds] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
   const [stepProgress, setStepProgress] = useState<Record<number, number>>({});
@@ -66,6 +67,14 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-xl border-[6px] border-white bg-black p-8 shadow-[20px_20px_0px_white] relative"
       >
+        <button 
+          onClick={() => onCancel(activeProgress.id)}
+          className="absolute top-4 right-4 p-2 bg-red-500/10 text-red-500 border-2 border-red-500/20 hover:bg-red-500 hover:text-white transition-all z-10"
+          title="Abort Protocol"
+        >
+          <X className="w-6 h-6" />
+        </button>
+
         <div className="flex items-center gap-4 mb-2">
           <div className="bg-main p-2 transform -skew-x-12">
             <CheckCircle2 className="w-8 h-8 text-black" />

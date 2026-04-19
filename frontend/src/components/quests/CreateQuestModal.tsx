@@ -1,6 +1,7 @@
 import { useState, type FC, useEffect } from 'react';
-import { X, Plus, Trash2, Dumbbell, Timer } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Trash2 } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import PopupWindow from '../common/PopupWindow';
 
 interface ExerciseOption {
   id: string;
@@ -29,8 +30,6 @@ interface CreateQuestModalProps {
 const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate, initialData, onUpdate }) => {
   const [title, setTitle] = useState('');
   const [exercises, setExercises] = useState<any[]>([{ name: MOCKED_EXERCISES[0].name, type: MOCKED_EXERCISES[0].type, value: 10 }]);
-
- 
 
   useEffect(() => {
     if (initialData) {
@@ -88,109 +87,95 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="system-card w-full max-w-lg max-h-[90vh] overflow-y-auto"
-      >
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
-        >
-          <X className="w-6 h-6" />
-        </button>
+    <PopupWindow
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`${initialData ? 'EDIT' : 'NEW'} QUEST PROTOCOL`}
+      maxWidth="max-w-md"
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-2">
+          <label className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Quest Title</label>
+          <input 
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="E.G. MORNING GRIND"
+            className="input-neon text-sm"
+            required
+          />
+        </div>
 
-        <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white mb-8 border-b-4 border-main pb-2">
-          {initialData ? 'EDIT' : 'NEW'} <span className="text-main">QUEST</span>
-        </h2>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Quest Title</label>
-            <input 
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="E.G. MORNING GRIND"
-              className="input-neon"
-              required
-            />
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <label className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Exercises</label>
-              <button 
-                type="button"
-                onClick={addExercise}
-                className="flex items-center gap-1 text-[10px] font-black uppercase text-main hover:text-white transition-colors"
-              >
-                <Plus className="w-3 h-3" /> ADD
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              <AnimatePresence>
-                {exercises.map((ex, index) => (
-                  <motion.div 
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    className="flex gap-2 items-center"
-                  >
-                    <div className="flex-1 grid grid-cols-2 gap-2">
-                      <select 
-                        value={ex.name}
-                        onChange={(e) => updateExercise(index, 'name', e.target.value)}
-                        className="bg-white text-black font-black uppercase italic text-xs p-2 skew-x-[-10deg] outline-none"
-                      >
-                        {MOCKED_EXERCISES.map(opt => (
-                          <option key={opt.id} value={opt.name}>{opt.name}</option>
-                        ))}
-                      </select>
-                      <div className="relative">
-                        <input 
-                          type="number"
-                          value={ex.value}
-                          onChange={(e) => updateExercise(index, 'value', e.target.value)}
-                          className="w-full bg-white text-black font-black uppercase italic text-xs p-2 skew-x-[-10deg] outline-none pr-10"
-                        />
-                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[8px] font-black text-black/40 italic">
-                          {ex.type === 'REPS' ? 'REPS' : 'SEC'}
-                        </span>
-                      </div>
-                    </div>
-                    {exercises.length > 1 && (
-                      <button 
-                        type="button"
-                        onClick={() => removeExercise(index)}
-                        className="p-2 text-white/20 hover:text-red-500 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    )}
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          </div>
-
-          <div className="pt-4 flex gap-4">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Exercises</label>
             <button 
-              type="submit"
-              className="button-neon flex-1"
+              type="button"
+              onClick={addExercise}
+              className="flex items-center gap-1 text-[10px] font-black uppercase text-main hover:text-white transition-colors underline underline-offset-4 decoration-2"
             >
-              {initialData ? 'UPDATE PROTOCOL' : 'INITIALIZE PROTOCOL'}
+              <Plus className="w-3 h-3" /> ADD NEW
             </button>
           </div>
-        </form>
-      </motion.div>
-    </div>
+
+          <div className="space-y-3">
+            <AnimatePresence>
+              {exercises.map((ex, index) => (
+                <motion.div 
+                  key={index}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  className="flex gap-2 items-center bg-white/5 p-2 border border-white/10"
+                >
+                  <div className="flex-1 grid grid-cols-2 gap-2">
+                    <select 
+                      value={ex.name}
+                      onChange={(e) => updateExercise(index, 'name', e.target.value)}
+                      className="bg-black text-white font-black uppercase italic text-[10px] p-2 outline-none border border-white/20"
+                    >
+                      {MOCKED_EXERCISES.map(opt => (
+                        <option key={opt.id} value={opt.name}>{opt.name}</option>
+                      ))}
+                    </select>
+                    <div className="relative">
+                      <input 
+                        type="number"
+                        value={ex.value}
+                        onChange={(e) => updateExercise(index, 'value', e.target.value)}
+                        className="w-full bg-black text-white font-black uppercase italic text-[10px] p-2 outline-none border border-white/20 pr-10"
+                      />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[8px] font-black text-white/40 italic">
+                        {ex.type === 'REPS' ? 'REPS' : 'SEC'}
+                      </span>
+                    </div>
+                  </div>
+                  {exercises.length > 1 && (
+                    <button 
+                      type="button"
+                      onClick={() => removeExercise(index)}
+                      className="p-2 text-white/20 hover:text-red-500 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        <div className="pt-6">
+          <button 
+            type="submit"
+            className="w-full bg-main text-black font-black py-4 uppercase italic tracking-widest text-sm hover:bg-white transition-all shadow-[6px_6px_0px_rgba(255,255,255,0.1)] hover:shadow-[6px_6px_0px_var(--main-color)]"
+          >
+            {initialData ? 'UPDATE PROTOCOL' : 'INITIALIZE PROTOCOL'}
+          </button>
+        </div>
+      </form>
+    </PopupWindow>
   );
 };
 

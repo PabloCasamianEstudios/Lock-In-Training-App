@@ -72,7 +72,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
         <div className="flex flex-col items-center justify-center p-4 border-r-2 border-white group hover:bg-main/5 transition-colors">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xl font-black italic text-white leading-none tracking-tighter">
-              {activeQuestsCount}/3
+              {activeQuestsCount}/1
             </span>
             <Shield className="w-4 h-4 text-main fill-main" />
           </div>
