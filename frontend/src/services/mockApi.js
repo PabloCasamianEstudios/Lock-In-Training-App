@@ -1,5 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
 
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 export const authService = {
   register: async (userData) => {
     const response = await fetch(`${API_BASE_URL}/api/auth/register`, {

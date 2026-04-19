@@ -356,7 +356,7 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
                         <th className="p-2">#</th>
                         <th className="p-2">User</th>
                         <th className="p-2">Stats</th>
-                        <th className="p-2 text-right">Season Rank</th>
+                        <th className="p-2 text-right">User Rank</th>
                         <th className="p-2 text-right">Season Points</th>
                       </tr>
                     </thead>
@@ -370,10 +370,10 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
                           </td>
                           <td className="p-2 opacity-50">Lvl {u.level}</td>
                           <td className="p-2 text-right">
-                            <span className={`px-2 py-0.5 rounded-sm font-black ${u.seasonRank === 'S' ? 'bg-yellow-500 text-black shadow-[0_0_5px_yellow]' :
-                                u.seasonRank === 'A' ? 'bg-purple-500 text-white' : 'bg-white/10 text-white'
+                            <span className={`px-2 py-0.5 rounded-sm font-black ${u.rank === 'S' ? 'bg-yellow-500 text-black shadow-[0_0_5px_yellow]' :
+                                u.rank === 'A' ? 'bg-purple-500 text-white' : 'bg-white/10 text-white'
                               }`}>
-                              {u.seasonRank || 'E'}
+                              {u.rank || 'E'}
                             </span>
                           </td>
                           <td className="p-2 text-right font-mono text-orange-400">{(u.seasonPoints || 0).toLocaleString()}</td>

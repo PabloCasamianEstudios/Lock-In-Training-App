@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react';
+import { useState, type FC, useEffect } from 'react';
 import { X, Plus, Trash2, Dumbbell, Timer } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -22,11 +22,31 @@ interface CreateQuestModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCreate: (data: any) => void;
+  initialData?: any;
+  onUpdate?: (id: number, data: any) => void;
 }
 
-const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate }) => {
+const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate, initialData, onUpdate }) => {
   const [title, setTitle] = useState('');
   const [exercises, setExercises] = useState<any[]>([{ name: MOCKED_EXERCISES[0].name, type: MOCKED_EXERCISES[0].type, value: 10 }]);
+
+ 
+
+  useEffect(() => {
+    if (initialData) {
+      setTitle(initialData.title || '');
+      if (initialData.steps) {
+        setExercises(initialData.steps.map((s: any) => ({
+          name: s.exercise?.name || 'PUSH-UPS',
+          type: s.exercise?.type === 'SECONDS' ? 'SECONDS' : 'REPS',
+          value: s.repetitions || 10
+        })));
+      }
+    } else {
+      setTitle('');
+      setExercises([{ name: MOCKED_EXERCISES[0].name, type: MOCKED_EXERCISES[0].type, value: 10 }]);
+    }
+  }, [initialData, isOpen]);
 
   const addExercise = () => {
     setExercises([...exercises, { name: MOCKED_EXERCISES[0].name, type: MOCKED_EXERCISES[0].type, value: 10 }]);
@@ -52,13 +72,19 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
     e.preventDefault();
     if (!title || exercises.length === 0) return;
     
-    onCreate({
+    const data = {
       title,
       exercises: exercises.map(ex => ({
         name: ex.name,
         [ex.type === 'REPS' ? 'reps' : 'seconds']: Number(ex.value)
       }))
-    });
+    };
+
+    if (initialData && onUpdate) {
+      onUpdate(initialData.id, data);
+    } else {
+      onCreate(data);
+    }
     onClose();
   };
 
@@ -79,7 +105,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
         </button>
 
         <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white mb-8 border-b-4 border-main pb-2">
-          NEW <span className="text-main">QUEST</span>
+          {initialData ? 'EDIT' : 'NEW'} <span className="text-main">QUEST</span>
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -159,7 +185,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
               type="submit"
               className="button-neon flex-1"
             >
-              INITIALIZE PROTOCOL
+              {initialData ? 'UPDATE PROTOCOL' : 'INITIALIZE PROTOCOL'}
             </button>
           </div>
         </form>

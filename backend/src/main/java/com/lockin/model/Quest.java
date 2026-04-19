@@ -29,6 +29,8 @@ public class Quest {
     private long goldReward;
     private long xpReward;
 
+    private Long creatorId = 0L; // 0 = System/Global
+
     @OneToMany(mappedBy = "quest", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<QuestStep> steps;

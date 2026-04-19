@@ -5,7 +5,7 @@ export interface User {
   username: string;
   email: string;
   profilePic?: string;
-  registrationDate: string;
+  registrationDate?: string;
   streak: number;
   totalPoints: number;
   seasonPoints: number;
@@ -13,17 +13,17 @@ export interface User {
   xp: number;
   coins: number;
   rank?: string;
-  seasonRank: string;
-  role: UserRole;
+  seasonRank?: string;
+  role?: UserRole;
   weight?: number;
   height?: number;
   birthDate?: string;
   gender?: string;
-  energy: number;
-  fatigue: number;
-  completedWorkouts: number;
-  totalTrainingTime: number;
-  achievedChallenges: number;
+  energy?: number;
+  fatigue?: number;
+  completedWorkouts?: number;
+  totalTrainingTime?: number;
+  achievedChallenges?: number;
   imc?: number;
   isGuest?: boolean;
 }
@@ -47,12 +47,12 @@ export interface Stat {
 
 export interface Quest {
   id: number;
-  title: string;
-  description: string;
-  type: 'DAILY' | 'CHALLENGE' | 'BOSS' | 'CUSTOM';
-  rankDifficulty: string;
-  goldReward: number;
-  xpReward: number;
+  title?: string;
+  description?: string;
+  type?: 'DAILY' | 'CHALLENGE' | 'BOSS' | 'CUSTOM';
+  rankDifficulty?: string;
+  goldReward?: number;
+  xpReward?: number;
   steps?: QuestStep[];
   completed?: boolean;
   completedRepetitions?: number;
@@ -61,19 +61,19 @@ export interface Quest {
 
 export interface QuestStep {
   id: number;
-  exercise: Exercise;
-  series: number;
-  repetitions: number;
+  exercise?: Exercise;
+  series?: number;
+  repetitions?: number;
   duration?: number;
   weight?: number;
 }
 
 export interface Exercise {
   id: number;
-  name: string;
-  type: string;
-  difficulty: string;
-  baseReps: number;
+  name?: string;
+  type?: string;
+  difficulty?: string;
+  baseReps?: number;
   baseDuration?: number;
   baseWeight?: number;
 }
@@ -85,16 +85,16 @@ export interface RankingUserDTO {
   title?: string;
   level: number;
   rank?: string;
-  seasonRank: string;
+  seasonRank?: string;
   totalPoints: number;
   seasonPoints: number;
 }
 
 export interface LoginResponse {
-  token: string;
-  username: string;
-  email: string;
-  role: UserRole;
+  token?: string;
+  username?: string;
+  email?: string;
+  role?: UserRole;
   id: number;
 }
 
@@ -107,9 +107,9 @@ export interface PlayerStats {
 export interface PlayerProfile {
   userId?: number;
   rank?: string;
-  level?: number;
-  xp?: number;
-  coins?: number;
+  level: number;
+  xp: number;
+  coins: number;
   stats?: PlayerStats;
   username?: string;
   biometria?: Record<string, unknown>;
@@ -136,14 +136,14 @@ export interface PageProps {
 
 export interface DailyQuestDTO {
   questId: number;
-  title: string;
-  rank: string;
-  xpReward: number;
-  goldReward: number;
-  completed: boolean;
-  completedRepetitions: number;
-  totalRepetitions: number;
-  exercises: DailyQuestExercise[];
+  title?: string;
+  rank?: string;
+  xpReward?: number;
+  goldReward?: number;
+  completed?: boolean;
+  completedRepetitions?: number;
+  totalRepetitions?: number;
+  exercises?: DailyQuestExercise[];
 }
 
 export interface DailyQuestExercise {

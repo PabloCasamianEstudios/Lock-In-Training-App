@@ -16,7 +16,7 @@ interface HomeData {
   streak: number;
   level: number;
   xp: number;
-  seasonRank: string;
+  rank: string;
   loading: boolean;
   error: string | null;
 }
@@ -33,7 +33,7 @@ export const useHomeData = (userId: number | undefined) => {
     streak: 0,
     level: 1,
     xp: 0,
-    seasonRank: 'E',
+    rank: 'E',
     loading: true,
     error: null,
   });
@@ -122,7 +122,7 @@ export const useHomeData = (userId: number | undefined) => {
         streak: profile?.streak || 0,
         level: profile?.level || 1,
         xp: profile?.xp || 0,
-        seasonRank: profile?.seasonRank || 'E',
+        rank: profile?.rank || 'E',
         loading: false,
         error: null,
       });

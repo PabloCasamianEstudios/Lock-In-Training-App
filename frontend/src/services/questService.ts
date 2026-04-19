@@ -69,17 +69,31 @@ export const questService = {
    * Path: /api/quests/custom
    */
   createCustomQuest: async (userId: number, data: any): Promise<any> => {
-    return await apiClient(`/api/quests/custom`, { 
+    return await apiClient(`/api/quests/custom?userId=${userId}`, { 
       method: 'POST', 
-      body: JSON.stringify(data)
+      body: data
+    });
+  },
+
+  updateCustomQuest: async (userId: number, questId: number, data: any): Promise<any> => {
+    return await apiClient(`/api/quests/custom/${questId}?userId=${userId}`, {
+      method: 'PUT',
+      body: data
+    });
+  },
+
+  deleteCustomQuest: async (userId: number, questId: number): Promise<any> => {
+    return await apiClient(`/api/quests/custom/${questId}?userId=${userId}`, {
+      method: 'DELETE'
     });
   },
 
   /**
-   * Fetches global CUSTOM quests.
+   * Fetches global CUSTOM quests for a user (System + Personal).
    */
-  getGlobalCustomQuests: async (): Promise<Quest[]> => {
-    return await apiClient(`/api/quests/custom/all`);
+  getGlobalCustomQuests: async (userId?: number): Promise<Quest[]> => {
+    const endpoint = userId ? `/api/quests/custom/all?userId=${userId}` : `/api/quests/custom/all`;
+    return await apiClient(endpoint);
   },
 
   /**

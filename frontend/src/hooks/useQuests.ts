@@ -21,7 +21,7 @@ export const useQuests = (userId: number | null) => {
         console.error("Active Quests Error:", err);
         return [] as any[];
       });
-      const customPromise = questService.getGlobalCustomQuests().catch(err => {
+      const customPromise = questService.getGlobalCustomQuests(userId).catch(err => {
         console.error("Custom Quests Error:", err);
         return [] as Quest[];
       });
@@ -101,6 +101,34 @@ export const useQuests = (userId: number | null) => {
     }
   };
 
+  const updateCustomQuest = async (questId: number, data: any) => {
+    if (!userId) return null;
+    setLoading(true);
+    try {
+      await questService.updateCustomQuest(userId, questId, data);
+      await fetchData();
+    } catch (err: any) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteCustomQuest = async (questId: number) => {
+    if (!userId) return null;
+    setLoading(true);
+    try {
+      await questService.deleteCustomQuest(userId, questId);
+      await fetchData();
+    } catch (err: any) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getCustomQuests = useCallback(() => {
     return customQuests;
   }, [customQuests]);
@@ -118,6 +146,8 @@ export const useQuests = (userId: number | null) => {
     startQuest, 
     completeQuest,
     createCustomQuest,
+    updateCustomQuest,
+    deleteCustomQuest,
     getCustomQuests
   };
 };

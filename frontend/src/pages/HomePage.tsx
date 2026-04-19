@@ -28,7 +28,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
     streak, 
     level, 
     xp, 
-    seasonRank, 
+    rank, 
     loading 
   } = useHomeData(user?.id);
 
@@ -61,7 +61,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
             <h2 className="text-xl font-black text-white leading-tight">{username}</h2>
             <div className="flex items-end justify-between">
               <span className="text-sm font-bold text-white/60">lv.{level}</span>
-              <span className="text-sm font-black text-white/40 uppercase tracking-widest">RANK {seasonRank}</span>
+              <span className="text-sm font-black text-white/40 uppercase tracking-widest">RANK {rank}</span>
             </div>
             <ProgressBar progress={xp % 1000} max={1000} className="mt-1" />
           </div>
@@ -83,7 +83,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
           <div className="flex items-center gap-2 mb-1">
             <Trophy className="w-5 h-5 text-main" />
           </div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-white/40 whitespace-nowrap">RANK {seasonRank}</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/40 whitespace-nowrap">RANK {rank}</span>
         </div>
 
         <div className="flex flex-col items-center justify-center p-4 group hover:bg-main/5 transition-colors">
@@ -201,7 +201,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
                       </div>
                       <div>
                         <p className="text-xs font-black text-white italic">{friend.username ?? 'Hunter'}</p>
-                        <p className="text-[10px] text-white/30 uppercase tracking-widest">RANK {friend.seasonRank || 'E'}</p>
+                        <p className="text-[10px] text-white/30 uppercase tracking-widest">RANK {friend.rank || 'E'}</p>
                       </div>
                     </div>
                     <ChevronRight className="w-4 h-4 text-white/20" />

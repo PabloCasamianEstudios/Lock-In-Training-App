@@ -88,16 +88,20 @@ public class UserQuestController {
     }
 
     @GetMapping("/custom/all")
-    public List<Quest> getCustomQuests() {
+    public List<Quest> getCustomQuests(@RequestParam(required = false) Long userId) {
+        if (userId != null && userId > 0) {
+            return questRepository.findAllForUser(userId, Quest.QuestType.CUSTOM);
+        }
         return questRepository.findByType(Quest.QuestType.CUSTOM);
     }
 
     @PostMapping("/custom")
-    public ResponseEntity<Object> createCustomQuest(@RequestBody CreateQuestDTO dto) {
+    public ResponseEntity<Object> createCustomQuest(@RequestBody CreateQuestDTO dto, @RequestParam(required = false) Long userId) {
         try {
             Quest quest = new Quest();
             quest.setTitle(dto.getTitle());
             quest.setType(Quest.QuestType.CUSTOM);
+            quest.setCreatorId(userId != null ? userId : 0L);
 
             List<QuestStep> steps = new ArrayList<>();
             int totalReps = 0;
@@ -167,6 +171,81 @@ public class UserQuestController {
             return ResponseEntity.ok(savedQuest);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al crear la misión: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/custom/{id}")
+    public ResponseEntity<Object> updateCustomQuest(@PathVariable Long id, @RequestBody CreateQuestDTO dto, @RequestParam Long userId) {
+        try {
+            Quest quest = questRepository.findById(id).orElse(null);
+            if (quest == null) return ResponseEntity.status(404).body("Misión no encontrada");
+            
+            if (quest.getCreatorId() == 0 || !quest.getCreatorId().equals(userId)) {
+                return ResponseEntity.status(403).body("No tienes permiso para modificar esta misión");
+            }
+
+            quest.setTitle(dto.getTitle());
+            
+            // Clear and add new steps
+            quest.getSteps().clear();
+            List<QuestStep> steps = new ArrayList<>();
+            int totalVolume = 0;
+
+            for (CreateQuestDTO.CreateQuestExerciseDTO exDto : dto.getExercises()) {
+                Optional<Exercise> optEx = exerciseRepository.findByNameIgnoreCase(exDto.getName());
+                Exercise exercise = optEx.orElseGet(() -> {
+                    Exercise ex = new Exercise();
+                    ex.setName(exDto.getName().toUpperCase());
+                    ex.setType(exDto.getSeconds() != null && exDto.getSeconds() > 0 ? "SECONDS" : "REPS");
+                    ex.setDifficulty("D");
+                    return exerciseRepository.save(ex);
+                });
+
+                QuestStep step = new QuestStep();
+                step.setQuest(quest);
+                step.setExercise(exercise);
+                step.setSeries(1);
+                
+                int reps = exDto.getReps() != null ? exDto.getReps() : 0;
+                int seconds = exDto.getSeconds() != null ? exDto.getSeconds() : 0;
+                step.setRepetitions(seconds > 0 ? seconds : reps);
+                
+                totalVolume += (reps + (seconds / 2));
+                steps.add(step);
+            }
+            quest.getSteps().addAll(steps);
+            
+            // Re-calculate rewards and rank
+            String rank = "E";
+            if (totalVolume >= 1000) rank = "S";
+            else if (totalVolume >= 500) rank = "A";
+            else if (totalVolume >= 200) rank = "B";
+            else if (totalVolume >= 100) rank = "C";
+            else if (totalVolume >= 50) rank = "D";
+            quest.setRankDifficulty(rank);
+            quest.setXpReward(totalVolume * 2L);
+            quest.setGoldReward(totalVolume);
+
+            return ResponseEntity.ok(questRepository.save(quest));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al actualizar la misión: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/custom/{id}")
+    public ResponseEntity<Object> deleteCustomQuest(@PathVariable Long id, @RequestParam Long userId) {
+        try {
+            Quest quest = questRepository.findById(id).orElse(null);
+            if (quest == null) return ResponseEntity.status(404).body("Misión no encontrada");
+
+            if (quest.getCreatorId() == 0 || !quest.getCreatorId().equals(userId)) {
+                return ResponseEntity.status(403).body("No tienes permiso para eliminar esta misión");
+            }
+
+            questRepository.delete(quest);
+            return ResponseEntity.ok("Misión eliminada correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al eliminar la misión: " + e.getMessage());
         }
     }
 }

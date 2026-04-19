@@ -54,7 +54,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
           <h2 className="text-3xl font-black italic uppercase text-white tracking-tighter leading-none">{displayUser?.username || 'HUNTER_X'}</h2>
           <div className="flex gap-4 justify-center">
             <span className="text-[10px] bg-white text-black px-2 py-0.5 font-black uppercase tracking-widest italic">{displayUser?.email || 'OFFLINE_PROTOCOL'}</span>
-            <span className="text-[10px] bg-main text-black px-2 py-0.5 font-black uppercase tracking-widest italic">Rank {displayProfile?.seasonRank || displayProfile?.rank || 'E'}</span>
+            <span className="text-[10px] bg-main text-black px-2 py-0.5 font-black uppercase tracking-widest italic">Rank {displayProfile?.rank || 'E'}</span>
           </div>
         </div>
       </div>

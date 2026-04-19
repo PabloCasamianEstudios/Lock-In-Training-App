@@ -66,7 +66,7 @@ const PodiumCard: FC<PodiumCardProps> = ({ player, position, isCurrentUser }) =>
       className={`flex flex-col items-center gap-2 ${isCenter ? 'scale-110 z-10' : 'opacity-85'}`}
     >
       <MedalIcon className={`${medal.size} ${medal.color}`} />
-      <div className={`relative ${rankGlow(player.seasonRank)}`}>
+      <div className={`relative ${rankGlow(player.rank)}`}>
         <Avatar
           src={player.profilePic}
           username={player.username}
@@ -84,8 +84,8 @@ const PodiumCard: FC<PodiumCardProps> = ({ player, position, isCurrentUser }) =>
           {player.username}
         </p>
         <p className="text-[9px] italic text-white/40 mt-0.5">"{player.title ?? 'the hunter'}"</p>
-        <p className={`text-[10px] font-black uppercase mt-1 ${rankColor(player.seasonRank)}`}>
-          RANK {player.seasonRank} · lv.{player.level}
+        <p className={`text-[10px] font-black uppercase mt-1 ${rankColor(player.rank)}`}>
+          RANK {player.rank} · lv.{player.level}
         </p>
       </div>
     </motion.div>
@@ -130,8 +130,8 @@ const RankRow: FC<RankRowProps> = ({ player, position, isCurrentUser, onClick })
         <p className="text-[9px] italic text-white/30 truncate">"{player.title ?? 'the hunter'}"</p>
       </div>
       <div className="text-right flex-shrink-0">
-        <p className={`text-xs font-black uppercase ${rankColor(player.seasonRank)}`}>
-          RANK {player.seasonRank}
+        <p className={`text-xs font-black uppercase ${rankColor(player.rank)}`}>
+          RANK {player.rank}
         </p>
         <p className="text-[10px] text-white/30">lv.{player.level}</p>
       </div>
@@ -152,20 +152,20 @@ const FriendRow: FC<FriendRowProps> = ({ friend, position }) => (
   >
     <span className="text-sm font-black italic w-6 text-right flex-shrink-0 text-white/40">{position}</span>
     <div className="w-10 h-10 rounded-full border border-white/20 bg-zinc-800 flex items-center justify-center text-xs font-black text-white/50 flex-shrink-0">
-      {friend.username[0].toUpperCase()}
+      {(friend.username?.[0] || '?').toUpperCase()}
     </div>
     <div className="flex-1 min-w-0">
       <p className="text-xs font-black text-white uppercase italic truncate">{friend.username}</p>
       <ProgressBar
-        progress={friend.xp % 1000}
+        progress={(friend.xp || 0) % 1000}
         max={1000}
         height="h-1"
         className="mt-1 max-w-[120px]"
       />
     </div>
     <div className="text-right flex-shrink-0">
-      <p className={`text-xs font-black uppercase ${rankColor(friend.seasonRank)}`}>
-        RANK {friend.seasonRank || 'E'}
+      <p className={`text-xs font-black uppercase ${rankColor(friend.rank)}`}>
+        RANK {friend.rank || 'E'}
       </p>
       <p className="text-[10px] text-white/30">lv.{friend.level}</p>
     </div>
