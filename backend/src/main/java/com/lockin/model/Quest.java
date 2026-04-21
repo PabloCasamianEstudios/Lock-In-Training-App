@@ -31,7 +31,7 @@ public class Quest {
 
     private Long creatorId = 0L; // 0 = System/Global
 
-    @OneToMany(mappedBy = "quest", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "quest", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<QuestStep> steps;
 
