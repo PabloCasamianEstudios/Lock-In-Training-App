@@ -113,7 +113,18 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                   title: 'ABORT PROTOCOL',
                   message: 'ARE YOU SURE YOU WANT TO TERMINATE THIS MISSION? ALL CURRENT EXPERIMENT DATA WILL BE PURGED.',
                   type: 'DANGER',
-                  onConfirm: () => cancelQuest(pid)
+                  onConfirm: async () => {
+                    try {
+                      await cancelQuest(pid);
+                    } catch (err: any) {
+                      setSystemPopup({
+                        isOpen: true,
+                        title: 'PROTOCOL FAILED',
+                        message: err.message || 'FAILED TO TERMINATE MISSION.',
+                        type: 'DANGER'
+                      });
+                    }
+                  }
                 });
               }}
             />
@@ -166,7 +177,18 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                               title: 'PURGE PROTOCOL',
                               message: 'YOU ARE ABOUT TO DELETE THIS QUEST. THIS ACTION CANNOT BE UNDONE. PROCEED?',
                               type: 'DANGER',
-                              onConfirm: () => deleteCustomQuest(quest.id)
+                              onConfirm: async () => {
+                                try {
+                                  await deleteCustomQuest(quest.id);
+                                } catch (err: any) {
+                                  setSystemPopup({
+                                    isOpen: true,
+                                    title: 'DELETE FAILED',
+                                    message: err.message || 'THE SERVER REJECTED THE DELETION REQUEST.',
+                                    type: 'DANGER'
+                                  });
+                                }
+                              }
                             });
                           }}
                           className="hover:text-red-500 text-white/40 transition-colors"
@@ -212,7 +234,18 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                             title: 'INITIALIZE PROTOCOL',
                             message: 'ARE YOU READY TO COMMIT? THIS WILL LOCK YOUR ACTIVE QUEST SLOT UNTIL COMPLETION OR FAILURE.',
                             type: 'INFO',
-                            onConfirm: () => startQuest(quest.id || quest.questId)
+                            onConfirm: async () => {
+                              try {
+                                await startQuest(quest.id || quest.questId);
+                              } catch (err: any) {
+                                setSystemPopup({
+                                  isOpen: true,
+                                  title: 'INITIALIZATION FAILED',
+                                  message: err.message || 'FAILED TO COMMENCE MISSION.',
+                                  type: 'DANGER'
+                                });
+                              }
+                            }
                           });
                         } else {
                           setSystemPopup({
@@ -325,7 +358,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                     onClick={closePopup}
                     className="w-full py-3 bg-main text-black text-[10px] font-black uppercase italic"
                   >
-                    ACKNOWLEDGED
+                    OK
                   </button>
                 )}
               </div>

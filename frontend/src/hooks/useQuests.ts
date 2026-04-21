@@ -63,7 +63,6 @@ export const useQuests = (userId: number | null) => {
       await fetchData();
     } catch (err: any) {
       console.error('[useQuests] startQuest error:', err);
-      setError(err.message);
       throw err;
     } finally {
       setLoading(false);
@@ -78,7 +77,6 @@ export const useQuests = (userId: number | null) => {
       await fetchData();
       return response;
     } catch (err: any) {
-      setError(err.message);
       throw err;
     } finally {
       setLoading(false);
@@ -95,7 +93,6 @@ export const useQuests = (userId: number | null) => {
       return newQuest;
     } catch (err: any) {
       console.error('[useQuests] createCustomQuest error:', err);
-      setError(err.message);
       throw err;
     } finally {
       setLoading(false);
@@ -109,7 +106,6 @@ export const useQuests = (userId: number | null) => {
       await questService.updateCustomQuest(userId, questId, data);
       await fetchData();
     } catch (err: any) {
-      setError(err.message);
       throw err;
     } finally {
       setLoading(false);
@@ -123,7 +119,6 @@ export const useQuests = (userId: number | null) => {
       await questService.deleteCustomQuest(userId, questId);
       await fetchData();
     } catch (err: any) {
-      setError(err.message);
       throw err;
     } finally {
       setLoading(false);
@@ -136,7 +131,6 @@ export const useQuests = (userId: number | null) => {
       await questService.cancelQuest(progressId);
       await fetchData();
     } catch (err: any) {
-      setError(err.message);
       throw err;
     } finally {
       setLoading(false);

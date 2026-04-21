@@ -243,6 +243,11 @@ public class UserQuestController {
                 return ResponseEntity.status(403).body("No tienes permiso para eliminar esta misión");
             }
 
+            // Verificar si hay progreso asociado
+            if (progressRepository.existsByQuestId(id)) {
+                return ResponseEntity.badRequest().body("No se puede eliminar la misión: otros usuarios (o tú mismo) tienen progreso activo o completado en ella.");
+            }
+
             questRepository.delete(quest);
             return ResponseEntity.ok("Misión eliminada correctamente");
         } catch (Exception e) {
