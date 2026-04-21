@@ -15,5 +15,7 @@ public interface UserQuestProgressRepository extends JpaRepository<UserQuestProg
     List<UserQuestProgress> findByUserIdAndQuestType(Long userId, com.lockin.model.Quest.QuestType type);
 
     List<UserQuestProgress> findByUserIdAndStatus(Long userId, com.lockin.model.UserQuestProgress.QuestStatus status);
+
+    boolean existsByQuestId(Long questId);
 }
 

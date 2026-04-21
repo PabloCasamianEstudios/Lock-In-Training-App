@@ -18,6 +18,7 @@ Thumbs.db
 # Build artifacts
 backend/target/
 frontend/dist/
+frontend-mobile/
 node_modules/
 
 # Spring local overrides (no subir credenciales locales)

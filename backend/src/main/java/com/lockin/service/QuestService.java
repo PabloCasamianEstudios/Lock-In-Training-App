@@ -1,6 +1,7 @@
 package com.lockin.service;
 
 import com.lockin.model.*;
+import com.lockin.model.dtos.QuestCompletionResponse;
 import com.lockin.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class QuestService {
 
     /* --- REWARDS & PROGRESSION ZONE --- */
     @Transactional
-    public User completeQuest(Long progressId) {
+    public QuestCompletionResponse completeQuest(Long progressId) {
         UserQuestProgress progress = progressRepository.findById(progressId)
                 .orElseThrow(() -> new RuntimeException("Progreso no encontrado"));
 
@@ -36,6 +37,8 @@ public class QuestService {
 
         User user = progress.getUser();
         Quest quest = progress.getQuest();
+        
+        int oldLevel = user.getLevel();
 
         // Apply Rewards
         user.setXp(user.getXp() + quest.getXpReward());
@@ -46,6 +49,8 @@ public class QuestService {
 
         // Level-Up Logic (Scaling)
         processLevelUp(user);
+        
+        int levelsGained = user.getLevel() - oldLevel;
 
         // Update Progress
         progress.setStatus(UserQuestProgress.QuestStatus.COMPLETED);
@@ -66,15 +71,24 @@ public class QuestService {
             }
         });
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        
+        return QuestCompletionResponse.builder()
+                .user(savedUser)
+                .xpReward(quest.getXpReward())
+                .goldReward(quest.getGoldReward())
+                .levelsGained(levelsGained)
+                .statPointsGained(levelsGained * 4)
+                .build();
     }
 
     private void processLevelUp(User user) {
-        while (true) {
+        while (user.getLevel() < 175) {
             long xpRequired = calculateRequiredXP(user.getLevel());
             if (user.getXp() >= xpRequired) {
                 user.setXp(user.getXp() - xpRequired);
                 user.setLevel(user.getLevel() + 1);
+                user.setStatPoints(user.getStatPoints() + 4);
                 
                 // LOG LEVEL UP FOR SECURITY
                 protectionService.logActivity(user, UserActivityLog.ActivityType.LEVEL_UP, 1, "Leveled up to " + user.getLevel());
@@ -82,6 +96,8 @@ public class QuestService {
                 break;
             }
         }
+        
+        // If max level reached, cap XP or handle excess? For now, we just stop leveling.
     }
 
     private long calculateRequiredXP(int level) {

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.lockin.model.dtos.CreateQuestDTO;
+import com.lockin.model.dtos.QuestCompletionResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,8 +67,8 @@ public class UserQuestController {
     @PostMapping("/progress/{progressId}/complete")
     public ResponseEntity<Object> completeQuest(@PathVariable Long progressId) {
         try {
-            User user = questService.completeQuest(progressId);
-            return ResponseEntity.ok(user);
+            QuestCompletionResponse response = questService.completeQuest(progressId);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

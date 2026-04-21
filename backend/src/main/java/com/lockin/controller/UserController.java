@@ -13,6 +13,11 @@ import com.lockin.repository.UserItemRepository;
 import com.lockin.repository.UserTitleRepository;
 import com.lockin.model.UserItem;
 import com.lockin.model.UserTitle;
+import com.lockin.model.UserLeague;
+import com.lockin.model.dtos.RankingUserDTO;
+import com.lockin.repository.UserLeagueRepository;
+import com.lockin.repository.UserTitleRepository;
+import com.lockin.repository.StatRepository;
 import com.lockin.service.UserSurveyService;
 
 import java.util.ArrayList;
@@ -33,6 +38,8 @@ public class UserController {
     private final com.lockin.repository.UserStatRepository userStatRepository;
     private final UserItemRepository userItemRepository;
     private final UserTitleRepository userTitleRepository;
+    private final UserLeagueRepository userLeagueRepository;
+    private final StatRepository statRepository;
 
     public UserController(UserSurveyService userSurveyService,
             UserRepository userRepository,
@@ -40,7 +47,9 @@ public class UserController {
             com.lockin.repository.QuestRepository questRepository,
             com.lockin.repository.UserStatRepository userStatRepository,
             UserItemRepository userItemRepository,
-            UserTitleRepository userTitleRepository) {
+            UserTitleRepository userTitleRepository,
+            UserLeagueRepository userLeagueRepository,
+            StatRepository statRepository) {
         this.userSurveyService = userSurveyService;
         this.userRepository = userRepository;
         this.userQuestProgressRepository = userQuestProgressRepository;
@@ -48,6 +57,8 @@ public class UserController {
         this.userStatRepository = userStatRepository;
         this.userItemRepository = userItemRepository;
         this.userTitleRepository = userTitleRepository;
+        this.userLeagueRepository = userLeagueRepository;
+        this.statRepository = statRepository;
     }
 
     @PostMapping("/survey")
@@ -268,5 +279,90 @@ public class UserController {
             response.add(data);
         }
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/league-players")
+    public ResponseEntity<List<RankingUserDTO>> getLeaguePlayers(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<UserLeague> userLeagues = userLeagueRepository.findByUser(user);
+        if (userLeagues.isEmpty()) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+
+        UserLeague ulContext = userLeagues.get(0);
+
+        List<UserLeague> colleagues = userLeagueRepository.findByLeagueIdAndGroupId(
+                ulContext.getLeague().getId(),
+                ulContext.getGroupId());
+
+        List<RankingUserDTO> ranking = colleagues.stream()
+                .map(ul -> mapToRankingDTO(ul.getUser()))
+                .sorted((a, b) -> Long.compare(b.getSeasonPoints(), a.getSeasonPoints()))
+                .toList();
+
+        return ResponseEntity.ok(ranking);
+    }
+
+    private RankingUserDTO mapToRankingDTO(User user) {
+        String titleName = userTitleRepository.findByUserIdAndIsEquippedTrue(user.getId())
+                .map(ut -> ut.getTitle().getName())
+                .orElse("Hunter");
+
+        return RankingUserDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .profilePic(user.getProfilePic())
+                .title(titleName)
+                .level(user.getLevel())
+                .rank(user.getRank())
+                .seasonRank(user.getSeasonRank())
+                .totalPoints(user.getTotalPoints())
+                .seasonPoints(user.getSeasonPoints())
+                .build();
+    }
+
+    @PostMapping("/{id}/distribute-stats")
+    public ResponseEntity<Object> distributeStats(@PathVariable Long id, @RequestBody Map<String, Integer> distribution) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) return ResponseEntity.notFound().build();
+
+        int totalPointsToSpend = distribution.values().stream().mapToInt(Integer::intValue).sum();
+        if (totalPointsToSpend > user.getStatPoints()) {
+            return ResponseEntity.badRequest().body("No tienes suficientes puntos de estadísticas.");
+        }
+
+        if (distribution.containsKey("DISC")) {
+            return ResponseEntity.badRequest().body("La disciplina no se puede subir con puntos de nivel.");
+        }
+
+        List<com.lockin.model.UserStat> currentStats = userStatRepository.findByUser(user);
+
+        for (Map.Entry<String, Integer> entry : distribution.entrySet()) {
+            String statName = entry.getKey();
+            int pointsToAdd = entry.getValue();
+            if (pointsToAdd <= 0) continue;
+
+            com.lockin.model.UserStat userStat = currentStats.stream()
+                .filter(us -> us.getStat().getName().equals(statName))
+                .findFirst()
+                .orElse(null);
+
+            if (userStat != null) {
+                if (userStat.getCurrentValue() + pointsToAdd > 100) {
+                    return ResponseEntity.badRequest().body("La estadística " + statName + " no puede superar los 100 puntos.");
+                }
+                userStat.setCurrentValue(userStat.getCurrentValue() + pointsToAdd);
+                userStatRepository.save(userStat);
+            }
+        }
+
+        user.setStatPoints(user.getStatPoints() - totalPointsToSpend);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(user);
     }
 }

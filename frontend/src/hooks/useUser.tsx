@@ -67,5 +67,20 @@ export const useUser = () => {
     return undefined;
   }, []);
 
-  return { profile, setProfile, loading, error, submitSurvey, fetchProfile };
+  const distributeStats = useCallback(async (userId: number, distribution: Record<string, number>): Promise<PlayerProfile> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await userService.distributeStats(userId, distribution);
+      setProfile(data as PlayerProfile);
+      return data as PlayerProfile;
+    } catch (err: any) {
+      setError(err.message || 'Failed to distribute stats');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { profile, setProfile, loading, error, submitSurvey, fetchProfile, distributeStats };
 };

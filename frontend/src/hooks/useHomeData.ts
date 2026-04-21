@@ -17,6 +17,7 @@ interface HomeData {
   level: number;
   xp: number;
   rank: string;
+  statPoints: number;
   loading: boolean;
   error: string | null;
 }
@@ -34,6 +35,7 @@ export const useHomeData = (userId: number | undefined) => {
     level: 1,
     xp: 0,
     rank: 'E',
+    statPoints: 0,
     loading: true,
     error: null,
   });
@@ -123,6 +125,7 @@ export const useHomeData = (userId: number | undefined) => {
         level: profile?.level || 1,
         xp: profile?.xp || 0,
         rank: profile?.rank || 'E',
+        statPoints: profile?.statPoints || 0,
         loading: false,
         error: null,
       });

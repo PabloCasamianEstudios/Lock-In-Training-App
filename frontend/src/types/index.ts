@@ -25,6 +25,7 @@ export interface User {
   totalTrainingTime?: number;
   achievedChallenges?: number;
   imc?: number;
+  statPoints?: number;
   isGuest?: boolean;
 }
 
@@ -115,6 +116,7 @@ export interface PlayerProfile {
   biometria?: Record<string, unknown>;
   profilePic?: string;
   seasonRank?: string;
+  statPoints?: number;
 }
 
 export interface AppUser {

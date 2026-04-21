@@ -8,6 +8,7 @@ type RankingTab = 'ALL' | 'FRIENDS' | 'YOUR_LEAGUE';
 interface RankingsData {
   globalTop: RankingUserDTO[];
   friends: User[];
+  leaguePlayers: RankingUserDTO[];
   loading: boolean;
   error: string | null;
 }
@@ -17,6 +18,7 @@ export const useRankings = (userId: number | undefined) => {
   const [data, setData] = useState<RankingsData>({
     globalTop: [],
     friends: [],
+    leaguePlayers: [],
     loading: true,
     error: null,
   });
@@ -43,11 +45,26 @@ export const useRankings = (userId: number | undefined) => {
       }
     };
 
-    const [globalTop, friends] = await Promise.all([fetchGlobal(), fetchFriends()]);
+    const fetchLeague = async () => {
+      if (!userId) return [];
+      try {
+        return await rankingService.getUserLeaguePlayers(userId);
+      } catch (e) {
+        console.error('[Rankings] League players failed:', e);
+        return [];
+      }
+    };
+
+    const [globalTop, friends, leaguePlayers] = await Promise.all([
+      fetchGlobal(),
+      fetchFriends(),
+      fetchLeague()
+    ]);
 
     setData({
       globalTop,
       friends,
+      leaguePlayers,
       loading: false,
       error: null,
     });

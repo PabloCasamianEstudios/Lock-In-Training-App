@@ -1,0 +1,1 @@
+export type AppScreen = 'splash' | 'auth' | 'survey' | 'analyzing' | 'result' | 'hub';

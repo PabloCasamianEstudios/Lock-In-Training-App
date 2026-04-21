@@ -49,4 +49,24 @@ export const rankingService = {
   getLeaguePlayers: async (leagueId: number): Promise<RankingUserDTO[]> => {
     return await apiClient<RankingUserDTO[]>(`/api/admin/leagues/${leagueId}/players`);
   },
+
+  getUserLeaguePlayers: async (userId: number): Promise<RankingUserDTO[]> => {
+    try {
+      const users = await apiClient<any[]>(`/api/user/${userId}/league-players`);
+      return users.map(user => ({
+        id: user.id,
+        username: user.username,
+        profilePic: user.profilePic,
+        title: user.title || 'Hunter',
+        level: user.level || 1,
+        rank: user.rank || 'E',
+        seasonRank: user.seasonRank || 'E',
+        totalPoints: user.totalPoints || 0,
+        seasonPoints: user.seasonPoints || 0
+      }));
+    } catch (e) {
+      console.warn('League players fetch failed. Returning empty list.', e);
+      return [];
+    }
+  },
 };

@@ -213,6 +213,12 @@ public class AdminController {
         if (!questRepository.existsById(id)) {
             return ResponseEntity.status(404).body("El id no existe");
         }
+        
+        // Verificar si hay progreso asociado
+        if (userQuestProgressRepository.existsByQuestId(id)) {
+            return ResponseEntity.badRequest().body("No se puede eliminar la misión: usuarios tienen progreso activo o completado en ella.");
+        }
+
         questRepository.deleteById(id);
         return ResponseEntity.ok("Eliminado correctamente");
     }

@@ -76,6 +76,7 @@ export const useQuests = (userId: number | null) => {
       const response = await questService.completeQuest(progressId);
       console.log('premioss: ', response);
       await fetchData();
+      return response;
     } catch (err: any) {
       setError(err.message);
       throw err;
