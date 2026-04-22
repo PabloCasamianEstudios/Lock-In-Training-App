@@ -18,11 +18,11 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
   const [activeSubTab, setActiveSubTab] = useState<'ALL' | 'DAILY' | 'ACTIVE' | 'YOURS' | 'SYSTEM'>('ALL');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuest, setEditingQuest] = useState<any | null>(null);
-  const [systemPopup, setSystemPopup] = useState<{ 
-    isOpen: boolean; 
-    title: string; 
-    message?: string; 
-    type: 'INFO' | 'WARNING' | 'DANGER' | 'REWARDS'; 
+  const [systemPopup, setSystemPopup] = useState<{
+    isOpen: boolean;
+    title: string;
+    message?: string;
+    type: 'INFO' | 'WARNING' | 'DANGER' | 'REWARDS';
     onConfirm?: () => void;
     rewards?: { gold: number; xp: number }
   } | null>(null);
@@ -50,7 +50,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
           xp: response?.xpReward || 0
         }
       });
-      
+
       if (response?.unlockedAchievements && response.unlockedAchievements.length > 0) {
         window.dispatchEvent(new CustomEvent('achievement_unlocked', { detail: response.unlockedAchievements }));
       }
@@ -84,7 +84,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
 
   return (
     <div className="max-w-md mx-auto space-y-6 pb-20 relative min-h-screen">
-      
+
       <AppHeader title="QUESTS" />
 
       <nav className="flex items-center justify-between gap-1 overflow-x-auto no-scrollbar py-2 px-6 mb-8">
@@ -99,8 +99,8 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
             key={tab.id}
             onClick={() => setActiveSubTab(tab.id as any)}
             className={`px-4 py-1.5 text-[10px] font-black border-2 transition-all uppercase tracking-widest whitespace-nowrap
-              ${activeSubTab === tab.id 
-                ? 'bg-main text-black border-main shadow-[4px_4px_0px_white]' 
+              ${activeSubTab === tab.id
+                ? 'bg-main text-black border-main shadow-[4px_4px_0px_white]'
                 : 'bg-black text-white/40 border-white/20 hover:border-white/40'}`}
           >
             {tab.label}
@@ -111,10 +111,10 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
       <div className="px-6 space-y-6">
         {activeSubTab === 'ACTIVE' ? (
           activeQuest ? (
-            <ActiveQuestView 
-              activeProgress={activeQuest} 
-              onUpdateProgress={() => {}} 
-              onComplete={(pid) => handleCompleteQuest(pid)} 
+            <ActiveQuestView
+              activeProgress={activeQuest}
+              onUpdateProgress={() => { }}
+              onComplete={(pid) => handleCompleteQuest(pid)}
               onCancel={(pid) => {
                 setSystemPopup({
                   isOpen: true,
@@ -146,15 +146,15 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
             {filteredQuests.map((quest: any) => {
               const isOwner = quest.creatorId === user?.id;
               const isSystem = quest.creatorId === 0;
-              
+
               return (
-                <div 
+                <div
                   key={quest.id || quest.questId}
                   className="bg-black border-4 border-white p-6 relative overflow-hidden shadow-[10px_10px_0px_white] transition-all hover:translate-y-[-4px] active:translate-y-[2px] group"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex gap-2">
-                       <span className="text-[10px] font-black italic uppercase border-2 border-white px-2 py-0.5 transform -skew-x-12">
+                      <span className="text-[10px] font-black italic uppercase border-2 border-white px-2 py-0.5 transform -skew-x-12">
                         [ {quest.rankDifficulty || quest.rank || 'D'}-RANK ]
                       </span>
                       {isSystem && (
@@ -165,7 +165,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                     </div>
                     {isOwner && !isSystem && (
                       <div className="flex gap-2">
-                        <button 
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setEditingQuest(quest);
@@ -177,7 +177,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                           </svg>
                         </button>
-                        <button 
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setSystemPopup({
@@ -212,12 +212,12 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                   <h3 className="text-3xl font-black italic uppercase text-white mb-2 group-hover:text-main transition-colors leading-[0.9]">
                     {quest.title}
                   </h3>
-                  
+
                   <div className="space-y-1 mb-6">
                     {quest.steps?.map((step: any, idx: number) => (
                       <div key={idx} className="flex items-center gap-2 text-[10px] text-white/60 font-black uppercase italic">
                         <div className="w-1 h-1 bg-main rounded-full" />
-                        {step.exercise?.name || 'Exercise'}: {step.repetitions} {step.exercise?.type === 'SECONDS' ? 'SEC' : 'REPS'}
+                        {step.exercise?.name || 'Exercise'}: {step.repetitions || step.duration || 0} {step.exercise?.type === 'SECONDS' ? 'SEC' : 'REPS'}
                       </div>
                     ))}
                   </div>
@@ -234,7 +234,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                       </div>
                     </div>
 
-                    <button 
+                    <button
                       onClick={() => {
                         if (!activeQuest) {
                           setSystemPopup({
@@ -282,7 +282,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
         )}
       </div>
 
-      <button 
+      <button
         onClick={() => {
           setEditingQuest(null);
           setIsModalOpen(true);
@@ -292,10 +292,10 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
         <Plus className="w-8 h-8 font-black" />
       </button>
 
-      <CreateQuestModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onCreate={(data) => createCustomQuest(data)} 
+      <CreateQuestModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onCreate={(data) => createCustomQuest(data)}
         initialData={editingQuest}
         onUpdate={(id, data) => updateCustomQuest(id, data)}
       />
@@ -312,7 +312,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
               <div className="w-20 h-20 bg-main flex items-center justify-center rounded-sm transform rotate-12 shadow-[8px_8px_0px_white]">
                 <Trophy className="w-12 h-12 text-black -rotate-12" />
               </div>
-              
+
               <div className="space-y-4 w-full">
                 <div className="bg-white/5 border-2 border-white/10 p-4 transform -skew-x-6 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -331,7 +331,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={closePopup}
                 className="w-full py-4 bg-white text-black font-black uppercase italic tracking-widest hover:bg-main transition-all"
               >
@@ -349,13 +349,13 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
               <div className="flex gap-4 w-full">
                 {systemPopup?.onConfirm ? (
                   <>
-                    <button 
+                    <button
                       onClick={closePopup}
                       className="flex-1 py-3 border-2 border-white/20 text-[10px] font-black uppercase italic hover:bg-white/10 transition-all"
                     >
                       ABORT
                     </button>
-                    <button 
+                    <button
                       onClick={() => {
                         systemPopup.onConfirm?.();
                         closePopup();
@@ -366,7 +366,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                     </button>
                   </>
                 ) : (
-                  <button 
+                  <button
                     onClick={closePopup}
                     className="w-full py-3 bg-main text-black text-[10px] font-black uppercase italic"
                   >

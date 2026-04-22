@@ -45,7 +45,6 @@ Once the containers are active and healthy:
 
 - **/backend**: Spring Boot application (Java 17 / Eclipse Temurin).
 - **/frontend**: React + Vite application with Tailwind CSS. "Solo Leveling" aesthetic (Orange/Black).
-- **/db**: Database configuration and persistent storage.
 - **/scripts**: Helper scripts for system management.
 
 ## Technical Architecture

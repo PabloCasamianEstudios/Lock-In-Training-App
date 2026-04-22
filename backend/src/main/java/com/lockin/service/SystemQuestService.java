@@ -25,9 +25,6 @@ public class SystemQuestService {
 
     @Transactional
     public void generateGlobalPool() {
-        // Borrar pool anterior si se desea refrescar?
-        // El usuario dijo "hacer 50 misiones de cada rango", así que las generamos si
-        // no existen.
 
         List<Exercise> exercises = exerciseRepository.findAll();
         if (exercises.isEmpty()) {
@@ -68,9 +65,6 @@ public class SystemQuestService {
                 double[] repMultipliers = { 1.0, 2.0, 4.0, 6.0, 8.0, 10.0 };
                 double repMult = repMultipliers[rankVal - 1];
 
-                // 3. Series escala con el rango
-                int maxSeries = 1 + (rankVal / 2) + rand.nextInt(rankVal);
-
                 List<QuestStep> steps = new ArrayList<>();
                 int totalVolume = 0;
 
@@ -83,10 +77,7 @@ public class SystemQuestService {
                     QuestStep step = new QuestStep();
                     step.setQuest(quest);
                     step.setExercise(ex);
-
-                    // Series: E escala menos, S escala más
-                    int series = 1 + rand.nextInt(Math.max(1, rankVal));
-                    step.setSeries(series);
+                    step.setSeries(1);
 
                     int base = ex.getBaseReps() > 0 ? ex.getBaseReps() : (ex.getBaseDuration() / 5);
                     if (base <= 0)
@@ -105,9 +96,6 @@ public class SystemQuestService {
                         .collect(Collectors.joining(", "));
                 quest.setDescription(desc);
 
-                // Recompensa ahora escala proporcionalmente al volumen total
-                // E-rank con 15 pushups: ~30 gold, 75 XP
-                // S-rank con 5000 volume: ~10,000 gold, 25,000 XP
                 quest.setGoldReward(totalVolume * 2L);
                 quest.setXpReward(totalVolume * 5L);
 

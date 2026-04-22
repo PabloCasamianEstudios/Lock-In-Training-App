@@ -1,4 +1,4 @@
-﻿import { useState, type FC, useEffect, useMemo } from 'react';
+import { useState, type FC, useEffect, useMemo } from 'react';
 import { Timer, CheckCircle2, Square, CheckSquare, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -10,18 +10,54 @@ interface ActiveQuestViewProps {
 }
 
 const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdateProgress, onComplete, onCancel }) => {
+  const getInitialState = (key: string, defaultValue: any, isObject = false) => {
+    try {
+      const item = localStorage.getItem(`quest_${activeProgress.id}_${key}`);
+      if (item !== null) {
+        return isObject ? JSON.parse(item) : item;
+      }
+    } catch (e) {
+      console.warn("Error reading from localStorage:", e);
+    }
+    return defaultValue;
+  };
+
+  const [hasStarted, setHasStarted] = useState<boolean>(() => getInitialState('started', 'false') === 'true');
+  const [startTimestamp, setStartTimestamp] = useState<number | null>(() => {
+    const ts = getInitialState('start_ts', null);
+    return ts ? parseInt(ts, 10) : null;
+  });
   const [seconds, setSeconds] = useState(0);
-  const [hasStarted, setHasStarted] = useState(false);
-  const [stepProgress, setStepProgress] = useState<Record<number, number>>({});
+  const [stepProgress, setStepProgress] = useState<Record<number, number>>(() => getInitialState('steps', {}, true));
 
   useEffect(() => {
-    if (!hasStarted) return;
-    const start = Date.now();
+    localStorage.setItem(`quest_${activeProgress.id}_steps`, JSON.stringify(stepProgress));
+  }, [stepProgress, activeProgress.id]);
+
+  useEffect(() => {
+    if (!hasStarted || !startTimestamp) return;
+    
+    setSeconds(Math.floor((Date.now() - startTimestamp) / 1000));
     const interval = setInterval(() => {
-      setSeconds(Math.floor((Date.now() - start) / 1000));
+      setSeconds(Math.floor((Date.now() - startTimestamp) / 1000));
     }, 1000);
     return () => clearInterval(interval);
-  }, [hasStarted]);
+  }, [hasStarted, startTimestamp]);
+
+  const handleStart = () => {
+    const now = Date.now();
+    setStartTimestamp(now);
+    setHasStarted(true);
+    localStorage.setItem(`quest_${activeProgress.id}_start_ts`, now.toString());
+    localStorage.setItem(`quest_${activeProgress.id}_started`, 'true');
+  };
+
+  const clearStorageAndAction = (action: (id: number) => void) => {
+    localStorage.removeItem(`quest_${activeProgress.id}_started`);
+    localStorage.removeItem(`quest_${activeProgress.id}_start_ts`);
+    localStorage.removeItem(`quest_${activeProgress.id}_steps`);
+    action(activeProgress.id);
+  };
 
   const formatTime = (s: number) => {
     const h = Math.floor(s / 3600);
@@ -68,7 +104,7 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
         className="w-full max-w-xl border-[6px] border-white bg-black p-8 shadow-[20px_20px_0px_white] relative"
       >
         <button 
-          onClick={() => onCancel(activeProgress.id)}
+          onClick={() => clearStorageAndAction(onCancel)}
           className="absolute top-4 right-4 p-2 bg-red-500/10 text-red-500 border-2 border-red-500/20 hover:bg-red-500 hover:text-white transition-all z-10"
           title="Abort Protocol"
         >
@@ -94,7 +130,7 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
                </div>
 
                <button 
-                onClick={() => setHasStarted(true)}
+                onClick={handleStart}
                 className="group relative px-12 py-6 bg-main title-hover transition-all"
                >
                  <span className="relative z-10 text-3xl font-black italic text-black uppercase tracking-tighter">START QUEST</span>
@@ -179,7 +215,7 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
             </div>
             
             <button 
-              onClick={() => onComplete(activeProgress.id)}
+              onClick={() => clearStorageAndAction(onComplete)}
               disabled={!allCompleted}
               className={`w-full font-black py-5 text-xl uppercase italic tracking-[0.3em] transition-all transform flex items-center justify-center gap-3
                 ${allCompleted 
