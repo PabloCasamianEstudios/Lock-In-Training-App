@@ -16,4 +16,5 @@ public class QuestCompletionResponse {
     private long goldReward;
     private int levelsGained;
     private int statPointsGained;
+    private java.util.List<com.lockin.model.Achievement> unlockedAchievements;
 }

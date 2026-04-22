@@ -18,4 +18,8 @@ public class Achievement {
 
     private String description;
     private String iconUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "title_reward_id")
+    private Title titleReward;
 }

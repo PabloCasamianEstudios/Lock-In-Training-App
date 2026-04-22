@@ -13,3 +13,15 @@ VALUES ('Daily Quest: Preparing to get stronger', '100 Push-ups, 100 Sit-ups, 10
 
 -- Initial Tip
 INSERT INTO tips (title, description) VALUES ('Stay Hydrated', 'A good hunter always monitors their fluid intake during intense training sessions.');
+
+-- Titles
+INSERT INTO titles (name, description, price) VALUES ('Beginner', 'The journey begins.', 0);
+INSERT INTO titles (name, description, price) VALUES ('Awakened', 'Broken through the initial limits.', 0);
+INSERT INTO titles (name, description, price) VALUES ('Hard Worker', 'Unwavering dedication to training.', 0);
+INSERT INTO titles (name, description, price) VALUES ('Apex', 'Standing at the top of the food chain.', 0);
+
+-- Achievements
+INSERT INTO achievements (title, description, icon_url, title_reward_id) VALUES ('The Beginning', 'Reach level 10', '/icons/level10.png', 1);
+INSERT INTO achievements (title, description, icon_url, title_reward_id) VALUES ('Awakening', 'Reach level 50', '/icons/level50.png', 2);
+INSERT INTO achievements (title, description, icon_url, title_reward_id) VALUES ('Dedicated Hunter', 'Complete 50 missions', '/icons/50missions.png', 3);
+INSERT INTO achievements (title, description, icon_url, title_reward_id) VALUES ('Apex Predator', 'Reach the Diamond League', '/icons/diamond.png', 4);

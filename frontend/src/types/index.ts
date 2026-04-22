@@ -29,6 +29,13 @@ export interface User {
   isGuest?: boolean;
 }
 
+export interface Achievement {
+  id: number;
+  title: string;
+  description: string;
+  iconUrl: string;
+}
+
 export interface SurveyData {
   pushUps: string;
   runTime: string;

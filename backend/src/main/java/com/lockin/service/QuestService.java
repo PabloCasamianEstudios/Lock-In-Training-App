@@ -20,6 +20,8 @@ public class QuestService {
     private ProtectionService protectionService;
     @Autowired
     private AdventureSessionRepository adventureSessionRepository;
+    @Autowired
+    private AchievementService achievementService;
 
     /* --- REWARDS & PROGRESSION ZONE --- */
     @Transactional
@@ -55,6 +57,10 @@ public class QuestService {
         
         int levelsGained = user.getLevel() - oldLevel;
 
+        // Achievements and Counters
+        user.setCompletedWorkouts(user.getCompletedWorkouts() + 1);
+        java.util.List<Achievement> unlockedAchievements = achievementService.checkAndUnlock(user);
+
         // Update Progress
         progress.setStatus(UserQuestProgress.QuestStatus.COMPLETED);
         progress.setCompletionTime(LocalDateTime.now());
@@ -82,6 +88,7 @@ public class QuestService {
                 .goldReward(quest.getGoldReward())
                 .levelsGained(levelsGained)
                 .statPointsGained(levelsGained * 4)
+                .unlockedAchievements(unlockedAchievements)
                 .build();
     }
 

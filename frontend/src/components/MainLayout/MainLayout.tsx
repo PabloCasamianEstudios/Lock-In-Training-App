@@ -13,6 +13,7 @@ import AdminPage from '../../pages/AdminPage';
 import WorkoutCameraPage from '../../pages/WorkoutCameraPage';
 import RestrictedAccess from '../common/RestrictedAccess';
 import LevelUpModal from '../modals/LevelUpModal';
+import AchievementToast from '../common/AchievementToast';
 
 interface Tab {
   id: string;
@@ -221,6 +222,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
           onDistribute={(dist) => distributeStats(user?.id || 0, dist)}
         />
       )}
+      <AchievementToast />
     </div>
   );
 };
