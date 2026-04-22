@@ -26,9 +26,12 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${MYSQL_DATABASE:-lockin_db}?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-lockin_user}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-lockin_pass}
+      AI_GAME_MASTER_URL: http://ai_sandbox:8000/api/adventure
     depends_on:
       db:
         condition: service_healthy
+      ai_sandbox:
+        condition: service_started
 
   frontend:
     build: ./frontend
@@ -51,6 +54,14 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  ai_sandbox:
+    build: ./python_ai_sandbox
+    container_name: lockin_ai_sandbox
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./python_ai_sandbox/.env
 
 volumes:
   db_data:

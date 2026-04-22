@@ -51,6 +51,33 @@ public class SocialController {
         return ResponseEntity.ok(friendshipRepository.save(friendship));
     }
 
+    @GetMapping("/friends/status")
+    public ResponseEntity<java.util.Map<String, String>> checkStatus(@RequestParam Long u1, @RequestParam Long u2) {
+        Optional<Friendship> existing = friendshipRepository.findExistingFriendship(u1, u2);
+        String status = "NONE";
+        if (existing.isPresent()) {
+            status = existing.get().getStatus().name();
+        }
+        java.util.Map<String, String> response = new java.util.HashMap<>();
+        response.put("status", status);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/friends/requests/pending/{userId}")
+    public List<Friendship> getPendingRequests(@PathVariable Long userId) {
+        return friendshipRepository.findByReceiverIdAndStatus(userId, Friendship.FriendshipStatus.PENDING);
+    }
+
+    @PostMapping("/friends/reject/{requestId}")
+    public ResponseEntity<Object> rejectRequest(@PathVariable Long requestId) {
+        Friendship friendship = friendshipRepository.findById(requestId).orElse(null);
+        if (friendship == null)
+            return ResponseEntity.status(404).body("Petición no encontrada");
+
+        friendship.setStatus(Friendship.FriendshipStatus.REJECTED);
+        return ResponseEntity.ok(friendshipRepository.save(friendship));
+    }
+
     @GetMapping("/friends/{userId}")
     public List<User> getFriends(@PathVariable Long userId) {
         /* --- FRIEND LIST MAPPING ZONE --- */

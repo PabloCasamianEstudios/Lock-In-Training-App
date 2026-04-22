@@ -1,6 +1,7 @@
-﻿import { type FC, useState, useEffect } from 'react';
+import { type FC, useState, useEffect } from 'react';
 import { User as UserIcon, ShieldCheck, Mail, Database, Award, Settings, LogOut, Loader2 } from 'lucide-react';
 import { userService } from '../../services/userService';
+import { socialService } from '../../services/socialService';
 import type { User } from '../../types';
 import AppHeader from '../../components/common/AppHeader';
 import type { PageProps } from '../../types';
@@ -8,17 +9,38 @@ import type { PageProps } from '../../types';
 const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
   const isOwnProfile = !targetId || targetId === user?.id;
   const [targetProfile, setTargetProfile] = useState<User | null>(null);
+  const [friendStatus, setFriendStatus] = useState<'NONE' | 'PENDING' | 'ACCEPTED' | 'REJECTED'>('NONE');
   const [loading, setLoading] = useState(!isOwnProfile);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
-    if (!isOwnProfile && targetId) {
+    if (!isOwnProfile && targetId && user?.id) {
       setLoading(true);
-      userService.getUserProfile(targetId, false)
-        .then(data => setTargetProfile(data))
-        .catch(err => console.error('[ProfilePage] Failed to fetch target profile:', err))
+      Promise.all([
+        userService.getUserProfile(targetId, false),
+        socialService.getFriendshipStatus(user.id, targetId)
+      ])
+        .then(([profileData, statusData]) => {
+          setTargetProfile(profileData);
+          setFriendStatus(statusData.status);
+        })
+        .catch(err => console.error('[ProfilePage] Failed to fetch target data:', err))
         .finally(() => setLoading(false));
     }
-  }, [isOwnProfile, targetId]);
+  }, [isOwnProfile, targetId, user?.id]);
+
+  const handleAddFriend = async () => {
+    if (!user || !targetId) return;
+    setActionLoading(true);
+    try {
+      await socialService.sendFriendRequest(user.id, targetId);
+      setFriendStatus('PENDING');
+    } catch (err) {
+      console.error('Error sending friend request:', err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -56,6 +78,28 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
             <span className="text-[10px] bg-white text-black px-2 py-0.5 font-black uppercase tracking-widest italic">{displayUser?.email || 'OFFLINE_PROTOCOL'}</span>
             <span className="text-[10px] bg-main text-black px-2 py-0.5 font-black uppercase tracking-widest italic">Rank {displayProfile?.rank || 'E'}</span>
           </div>
+
+          {!isOwnProfile && displayUser && (
+            <div className="mt-4">
+              {friendStatus === 'NONE' || friendStatus === 'REJECTED' ? (
+                <button 
+                  onClick={handleAddFriend}
+                  disabled={actionLoading}
+                  className="bg-main text-black border-2 border-main px-6 py-2 font-black italic uppercase tracking-widest text-sm hover:bg-white hover:border-white transition-all disabled:opacity-50"
+                >
+                  {actionLoading ? 'PROCESS...' : 'ADD FRIEND'}
+                </button>
+              ) : friendStatus === 'PENDING' ? (
+                <button disabled className="bg-white/10 text-white/40 border-2 border-white/20 px-6 py-2 font-black italic uppercase tracking-widest text-sm">
+                  REQUEST SENT
+                </button>
+              ) : (
+                <button disabled className="bg-main/20 text-main border-2 border-main px-6 py-2 font-black italic uppercase tracking-widest text-sm">
+                  ALREADY FRIENDS
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

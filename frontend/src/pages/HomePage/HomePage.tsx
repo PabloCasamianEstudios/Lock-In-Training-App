@@ -1,4 +1,4 @@
-﻿import { useState, type FC } from 'react';
+import { useState, type FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Shield, 
@@ -8,8 +8,11 @@ import {
   Bell, 
   Users, 
   Lightbulb, 
-  Activity as ActivityIcon 
+  Activity as ActivityIcon,
+  X,
+  Check
 } from 'lucide-react';
+import { socialService } from '../../services/socialService';
 import type { PageProps } from '../../types';
 import { useHomeData } from '../../hooks/useHomeData';
 import AppHeader from '../../components/common/AppHeader';
@@ -23,16 +26,36 @@ const HomePage: FC<PageProps> = ({ user }) => {
     activeQuestsCount, 
     dailyQuests,
     friends, 
+    pendingRequests,
     activity, 
     tips,
     streak, 
     level, 
     xp, 
     rank, 
-    loading 
+    loading,
+    refresh
   } = useHomeData(user?.id);
 
   const [activeTab, setActiveTab] = useState<'FEED' | 'ACTIVITY' | 'TIPS' | 'FRIENDS'>('FEED');
+
+  const handleAcceptRequest = async (requestId: number) => {
+    try {
+      await socialService.acceptFriendRequest(requestId);
+      refresh();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleRejectRequest = async (requestId: number) => {
+    try {
+      await socialService.rejectFriendRequest(requestId);
+      refresh();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   if (loading) {
     return (
@@ -192,29 +215,62 @@ const HomePage: FC<PageProps> = ({ user }) => {
             )}
 
             {activeTab === 'FRIENDS' && (
-              <div className="space-y-3">
-                {friends.length > 0 ? (friends.map((friend, i) => (
-                  <div key={i} className="bg-black border border-white/10 p-3 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full border border-white/20 bg-zinc-800 flex items-center justify-center text-xs font-black text-white/40">
-                        {(friend.username ?? '?').charAt(0).toUpperCase()}
+              <div className="space-y-6">
+                
+                {/* PENDING REQUESTS */}
+                {pendingRequests && pendingRequests.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-main italic">INCOMING PROTOCOLS</h3>
+                    {pendingRequests.map((req: any, i: number) => (
+                      <div key={`req-${i}`} className="bg-main/10 border border-main/30 p-3 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full border border-main/50 bg-main/20 flex items-center justify-center text-xs font-black text-main">
+                            {(req.sender?.username ?? '?').charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-xs font-black text-white italic">{req.sender?.username ?? 'Hunter'}</p>
+                            <p className="text-[10px] text-white/50 uppercase tracking-widest">Requesting Access</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button onClick={() => handleRejectRequest(req.id)} className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 transition-colors">
+                            <X className="w-4 h-4 text-red-500" />
+                          </button>
+                          <button onClick={() => handleAcceptRequest(req.id)} className="p-2 bg-main/10 hover:bg-main/20 border border-main/30 transition-colors">
+                            <Check className="w-4 h-4 text-main" />
+                          </button>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs font-black text-white italic">{friend.username ?? 'Hunter'}</p>
-                        <p className="text-[10px] text-white/30 uppercase tracking-widest">RANK {friend.rank || 'E'}</p>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-white/20" />
-                  </div>
-                ))) : (
-                  <div className="flex flex-col items-center justify-center py-12 gap-4">
-                    <Users className="w-12 h-12 text-white/10" />
-                    <p className="text-xs font-black text-white/20 uppercase tracking-[0.2em]">Alone in the shadows...</p>
-                    <button className="text-[10px] font-black text-main border-b border-main pb-1 hover:text-white hover:border-white transition-all uppercase italic">
-                      FIND HUNTERS
-                    </button>
+                    ))}
                   </div>
                 )}
+
+                {/* EXISTING FRIENDS */}
+                <div className="space-y-3">
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">VERIFIED HUNTERS</h3>
+                  {friends.length > 0 ? (friends.map((friend, i) => (
+                    <div key={i} className="bg-black border border-white/10 p-3 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full border border-white/20 bg-zinc-800 flex items-center justify-center text-xs font-black text-white/40">
+                          {(friend.username ?? '?').charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="text-xs font-black text-white italic">{friend.username ?? 'Hunter'}</p>
+                          <p className="text-[10px] text-white/30 uppercase tracking-widest">RANK {friend.rank || 'E'}</p>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-white/20" />
+                    </div>
+                  ))) : (
+                    <div className="flex flex-col items-center justify-center py-12 gap-4">
+                      <Users className="w-12 h-12 text-white/10" />
+                      <p className="text-xs font-black text-white/20 uppercase tracking-[0.2em]">Alone in the shadows...</p>
+                      <button className="text-[10px] font-black text-main border-b border-main pb-1 hover:text-white hover:border-white transition-all uppercase italic">
+                        FIND HUNTERS
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </motion.div>

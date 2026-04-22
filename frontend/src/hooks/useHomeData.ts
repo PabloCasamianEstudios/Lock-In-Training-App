@@ -11,6 +11,7 @@ interface HomeData {
   activeQuestsCount: number;
   dailyQuests: Quest[];
   friends: User[];
+  pendingRequests: any[];
   activity: any[];
   tips: Tip[];
   streak: number;
@@ -29,6 +30,7 @@ export const useHomeData = (userId: number | undefined) => {
     activeQuestsCount: 0,
     dailyQuests: [],
     friends: [],
+    pendingRequests: [],
     activity: [],
     tips: [],
     streak: 0,
@@ -76,6 +78,15 @@ export const useHomeData = (userId: number | undefined) => {
         }
       };
 
+      const fetchPendingRequests = async () => {
+        try {
+          return await socialService.getPendingRequests(userId);
+        } catch (e) {
+          console.error('[API Failure] Pending Requests:', e);
+          return [];
+        }
+      };
+
       const fetchActivity = async () => {
         try {
           return await questService.getUserQuests(userId);
@@ -94,10 +105,11 @@ export const useHomeData = (userId: number | undefined) => {
         }
       };
 
-      const [profile, dailyQuests, friends, activity, fetchedTips] = await Promise.all([
+      const [profile, dailyQuests, friends, pending, activity, fetchedTips] = await Promise.all([
         fetchProfile(),
         fetchDailies(),
         fetchFriends(),
+        fetchPendingRequests(),
         fetchActivity(),
         fetchTips(),
       ]);
@@ -119,6 +131,7 @@ export const useHomeData = (userId: number | undefined) => {
         activeQuestsCount: completedDailies,
         dailyQuests: validDailies,
         friends: Array.isArray(friends) ? friends : [],
+        pendingRequests: Array.isArray(pending) ? pending : [],
         activity: Array.isArray(activity) ? activity : [],
         tips: finalTips,
         streak: profile?.streak || 0,

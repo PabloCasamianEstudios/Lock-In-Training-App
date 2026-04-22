@@ -24,5 +24,28 @@ export const socialService = {
    */
   acceptFriendRequest: async (requestId: number): Promise<any> => {
     return await apiClient(`/api/social/friends/accept/${requestId}`, { method: 'POST' });
+  },
+
+  /**
+   * Fetches pending friend requests for a user.
+   * Path: /api/social/friends/requests/pending/{userId}
+   */
+  getPendingRequests: async (userId: number): Promise<any[]> => {
+    return await apiClient(`/api/social/friends/requests/pending/${userId}`);
+  },
+
+  /**
+   * Rejects a friend request.
+   * Path: /api/social/friends/reject/{requestId}
+   */
+  rejectFriendRequest: async (requestId: number): Promise<any> => {
+    return await apiClient(`/api/social/friends/reject/${requestId}`, { method: 'POST' });
+  },
+
+  /**
+   * Gets friendship status between two users.
+   */
+  getFriendshipStatus: async (u1: number, u2: number): Promise<{ status: 'NONE' | 'PENDING' | 'ACCEPTED' | 'REJECTED' }> => {
+    return await apiClient<{ status: 'NONE' | 'PENDING' | 'ACCEPTED' | 'REJECTED' }>(`/api/social/friends/status?u1=${u1}&u2=${u2}`);
   }
 };
