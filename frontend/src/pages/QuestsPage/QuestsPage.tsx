@@ -14,8 +14,8 @@ interface QuestsPageProps extends PageProps {
 }
 
 const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfile }) => {
-  const { quests, activeQuest, loading, error, startQuest, cancelQuest, completeQuest, createCustomQuest, updateCustomQuest, deleteCustomQuest, getCustomQuests } = useQuests(user?.id ?? null);
-  const [activeSubTab, setActiveSubTab] = useState<'ALL' | 'DAILY' | 'ACTIVE' | 'YOURS'>('ALL');
+  const { quests, activeQuest, systemQuests, loading, error, startQuest, startSystemQuest, cancelQuest, completeQuest, createCustomQuest, updateCustomQuest, deleteCustomQuest, getCustomQuests } = useQuests(user?.id ?? null);
+  const [activeSubTab, setActiveSubTab] = useState<'ALL' | 'DAILY' | 'ACTIVE' | 'YOURS' | 'SYSTEM'>('ALL');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuest, setEditingQuest] = useState<any | null>(null);
   const [systemPopup, setSystemPopup] = useState<{ 
@@ -35,6 +35,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
   const allQuestsCount = dailyQuests.length + customQuests.length;
   const dailyQuestsCount = dailyQuests.length;
   const yoursQuestsCount = customQuests.length;
+  const systemQuestsCount = systemQuests.length;
   const activeQuestsCount = activeQuest ? 1 : 0;
 
   const handleCompleteQuest = async (id: number) => {
@@ -66,8 +67,9 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
   const filteredQuests = useMemo(() => {
     switch (activeSubTab) {
       case 'DAILY': return dailyQuests;
+      case 'SYSTEM': return systemQuests;
       case 'YOURS': return customQuests;
-      case 'ALL': return [...dailyQuests, ...customQuests];
+      case 'ALL': return [...dailyQuests, ...systemQuests, ...customQuests];
       default: return [];
     }
   }, [activeSubTab, dailyQuests, customQuests]);
@@ -82,7 +84,8 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
 
       <nav className="flex items-center justify-between gap-1 overflow-x-auto no-scrollbar py-2 px-6 mb-8">
         {[
-          { id: 'ALL', label: `ALL (${allQuestsCount})` },
+          { id: 'ALL', label: `ALL` },
+          { id: 'SYSTEM', label: `SYSTEM (${systemQuestsCount})` },
           { id: 'DAILY', label: `DAILY (${dailyQuestsCount})` },
           { id: 'ACTIVE', label: `ACTIVE (${activeQuestsCount})` },
           { id: 'YOURS', label: `YOURS (${yoursQuestsCount})` },
@@ -236,7 +239,11 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                             type: 'INFO',
                             onConfirm: async () => {
                               try {
-                                await startQuest(quest.id || quest.questId);
+                                if (quest.type === 'SYSTEM') {
+                                  await startSystemQuest(quest.id || quest.questId);
+                                } else {
+                                  await startQuest(quest.id || quest.questId);
+                                }
                               } catch (err: any) {
                                 setSystemPopup({
                                   isOpen: true,

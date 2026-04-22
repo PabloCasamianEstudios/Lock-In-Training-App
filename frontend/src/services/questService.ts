@@ -106,5 +106,13 @@ export const questService = {
    */
   getFriendsCustomQuests: async (userId: number, targetUserId: number): Promise<any> => {
     return await apiClient(`/api/quests/friends/${targetUserId}/custom?requesterId=${userId}`);
+  },
+
+  getSystemOffers: async (userId: number): Promise<Quest[]> => {
+    return await apiClient(`/api/quests/system/offers?userId=${userId}`);
+  },
+
+  acceptSystemQuest: async (userId: number, questId: number): Promise<any> => {
+    return await apiClient(`/api/quests/system/accept?userId=${userId}&questId=${questId}`, { method: 'POST' });
   }
 };

@@ -13,4 +13,3 @@ VALUES ('Daily Quest: Preparing to get stronger', '100 Push-ups, 100 Sit-ups, 10
 
 -- Initial Tip
 INSERT INTO tips (title, description) VALUES ('Stay Hydrated', 'A good hunter always monitors their fluid intake during intense training sessions.');
-

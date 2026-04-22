@@ -36,6 +36,8 @@ public class AdminController {
     private UserQuestProgressRepository userQuestProgressRepository;
     @Autowired
     private com.lockin.service.CompetitiveService competitiveService;
+    @Autowired
+    private com.lockin.service.SystemQuestService systemQuestService;
 
     /* --- COMPETITIVE MANAGEMENT ZONE --- */
     @PostMapping("/competitive/monthly-update")
@@ -221,6 +223,16 @@ public class AdminController {
 
         questRepository.deleteById(id);
         return ResponseEntity.ok("Eliminado correctamente");
+    }
+
+    @PostMapping("/quests/generate-system-pool")
+    public ResponseEntity<Object> generateSystemQuestPool() {
+        try {
+            systemQuestService.generateGlobalPool();
+            return ResponseEntity.ok("Pool de 300 misiones (50 por rango) generada correctamente.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al generar pool: " + e.getMessage());
+        }
     }
 
     /* --- CRUD ZONE: EXERCISES --- */

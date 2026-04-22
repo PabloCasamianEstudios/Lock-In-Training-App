@@ -161,6 +161,8 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
       } else if (type === 'quest-active') {
         if (!testId) throw new Error("User ID is required");
         url = `${API_BASE_URL}/api/quests/active/${testId}`;
+      } else if (type === 'quest-system-pool') {
+        url = `${API_BASE_URL}/api/admin/quests/generate-system-pool`;
       } else if (type === 'comp-monthly') {
         url = `${API_BASE_URL}/api/admin/competitive/monthly-update`;
       } else if (type === 'comp-season') {
@@ -281,7 +283,8 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
                           type === 'quest-complete' ? `/api/quests/progress/{id}/complete` :
                             type === 'quest-start' ? `/api/quests/{questId}/start?userId={n}` :
                               type === 'quest-active' ? `/api/quests/active/{id}` :
-                                type === 'comp-monthly' ? `/api/admin/competitive/monthly-update` :
+                                type === 'quest-system-pool' ? `/api/admin/quests/generate-system-pool` :
+                                  type === 'comp-monthly' ? `/api/admin/competitive/monthly-update` :
                                   type === 'comp-season' ? `/api/admin/competitive/season-reset` :
                                     type === 'comp-ranks' ? `/api/admin/competitive/refresh-ranks` :
                                     type === 'users-distribute-stats' ? `/api/user/{id}/distribute-stats` :
@@ -630,6 +633,16 @@ const AdminPage: FC = () => {
                   key="quest-complete"
                   method="post" title="Rewards: Complete Quest" entity="quests" type="quest-complete"
                   colorClass="bg-yellow-600" borderClass="border-yellow-600/20" bgClass="bg-yellow-600/10 hover:bg-yellow-600/20"
+                />
+              </>
+            )}
+
+            {selectedEntity === 'quests' && (
+              <>
+                <SwaggerBlock
+                  key="quest-system-pool"
+                  method="post" title="System: Generate Global Pool (300 Quests)" entity="quests" type="quest-system-pool"
+                  colorClass="bg-orange-600" borderClass="border-orange-600/20" bgClass="bg-orange-600/10 hover:bg-orange-600/20"
                 />
               </>
             )}

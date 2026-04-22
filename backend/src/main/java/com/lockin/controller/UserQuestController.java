@@ -22,6 +22,8 @@ public class UserQuestController {
     @Autowired
     private QuestService questService;
     @Autowired
+    private com.lockin.service.SystemQuestService systemQuestService;
+    @Autowired
     private UserQuestProgressRepository progressRepository;
     @Autowired
     private FriendshipRepository friendshipRepository;
@@ -264,6 +266,65 @@ public class UserQuestController {
             return ResponseEntity.ok("Misión cancelada correctamente");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al cancelar la misión: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/system/offers")
+    public ResponseEntity<Object> getSystemOffers(@RequestParam Long userId) {
+        try {
+            List<SystemQuestOffer> offers = systemQuestService.getOrFillOffers(userId);
+            User user = userRepository.findById(userId).orElseThrow();
+            
+            // Mapear a una lista de Quests con recompensas ajustadas visualmente
+            List<Quest> adjustedQuests = offers.stream().map(offer -> {
+                Quest q = offer.getQuest();
+                Quest copy = new Quest();
+                copy.setId(q.getId());
+                copy.setTitle(q.getTitle());
+                copy.setDescription(q.getDescription());
+                copy.setType(q.getType());
+                copy.setRankDifficulty(q.getRankDifficulty());
+                copy.setSteps(q.getSteps());
+                
+                // Aplicar multiplicadores
+                double multiplier = systemQuestService.calculateMultiplier(user, q);
+                copy.setXpReward((long)(q.getXpReward() * multiplier));
+                copy.setGoldReward((long)(q.getGoldReward() * multiplier));
+                
+                return copy;
+            }).collect(Collectors.toList());
+            
+            return ResponseEntity.ok(adjustedQuests);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/system/accept")
+    public ResponseEntity<Object> acceptSystemQuest(@RequestParam Long userId, @RequestParam Long questId) {
+        try {
+            User user = userRepository.findById(userId).orElseThrow();
+            Quest quest = questRepository.findById(questId).orElseThrow();
+            
+            // Calcular multiplicador y recompensas finales
+            double multiplier = systemQuestService.calculateMultiplier(user, quest);
+            long finalXp = (long) (quest.getXpReward() * multiplier);
+            long finalGold = (long) (quest.getGoldReward() * multiplier);
+
+            // Crear el progreso con la recompensa ajustada FINAL
+            UserQuestProgress progress = new UserQuestProgress();
+            progress.setUser(user);
+            progress.setQuest(quest);
+            progress.setStatus(UserQuestProgress.QuestStatus.ACTIVE);
+            progress.setAppliedXpReward(finalXp);
+            progress.setAppliedGoldReward(finalGold);
+            
+            // ELIMINAR la oferta del pool de este usuario para que se reponga una nueva
+            systemQuestService.removeOffer(userId, questId);
+            
+            return ResponseEntity.ok(progressRepository.save(progress));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

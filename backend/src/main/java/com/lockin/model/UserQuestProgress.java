@@ -25,6 +25,9 @@ public class UserQuestProgress {
     @Enumerated(EnumType.STRING)
     private QuestStatus status = QuestStatus.ACTIVE;
 
+    private Long appliedXpReward;
+    private Long appliedGoldReward;
+
     private LocalDateTime startTime = LocalDateTime.now();
     private LocalDateTime completionTime;
 

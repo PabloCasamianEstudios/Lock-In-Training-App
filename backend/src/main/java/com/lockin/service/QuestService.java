@@ -41,11 +41,14 @@ public class QuestService {
         int oldLevel = user.getLevel();
 
         // Apply Rewards
-        user.setXp(user.getXp() + quest.getXpReward());
-        user.setCoins(user.getCoins() + quest.getGoldReward());
+        long xpToApply = progress.getAppliedXpReward() != null ? progress.getAppliedXpReward() : quest.getXpReward();
+        long goldToApply = progress.getAppliedGoldReward() != null ? progress.getAppliedGoldReward() : quest.getGoldReward();
+        
+        user.setXp(user.getXp() + xpToApply);
+        user.setCoins(user.getCoins() + goldToApply);
 
         // Points increase (scaling with level)
-        user.setTotalPoints(user.getTotalPoints() + (quest.getXpReward() / 10));
+        user.setTotalPoints(user.getTotalPoints() + (xpToApply / 10));
 
         // Level-Up Logic (Scaling)
         processLevelUp(user);

@@ -5,6 +5,7 @@ import { Quest } from '../types';
 export const useQuests = (userId: number | null) => {
   const [quests, setQuests] = useState<Quest[]>([]);
   const [customQuests, setCustomQuests] = useState<Quest[]>([]);
+  const [systemQuests, setSystemQuests] = useState<Quest[]>([]);
   const [activeQuest, setActiveQuest] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,10 +26,15 @@ export const useQuests = (userId: number | null) => {
         console.error("Custom Quests Error:", err);
         return [] as Quest[];
       });
+      const systemPromise = questService.getSystemOffers(userId).catch(err => {
+        console.error("System Quests Error:", err);
+        return [] as Quest[];
+      });
 
-      const [daily, active, globalCustom] = await Promise.all([dailyPromise, activePromise, customPromise]);
+      const [daily, active, globalCustom, system] = await Promise.all([dailyPromise, activePromise, customPromise, systemPromise]);
       setQuests(Array.isArray(daily) ? daily.slice(0, 1) : []);
       setCustomQuests(globalCustom || []);
+      setSystemQuests(system || []);
 
 
       if (active && active.length > 0) {
@@ -61,8 +67,19 @@ export const useQuests = (userId: number | null) => {
     try {
       await questService.startQuest(userId, questId);
       await fetchData();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startSystemQuest = async (questId: number) => {
+    if (!userId) return;
+    setLoading(true);
+    try {
+      await questService.acceptSystemQuest(userId, questId);
+      await fetchData();
     } catch (err: any) {
-      console.error('[useQuests] startQuest error:', err);
+      console.error('[useQuests] startSystemQuest error:', err);
       throw err;
     } finally {
       setLoading(false);
@@ -146,12 +163,14 @@ export const useQuests = (userId: number | null) => {
   }, [fetchData]);
 
   return { 
-    quests, 
+    quests,
     activeQuest, 
+    systemQuests,
     loading, 
     error, 
     fetchQuests: fetchData, 
     startQuest, 
+    startSystemQuest,
     completeQuest,
     cancelQuest,
     createCustomQuest,
