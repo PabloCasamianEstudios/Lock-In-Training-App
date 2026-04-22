@@ -16,7 +16,6 @@ import com.lockin.model.UserTitle;
 import com.lockin.model.UserLeague;
 import com.lockin.model.dtos.RankingUserDTO;
 import com.lockin.repository.UserLeagueRepository;
-import com.lockin.repository.UserTitleRepository;
 import com.lockin.repository.StatRepository;
 import com.lockin.service.UserSurveyService;
 
@@ -326,9 +325,11 @@ public class UserController {
     }
 
     @PostMapping("/{id}/distribute-stats")
-    public ResponseEntity<Object> distributeStats(@PathVariable Long id, @RequestBody Map<String, Integer> distribution) {
+    public ResponseEntity<Object> distributeStats(@PathVariable Long id,
+            @RequestBody Map<String, Integer> distribution) {
         User user = userRepository.findById(id).orElse(null);
-        if (user == null) return ResponseEntity.notFound().build();
+        if (user == null)
+            return ResponseEntity.notFound().build();
 
         int totalPointsToSpend = distribution.values().stream().mapToInt(Integer::intValue).sum();
         if (totalPointsToSpend > user.getStatPoints()) {
@@ -344,16 +345,18 @@ public class UserController {
         for (Map.Entry<String, Integer> entry : distribution.entrySet()) {
             String statName = entry.getKey();
             int pointsToAdd = entry.getValue();
-            if (pointsToAdd <= 0) continue;
+            if (pointsToAdd <= 0)
+                continue;
 
             com.lockin.model.UserStat userStat = currentStats.stream()
-                .filter(us -> us.getStat().getName().equals(statName))
-                .findFirst()
-                .orElse(null);
+                    .filter(us -> us.getStat().getName().equals(statName))
+                    .findFirst()
+                    .orElse(null);
 
             if (userStat != null) {
                 if (userStat.getCurrentValue() + pointsToAdd > 100) {
-                    return ResponseEntity.badRequest().body("La estadística " + statName + " no puede superar los 100 puntos.");
+                    return ResponseEntity.badRequest()
+                            .body("La estadística " + statName + " no puede superar los 100 puntos.");
                 }
                 userStat.setCurrentValue(userStat.getCurrentValue() + pointsToAdd);
                 userStatRepository.save(userStat);
