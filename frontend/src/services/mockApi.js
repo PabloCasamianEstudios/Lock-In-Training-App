@@ -21,8 +21,7 @@ export const authService = {
       throw new Error(errorText);
     }
 
-    // El backend devuelve solo un mensaje, así que creamos
-    // un "usuario" mínimo para el front.
+    // lo cambiamos para gestionarlo desde el front y esto está de "mirame no me toques"
     const registeredUser = {
       username: userData.username,
       email: userData.email,

@@ -1,6 +1,7 @@
 import { useState, useEffect, type FC, type ChangeEvent } from 'react';
 import { ChevronDown, ChevronRight, Trash2, Database, RefreshCw, AlertTriangle, CheckCircle } from 'lucide-react';
 import PopupWindow from '../../components/common/PopupWindow';
+import PageLayout from '../../components/common/PageLayout';
 
 const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
 
@@ -497,29 +498,22 @@ const AdminPage: FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-500 max-w-7xl mx-auto p-4">
-      <div className="flex items-center gap-3 border-b-4 border-white pb-6">
-        <Database className="w-10 h-10 text-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.5)]" />
-        <h1 className="text-5xl font-black italic uppercase tracking-tighter">
-          Admin <span className="text-orange-500 text-glow">Panel</span>
-        </h1>
-        <div className="ml-auto flex items-center gap-2 px-4 py-1 bg-white/5 border border-white/10 skew-x-[-15deg]">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-white/50 skew-x-[15deg]">System Online</span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <PageLayout 
+      title="ADMIN PANEL" 
+      subtitle="CENTRAL CORE OVERRIDE" 
+      icon={Database}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 mt-8">
         {/* SIDEBAR */}
-        <div className="lg:col-span-1 flex flex-col gap-2">
-          <label className="text-[10px] font-black uppercase opacity-30 mb-2 tracking-widest">Select Repository</label>
+        <div className="lg:col-span-1 flex flex-col gap-3">
+          <label className="text-[10px] font-black uppercase opacity-30 mb-2 tracking-[0.3em] italic border-l-4 border-orange-500 pl-4">Repositories</label>
           {entities.map(e => (
             <button
               key={e.id}
               onClick={() => { setSelectedEntity(e.id); setGlobalData([]); }}
-              className={`p-4 text-left text-xs font-black uppercase tracking-[0.2em] transition-all skew-x-[-15deg] border-2 group relative overflow-hidden ${selectedEntity === e.id
+              className={`p-4 text-left text-[11px] font-black uppercase tracking-[0.2em] transition-all skew-x-[-15deg] border-2 group relative overflow-hidden ${selectedEntity === e.id
                 ? 'bg-orange-500 border-orange-500 text-black shadow-[6px_6px_0_white]'
-                : 'border-white/10 text-white/40 hover:border-white/30 hover:text-white'
+                : 'border-white/10 text-white/40 hover:border-white/30 hover:text-white bg-white/5'
                 }`}
             >
               <span className="relative z-10 skew-x-[15deg] inline-block">{e.name}</span>
@@ -531,15 +525,15 @@ const AdminPage: FC = () => {
         </div>
 
         <div className="lg:col-span-3">
-          <div className="flex flex-col mb-8 gap-1">
-            <h2 className="text-3xl font-black uppercase tracking-tight leading-none">{selectedEntity}</h2>
-            <div className="flex items-center gap-2 text-[10px] opacity-100 font-mono italic">
-              <span>Endpoint Base:</span>
-              <span className="text-orange-500/80">/api/admin/{selectedEntity}</span>
+          <div className="flex flex-col mb-10 gap-2 border-b-2 border-white/10 pb-6">
+            <h2 className="text-5xl font-black uppercase tracking-tighter italic leading-none text-white">{selectedEntity}</h2>
+            <div className="flex items-center gap-3 text-[10px] opacity-100 font-mono italic mt-2">
+              <span className="bg-white/5 px-2 py-0.5 rounded-sm text-white/40">ENDPOINT BASE</span>
+              <span className="text-orange-500 font-bold">/api/admin/{selectedEntity}</span>
             </div>
           </div>
 
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2">
             {/* --- SPECIAL ENDPOINTS ZONE --- */}
             {selectedEntity === 'users' && (
               <>
@@ -740,48 +734,48 @@ const AdminPage: FC = () => {
             />
           </div>
 
-          <div className="mt-12 group border-2 border-white/5 rounded-sm overflow-hidden bg-black/20">
-            <div className="bg-white/5 p-4 flex items-center justify-between border-b border-white/10 leading-none">
-              <span className="font-black text-xs uppercase tracking-[0.3em] flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-orange-500 rounded-full" />
+          <div className="mt-16 group border-4 border-white/5 rounded-sm overflow-hidden bg-black/40 shadow-2xl">
+            <div className="bg-white/5 p-5 flex items-center justify-between border-b-2 border-white/10 leading-none">
+              <span className="font-black text-[11px] uppercase tracking-[0.4em] flex items-center gap-3 text-white/60">
+                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_8px_var(--main-color)]" />
                 Quick View: {selectedEntity}
               </span>
               <span className="text-[9px] opacity-30 font-mono italic">Results from 'LIST ALL' execution</span>
             </div>
-            <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+            <div className="max-h-[500px] overflow-y-auto custom-scrollbar bg-black/20">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-white/5 border-b border-white/10 sticky top-0 z-10 backdrop-blur-md">
+                <thead className="bg-white/5 border-b-2 border-white/10 sticky top-0 z-10 backdrop-blur-xl">
                   <tr>
-                    <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/50">ID</th>
-                    <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/50">Preview Data</th>
-                    <th className="p-4 text-[10px] font-black uppercase tracking-widest text-white/50 text-right">Actions</th>
+                    <th className="p-5 text-[10px] font-black uppercase tracking-widest text-white/30">ID</th>
+                    <th className="p-5 text-[10px] font-black uppercase tracking-widest text-white/30">Preview Data</th>
+                    <th className="p-5 text-[10px] font-black uppercase tracking-widest text-white/30 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y-2 divide-white/5">
                   {(globalData || []).map((item: any) => (
-                    <tr key={item.id} className="hover:bg-white/[0.02] transition-colors group/row">
-                      <td className="p-4 font-mono text-[11px] text-orange-500/70 font-bold">#{item.id}</td>
-                      <td className="p-4">
-                        <div className="text-[10px] text-white/50 font-mono truncate max-w-md italic">
-                          {JSON.stringify(item).substring(0, 80)}...
+                    <tr key={item.id} className="hover:bg-white/[0.04] transition-all group/row">
+                      <td className="p-5 font-mono text-[12px] text-orange-500/80 font-black italic">#{item.id}</td>
+                      <td className="p-5">
+                        <div className="text-[10px] text-white/40 font-mono truncate max-w-lg italic group-hover/row:text-white transition-colors">
+                          {JSON.stringify(item).substring(0, 100)}...
                         </div>
                       </td>
-                      <td className="p-4 text-right">
+                      <td className="p-5 text-right">
                         <button
                           onClick={() => handleDeleteQuick(item.id)}
-                          className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white px-3 py-1.5 rounded transition-all duration-300 opacity-0 group-hover/row:opacity-100 border border-red-500/20"
+                          className="bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-black px-4 py-2 rounded-sm transition-all duration-300 opacity-0 group-hover/row:opacity-100 border-2 border-red-600/30 transform -skew-x-12"
                           title="Quick Delete"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </td>
                     </tr>
                   ))}
                   {(globalData && globalData.length === 0) && (
-                    <tr><td colSpan={3} className="p-10 text-center text-white/20 italic text-xs tracking-widest uppercase">Select an operation above and click EXECUTE to browse data</td></tr>
+                    <tr><td colSpan={3} className="p-20 text-center text-white/10 italic text-[11px] tracking-[0.4em] uppercase font-black">Select an operation above and click EXECUTE to browse data</td></tr>
                   )}
                   {globalData === null && (
-                    <tr><td colSpan={3} className="p-10 text-center text-white/10 italic text-xs tracking-widest uppercase">System ready. Establish connection with API...</td></tr>
+                    <tr><td colSpan={3} className="p-20 text-center text-white/5 italic text-[11px] tracking-[0.4em] uppercase font-black animate-pulse">System ready. Establish connection with API...</td></tr>
                   )}
                 </tbody>
               </table>
@@ -789,61 +783,54 @@ const AdminPage: FC = () => {
           </div>
         </div>
       </div>
+
       <PopupWindow
         isOpen={!!systemPopup?.isOpen}
         onClose={closePopup}
         title={systemPopup?.title}
         maxWidth="max-w-sm"
       >
-        <div className="flex flex-col items-center text-center space-y-6 pt-2">
-          <div className={`p-4 rounded-sm transform rotate-45 border-2 ${systemPopup?.type === 'DANGER' ? 'border-red-500 bg-red-500/10' : 'border-main bg-main/10'}`}>
+        <div className="flex flex-col items-center text-center space-y-8 pt-4">
+          <div className={`p-6 rounded-sm transform rotate-45 border-4 shadow-xl ${systemPopup?.type === 'DANGER' ? 'border-red-600 bg-red-600/10' : 'border-main bg-main/10'}`}>
             <div className="-rotate-45">
-              {systemPopup?.type === 'DANGER' ? <AlertTriangle className="w-10 h-10 text-red-500" /> : <CheckCircle className="w-10 h-10 text-main" />}
+              {systemPopup?.type === 'DANGER' ? <AlertTriangle className="w-16 h-16 text-red-600" /> : <CheckCircle className="w-16 h-16 text-main" />}
             </div>
           </div>
-          
-          <div className="space-y-4">
-            <p className="text-[10px] font-black uppercase italic tracking-widest text-white/70 leading-relaxed font-mono">
-              {systemPopup?.message}
-            </p>
-          </div>
-
-          <div className="flex gap-4 w-full pt-4">
+          <p className="text-[11px] font-black uppercase italic tracking-[0.2em] text-white leading-relaxed font-mono px-4">
+            {systemPopup?.message}
+          </p>
+          <div className="flex gap-4 w-full px-4 pb-4">
             {systemPopup?.onConfirm ? (
               <>
-                <button 
+                <button
                   onClick={closePopup}
-                  className="flex-1 py-3 border-2 border-white/20 text-[10px] font-black uppercase italic hover:bg-white/10 transition-all font-mono"
+                  className="flex-1 py-4 border-2 border-white/20 text-[10px] font-black uppercase italic hover:bg-white/10 transition-all font-mono"
                 >
                   ABORT
                 </button>
-                <button 
+                <button
                   onClick={() => {
                     systemPopup.onConfirm?.();
                     closePopup();
                   }}
-                  className="flex-1 py-3 bg-red-600 text-black text-[10px] font-black uppercase italic hover:bg-red-500 transition-all"
+                  className="flex-1 py-4 bg-red-600 text-black text-[10px] font-black uppercase italic hover:bg-red-500 transition-all shadow-[6px_6px_0px_white]"
                 >
-                  CONFIRM
+                  CONFIRM PURGE
                 </button>
               </>
             ) : (
-              <button 
+              <button
                 onClick={closePopup}
-                className="w-full py-3 bg-main text-black text-[10px] font-black uppercase italic"
+                className="w-full py-5 bg-main text-black text-[11px] font-black uppercase italic shadow-[8px_8px_0px_white] hover:bg-white transition-all"
               >
-                CLOSE TERMINAL
+                ACKNOWLEDGE
               </button>
             )}
           </div>
         </div>
       </PopupWindow>
-    </div>
+    </PageLayout>
   );
 };
 
 export default AdminPage;
-
-
-
-

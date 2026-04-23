@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Users, Trophy, Crown, Medal, Star } from 'lucide-react';
 import type { PageProps, RankingUserDTO, User } from '../../types';
 import { useRankings } from '../../hooks/useRankings';
-import AppHeader from '../../components/common/AppHeader';
+import PageLayout from '../../components/common/PageLayout';
 import BrutalistCard from '../../components/common/BrutalistCard';
 import ProgressBar from '../../components/common/ProgressBar';
 
@@ -85,7 +85,7 @@ const PodiumCard: FC<PodiumCardProps> = ({ player, position, isCurrentUser }) =>
         </p>
         <p className="text-[9px] italic text-white/40 mt-0.5">"{player.title ?? 'the hunter'}"</p>
         <p className={`text-[10px] font-black uppercase mt-1 ${rankColor(player.rank)}`}>
-          RANK {player.rank} Â· lv.{player.level}
+          RANK {player.rank} · lv.{player.level}
         </p>
       </div>
     </motion.div>
@@ -223,19 +223,29 @@ const RankingsPage: FC<PageProps> = ({ user, onNavigate }) => {
 
   const top10 = Array.from({ length: 10 }, (_, i) => globalTop[i] || null);
 
-  return (
-    <div className="max-w-md mx-auto pb-24">
-      <AppHeader title="RANKINGS" />
+  if (loading) {
+    return (
+      <PageLayout title="GLOBAL RANKINGS" subtitle="FETCHING HUNTER STANDINGS..." icon={Trophy}>
+        <LoadingSkeleton />
+      </PageLayout>
+    );
+  }
 
+  return (
+    <PageLayout 
+      title="GLOBAL RANKINGS" 
+      subtitle="ELITE HUNTER HIERARCHY" 
+      icon={Trophy}
+    >
       {/* Sub-tab nav */}
-      <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar px-4 py-3 border-b border-white/10 mb-4">
+      <nav className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-8 border-b border-white/10 mb-10">
         {SUB_TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-1.5 text-[10px] font-black border-2 transition-all uppercase tracking-widest whitespace-nowrap
+            className={`px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap
               ${activeTab === tab.id
-                ? 'bg-main text-black border-main'
+                ? 'bg-main text-black border-main shadow-[4px_4px_0px_white]'
                 : 'bg-black text-white/40 border-white/20 hover:border-white/40'}`}
           >
             {tab.label}
@@ -244,29 +254,27 @@ const RankingsPage: FC<PageProps> = ({ user, onNavigate }) => {
       </nav>
 
       <AnimatePresence mode="wait">
-        {/* â”€â”€ ALL tab â”€â”€ */}
+        {/* ALL tab */}
         {activeTab === 'ALL' && (
           <motion.div
             key="all"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="md:grid md:grid-cols-12 md:gap-12 items-start"
           >
-            {loading ? (
-              <LoadingSkeleton />
-            ) : globalTop.length === 0 ? (
-              <EmptyState message="No hunters ranked yet" />
+            {globalTop.length === 0 ? (
+              <div className="col-span-full"><EmptyState message="No hunters ranked yet" /></div>
             ) : (
               <>
-                {/* Podium */}
-                <div className="px-4 mb-6">
-                  <h2 className="text-center text-4xl font-black italic tracking-tighter text-white mb-6 uppercase">
-                    Top Players
+                {/* Podium Side */}
+                <div className="md:col-span-5 lg:col-span-4 mb-12 md:mb-0 md:sticky md:top-4">
+                  <h2 className="text-center text-4xl font-black italic tracking-tighter text-white mb-12 uppercase border-b-2 border-white/5 pb-4">
+                    Top <span className="text-main">Hunters</span>
                   </h2>
 
-                  {/* reorder: 2nd | 1st | 3rd */}
-                  <div className="flex items-end justify-around gap-2">
+                  <div className="flex items-end justify-around gap-2 mb-12">
                     {[1, 0, 2].map(idx => {
                       if (!podium[idx]) return <div key={`empty_${idx}`} className="w-1/3" />;
                       return (
@@ -279,127 +287,147 @@ const RankingsPage: FC<PageProps> = ({ user, onNavigate }) => {
                       );
                     })}
                   </div>
+
+                  {currentUserId && globalTop.find(p => p.id === currentUserId) && (
+                    <div className="hidden md:block bg-main/5 border-l-4 border-main p-5 shadow-lg">
+                      <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-main italic">
+                        <Star className="w-5 h-5 fill-main" />
+                        Live Status: Global Competitive
+                      </div>
+                      <p className="text-[9px] text-white/40 mt-2 font-bold uppercase">Your performance is being tracked in the global coliseum.</p>
+                    </div>
+                  )}
                 </div>
 
-                {/* Rest of leaderboard */}
-                <BrutalistCard padding="p-0">
-                  {top10.map((player, i) => (
+                {/* Leaderboard Side */}
+                <div className="md:col-span-7 lg:col-span-8">
+                  <BrutalistCard padding="p-0" className="shadow-[12px_12px_0px_white] border-4 border-white">
+                    {top10.map((player, i) => (
+                      <RankRow
+                        key={player ? player.id : `empty_rank_${i}`}
+                        player={player}
+                        position={i + 1}
+                        isCurrentUser={player?.id === currentUserId}
+                        onClick={() => {
+                          if (player && onNavigate) {
+                            onNavigate('profile', { targetId: player.id });
+                          }
+                        }}
+                      />
+                    ))}
+                  </BrutalistCard>
+                </div>
+              </>
+            )}
+          </motion.div>
+        )}
+
+        {/* FRIENDS tab */}
+        {activeTab === 'FRIENDS' && (
+          <motion.div
+            key="friends"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {sortedFriends.length === 0 ? (
+              <EmptyState message="Summon your allies to see them here" />
+            ) : (
+              <div className="grid md:grid-cols-2 gap-10">
+                <BrutalistCard padding="p-0" className="h-fit shadow-[8px_8px_0px_white] border-4 border-white">
+                  <div className="p-4 border-b-2 border-white bg-white/5">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 italic">
+                      Combat Circle (Division A)
+                    </p>
+                  </div>
+                  {sortedFriends.slice(0, Math.ceil(sortedFriends.length / 2)).map((friend, i) => (
+                    <FriendRow key={friend.id} friend={friend} position={i + 1} />
+                  ))}
+                </BrutalistCard>
+                {sortedFriends.length > 1 && (
+                   <BrutalistCard padding="p-0" className="h-fit shadow-[8px_8px_0px_white] border-4 border-white">
+                    <div className="p-4 border-b-2 border-white bg-white/5 md:hidden"></div>
+                    {sortedFriends.slice(Math.ceil(sortedFriends.length / 2)).map((friend, i) => (
+                      <FriendRow key={friend.id} friend={friend} position={Math.ceil(sortedFriends.length / 2) + i + 1} />
+                    ))}
+                  </BrutalistCard>
+                )}
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* YOUR_LEAGUE tab */}
+        {activeTab === 'YOUR_LEAGUE' && (
+          <motion.div
+            key="league"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {(leaguePlayers?.length ?? 0) === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 gap-8 text-center border-4 border-dashed border-white/10 rounded-sm">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-main/10 blur-3xl" />
+                  <Trophy className="w-16 h-16 text-main/20 relative" />
+                </div>
+                <div className="border-4 border-white p-8 bg-black space-y-3 shadow-[12px_12px_0px_var(--main-color)] transform -rotate-2">
+                  <p className="text-3xl font-black italic uppercase text-white tracking-tighter">SEASON</p>
+                  <p className="text-6xl font-black italic text-main tracking-tighter leading-none">ACTIVE</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 mt-4 italic">
+                    SYNCING GROUP DATA...
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-10">
+                 <BrutalistCard padding="p-0" className="h-fit shadow-[8px_8px_0px_white] border-4 border-white">
+                  <div className="p-4 border-b-2 border-white bg-main/10">
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-main italic">
+                      LEAGUE DIVISION PROTOCOL
+                    </p>
+                  </div>
+                  {leaguePlayers.slice(0, Math.ceil(leaguePlayers.length / 2)).map((player, i) => (
                     <RankRow
-                      key={player ? player.id : `empty_rank_${i}`}
+                      key={player.id}
                       player={player}
                       position={i + 1}
-                      isCurrentUser={player?.id === currentUserId}
+                      isCurrentUser={player.id === currentUserId}
                       onClick={() => {
-                        if (player && onNavigate) {
+                        if (onNavigate) {
                           onNavigate('profile', { targetId: player.id });
                         }
                       }}
                     />
                   ))}
                 </BrutalistCard>
-
-                {/* Current user stats if they have points */}
-                {currentUserId && globalTop.find(p => p.id === currentUserId) && (
-                  <div className="mt-4 px-4">
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/20 italic">
-                      <Star className="w-3 h-3 text-main" />
-                      You are in this ranking
-                    </div>
-                  </div>
+                {leaguePlayers.length > 1 && (
+                  <BrutalistCard padding="p-0" className="h-fit shadow-[8px_8px_0px_white] border-4 border-white">
+                    <div className="p-4 border-b-2 border-white bg-main/10 md:hidden"></div>
+                    {leaguePlayers.slice(Math.ceil(leaguePlayers.length / 2)).map((player, i) => (
+                      <RankRow
+                        key={player.id}
+                        player={player}
+                        position={Math.ceil(leaguePlayers.length / 2) + i + 1}
+                        isCurrentUser={player.id === currentUserId}
+                        onClick={() => {
+                          if (onNavigate) {
+                            onNavigate('profile', { targetId: player.id });
+                          }
+                        }}
+                      />
+                    ))}
+                  </BrutalistCard>
                 )}
-              </>
-            )}
-          </motion.div>
-        )}
-
-        {/* FRIENDS tab  */}
-        {activeTab === 'FRIENDS' && (
-          <motion.div
-            key="friends"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="px-4"
-          >
-            {loading ? (
-              <LoadingSkeleton />
-            ) : sortedFriends.length === 0 ? (
-              <EmptyState message="Summon your allies to see them here" />
-            ) : (
-              <BrutalistCard padding="p-0">
-                <div className="p-3 border-b border-white/10">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-white/30 italic">
-                    {sortedFriends.length} {sortedFriends.length === 1 ? 'hunter' : 'hunters'} in your circle
-                  </p>
-                </div>
-                {sortedFriends.map((friend, i) => (
-                  <FriendRow key={friend.id} friend={friend} position={i + 1} />
-                ))}
-              </BrutalistCard>
-            )}
-          </motion.div>
-        )}
-
-        {activeTab === 'YOUR_LEAGUE' && (
-          <motion.div
-            key="league"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="px-4"
-          >
-            {loading ? (
-              <LoadingSkeleton />
-            ) : (leaguePlayers?.length ?? 0) === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-main/10 blur-3xl" />
-                  <Trophy className="w-12 h-12 text-main/30 relative" />
-                </div>
-                <div className="border-2 border-white/10 p-6 bg-black space-y-2 shadow-[6px_6px_0px_var(--main-color)]">
-                  <p className="text-2xl font-black italic uppercase text-white">SEASON</p>
-                  <p className="text-5xl font-black italic text-main tracking-tighter leading-none">ACTIVE</p>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mt-2">
-                    Compete to climb the league
-                  </p>
-                </div>
-                <p className="text-xs text-white/20 font-black italic uppercase tracking-widest">
-                  Assignments in progress... check back soon!
-                </p>
               </div>
-            ) : (
-              <BrutalistCard padding="p-0">
-                <div className="p-3 border-b border-white/10 bg-main/5">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-main italic">
-                    League Group Membership
-                  </p>
-                </div>
-                {leaguePlayers.map((player, i) => (
-                  <RankRow
-                    key={player.id}
-                    player={player}
-                    position={i + 1}
-                    isCurrentUser={player.id === currentUserId}
-                    onClick={() => {
-                      if (onNavigate) {
-                        onNavigate('profile', { targetId: player.id });
-                      }
-                    }}
-                  />
-                ))}
-              </BrutalistCard>
             )}
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </PageLayout>
   );
 };
 
 export default RankingsPage;
-
-
-
-

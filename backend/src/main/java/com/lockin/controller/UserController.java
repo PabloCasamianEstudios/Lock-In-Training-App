@@ -38,7 +38,7 @@ public class UserController {
     private final UserItemRepository userItemRepository;
     private final UserTitleRepository userTitleRepository;
     private final UserLeagueRepository userLeagueRepository;
-    private final StatRepository statRepository;
+    private final StatRepository statRepository; // esto me da fallo maga, me pone nervioso la consola :c
 
     public UserController(UserSurveyService userSurveyService,
             UserRepository userRepository,

@@ -4,21 +4,18 @@ const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 1280,
+    height: 720,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
     },
-    // Estilo Solo Leveling - Sin menú clásico
     autoHideMenuBar: true,
-    title: "Solo Leveling: Lock-In Training"
+    title: "Lock-In"
   });
 
   if (isDev) {
     win.loadURL('http://localhost:5173');
-    // Abrir devtools en desarrollo si quieres
-    // win.webContents.openDevTools();
   } else {
     win.loadFile(path.join(__dirname, '../dist/index.html'));
   }
