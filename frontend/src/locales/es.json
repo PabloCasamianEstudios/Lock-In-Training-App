@@ -1,0 +1,327 @@
+{
+  "profile": {
+    "title": "PERFIL DE CAZADOR",
+    "subtitle_syncing": "SINCRONIZANDO DATOS BIOMÉTRICOS...",
+    "acquiring_data": "Adquiriendo Datos del Cazador...",
+    "terminal": "TERMINAL DE ACCESO PERSONAL",
+    "dossier": "DOSSIER DE CAZADOR EXTERNO",
+    "level": "Nvl",
+    "rank": "Rango",
+    "add_friend": "AÑADIR AMIGO",
+    "processing": "PROCESANDO...",
+    "request_sent": "SOLICITUD ENVIADA",
+    "already_friends": "YA SON AMIGOS",
+    "achievements": "LOGROS",
+    "total_logs": "REGISTROS TOTALES",
+    "account_status": "ESTADO DE CUENTA",
+    "notifications": "NOTIFICACIONES",
+    "unlocked": "DESBLOQUEADOS",
+    "sessions": "SESIONES",
+    "guest_override": "ACCESO DE INVITADO",
+    "verified_protocol": "PROTOCOLO VERIFICADO",
+    "new_debts": "NUEVAS DEUDAS",
+    "control_panel": "Panel de Control de Cazador",
+    "system_settings": "Ajustes del Sistema",
+    "modify_interface": "Modificar interfaz y protocolos",
+    "emergency_logout": "Cierre de Emergencia",
+    "terminate_session": "Terminar sesión actual"
+  },
+  "home": {
+    "title": "TERMINAL PRINCIPAL",
+    "subtitle_establishing": "ESTABLECIENDO VÍNCULO CENTRAL...",
+    "subtitle_active": "PROTOCOLOS DE SISTEMA ACTIVOS",
+    "loading": "Cargando Datos del Sistema...",
+    "quests": "MISIONES",
+    "streak": "RACHA",
+    "tabs": {
+      "feed": "MURO",
+      "activity": "ACTIVIDAD",
+      "tips": "CONSEJOS",
+      "friends": "AMIGOS"
+    },
+    "no_pending": "Sin protocolos diarios pendientes",
+    "no_activity": "Sin actividad registrada",
+    "incoming_protocols": "PROTOCOLOS ENTRANTES",
+    "requesting_access": "Solicitando Acceso",
+    "verified_hunters": "CAZADORES VERIFICADOS",
+    "alone": "Solo en las sombras...",
+    "find_hunters": "BUSCAR CAZADORES"
+  },
+  "rankings": {
+    "title": "RANKINGS GLOBALES",
+    "subtitle_fetching": "OBTENIENDO CLASIFICACIONES...",
+    "subtitle_hierarchy": "JERARQUÍA DE CAZADORES DE ÉLITE",
+    "tabs": {
+      "all": "TODOS",
+      "friends": "AMIGOS",
+      "league": "TU LIGA"
+    },
+    "top_hunters": "Cazadores Top",
+    "live_status": "Estado: Competitivo Global",
+    "performance_tracked": "Tu rendimiento está siendo rastreado en el coliseo global.",
+    "no_hunters": "Sin cazadores clasificados aún",
+    "summon_allies": "Invoca a tus aliados para verlos aquí",
+    "combat_circle": "Círculo de Combate (División A)",
+    "season_active": "TEMPORADA ACTIVA",
+    "syncing_group": "SINCRONIZANDO DATOS DE GRUPO...",
+    "league_protocol": "PROTOCOLO DE DIVISIÓN DE LIGA"
+  },
+  "quests": {
+    "title": "PROTOCOLOS DE MISIÓN",
+    "subtitle_decrypting": "DESCRIPTANDO DATOS DE MISIÓN...",
+    "subtitle_assignments": "ASIGNACIONES DE COMBATE DISPONIBLES",
+    "initializing": "INICIALIZANDO PROTOCOLO DE MISIÓN...",
+    "error": "ERROR DE SISTEMA DETECTADO",
+    "protocols": "Protocolos",
+    "tabs": {
+      "all": "TODO",
+      "system": "SISTEMA",
+      "daily": "DIARIO",
+      "active": "ACTIVO",
+      "yours": "TUS_MISIONES"
+    },
+    "no_active": "Sin misiones activas en progreso",
+    "abort_protocol": "ABORTAR PROTOCOLO",
+    "terminate_mission": "¿ESTÁS SEGURO DE QUE QUIERES TERMINAR ESTA MISIÓN? TODOS LOS DATOS DEL EXPERIMENTO ACTUAL SERÁN PURGADOS.",
+    "protocol_failed": "PROTOCOLO FALLIDO",
+    "initialize": "INICIALIZAR",
+    "system_overload": "SOLO SE PERMITE UNA MISIÓN ACTIVA. COMPLETA O ABANDONA EL PROTOCOLO ACTUAL PRIMERO.",
+    "purge_protocol": "PROTOCOLO DE PURGA",
+    "delete_warning": "ESTÁS A PUNTO DE ELIMINAR ESTA MISIÓN. ESTA ACCIÓN NO SE PUEDE DESHACER. ¿PROCEDER?",
+    "protocol_success": "PROTOCOLO EXITOSO",
+    "rewards": {
+      "xp": "XP GANADA",
+      "gold": "ORO ADQUIRIDO",
+      "collect": "RECOLECTAR Y CONTINUAR"
+    }
+  },
+  "common": {
+    "system_online": "Sistema Online",
+    "hunter": "CAZADOR",
+    "you": "TÚ",
+    "rank": "RANGO",
+    "level": "nvl."
+  },
+  "settings": {
+    "title": "CONFIGURACIÓN DEL SISTEMA",
+    "language": "IDIOMA DE INTERFAZ",
+    "select_language": "Seleccionar Idioma de Protocolo",
+    "spanish": "Español",
+    "english": "Inglés",
+    "save": "GUARDAR CAMBIOS"
+  },
+  "auth": {
+    "system": "SISTEMA",
+    "new": "NUEVO",
+    "access": "ACCESO",
+    "player": "JUGADOR",
+    "username": "Perfil de Usuario",
+    "username_placeholder": "ej. SUNG_JIN_WOO",
+    "email": "Protocolo de Email",
+    "password": "Clave de Seguridad",
+    "password_placeholder": "tu contraseña",
+    "enter_stage": "ENTRAR AL NIVEL",
+    "finalize_profile": "FINALIZAR PERFIL",
+    "no_data": "¿Sin datos? Crear protocolo de inicialización",
+    "already_registered": "¿Ya estás registrado? Acceder al sistema",
+    "guest_override": "ACCESO DE INVITADO",
+    "alert": "ALERTA",
+    "success": "SISTEMA",
+    "errors": {
+      "missing_credentials": "Fallo de protocolo: Faltan credenciales requeridas",
+      "username_mandatory": "Fallo de identidad: El nombre de usuario es obligatorio",
+      "invalid_email": "Corrupción de datos: Formato de email no válido",
+      "password_short": "Alerta de seguridad: La clave debe tener al menos 6 caracteres"
+    },
+    "messages": {
+      "register_success": "Alineación de perfil completa. Inicializando vínculo neural...",
+      "login_success": "Credenciales aceptadas. Accediendo al sistema..."
+    }
+  },
+  "admin": {
+    "title": "PANEL DE ADMINISTRACIÓN",
+    "subtitle": "SOBREESCRITURA DEL NÚCLEO CENTRAL",
+    "repositories": "Repositorios",
+    "endpoint_base": "BASE DEL ENDPOINT",
+    "parameters_payload": "Parámetros y Carga útil",
+    "execute": "EJECUTAR",
+    "response": "Respuesta",
+    "awaiting_server": "Esperando respuesta del servidor...",
+    "no_execution": "Aún no se ha realizado ninguna ejecución para este endpoint.",
+    "view_leaderboard": "VER TABLA DE CLASIFICACIÓN",
+    "view_raw": "VER JSON RAW",
+    "quick_view": "Vista Rápida",
+    "actions": "Acciones",
+    "delete_confirm": "CONFIRMAR ELIMINACIÓN",
+    "delete_message": "¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR EL REGISTRO #{{id}} DE {{entity}}? ESTA ACCIÓN ES IRREVERSIBLE.",
+    "purge_complete": "PURGA COMPLETA",
+    "purge_message": "EL REGISTRO HA SIDO ELIMINADO PERMANENTEMENTE DE LA BASE DE DATOS.",
+    "delete_failed": "ELIMINACIÓN FALLIDA",
+    "protocol_error": "ERROR DE PROTOCOLO",
+    "comm_error": "NO SE PUEDE COMUNICAR CON EL SISTEMA CENTRAL.",
+    "entities": {
+      "users": "Usuarios",
+      "quests": "Misiones",
+      "exercises": "Ejercicios",
+      "achievements": "Logros",
+      "stats": "Estadísticas",
+      "leagues": "Ligas",
+      "tips": "Consejos",
+      "titles": "Títulos",
+      "social": "Social",
+      "quest-progress": "Progreso de Misión",
+      "competitive": "Automatización Competitiva",
+      "moderation": "Seguridad y Moderación",
+      "shop": "Tienda e Inventario"
+    }
+  },
+  "adventure": {
+    "title": "AVENTURA",
+    "restricted": "ACCESO RESTRINGIDO",
+    "guest_denied": "ACCESO DE INVITADO DETECTADO. ACCESO DENEGADO.",
+    "gm_protocol": "PROTOCOLO DEL GAME MASTER",
+    "status": "ESTADO",
+    "vitality": "Vitalidad",
+    "arsenal": "ARSENAL",
+    "arsenal_empty": "(Los objetos de la tienda se materializarán aquí)",
+    "attributes": "ATRIBUTOS",
+    "streaming": "TRANSMITIENDO ATRIBUTOS...",
+    "game_master": "GAME MASTER",
+    "room": "SALA",
+    "type": "TIPO",
+    "darkness_awaits": "LA OSCURIDAD ESPERA. ¿ESTÁS PREPARADO PARA ENTRAR EN LA MAZMORRA?",
+    "you_died": "HAS MUERTO",
+    "start_new": "INICIAR NUEVA CAMPAÑA",
+    "enter_dungeon": "ENTRAR EN LA MAZMORRA",
+    "path_blocked": "¡CAMINO BLOQUEADO! Una prueba física te espera en tu pestaña de Misiones.",
+    "override_trial": "DEBUG: SOBRESCRIBIR PRUEBA (AVANZAR PROTOCOLO)",
+    "waiting_gm": "ESPERANDO AL GAME MASTER...",
+    "errors": {
+      "gm_connection": "Falló la conexión con el Game Master.",
+      "quest_pending": "Deberás completar la Quest Físicamente antes de continuar.",
+      "skip_failed": "No se pudo saltar la prueba."
+    }
+  },
+  "camera": {
+    "ai_detection": "DETECCIÓN DE IA",
+    "syncing": "Sincronizando con el sistema...",
+    "objective_completed": "OBJETIVO COMPLETADO",
+    "claim_reward": "RECLAMAR RECOMPENSA",
+    "position_hint": "Ponte frente a la cámara de forma lateral. Asegúrate de que tus brazos y pecho sean visibles para el 'Sistema'."
+  },
+  "quest_view": {
+    "protocol": "PROTOCOLO DE MISIÓN",
+    "system_workout": "Entrenamiento Generado por el Sistema",
+    "awaiting_init": "Esperando Inicialización",
+    "prepare": "Prepara tu cuerpo. Protocolo listo.",
+    "start": "INICIAR MISIÓN",
+    "progress": "Progreso",
+    "elapsed": "TIEMPO TRANSCURRIDO DE LA MISIÓN",
+    "complete": "COMPLETAR TODAS LAS TAREAS",
+    "abort": "Abortar Protocolo"
+  },
+  "quest_modal": {
+    "edit": "EDITAR",
+    "new": "NUEVO",
+    "protocol": "PROTOCOLO DE MISIÓN",
+    "title": "Título de la Misión",
+    "title_placeholder": "EJ. ENTRENAMIENTO MATUTINO",
+    "exercises": "Ejercicios",
+    "add_new": "AÑADIR NUEVO",
+    "update": "ACTUALIZAR PROTOCOLO",
+    "initialize": "INICIALIZAR PROTOCOLO"
+  },
+  "splash": {
+    "initializing": "INICIALIZANDO PROTOCOLO"
+  },
+  "survey": {
+    "steps": {
+      "container": "CONTENEDOR",
+      "capacity": "CAPACIDAD",
+      "tuning": "CALIBRACIÓN",
+      "objective": "OBJETIVO"
+    },
+    "fields": {
+      "gender": "GÉNERO",
+      "age": "EDAD",
+      "weight": "PESO (KG)",
+      "height": "ALTURA (CM)",
+      "male": "MASCULINO",
+      "female": "FEMENINO",
+      "other": "OTRO"
+    },
+    "pushup_capacity": "CAPACIDAD DE FLEXIONES",
+    "run_endurance": "RESISTENCIA DE CARRERA",
+    "training_tuning": "CALIBRACIÓN DE ENTRENAMIENTO ACTUAL",
+    "primary_objective": "OBJETIVO PRIMARIO",
+    "frequency": {
+      "never": "CERO (RANGO E)",
+      "never_desc": "Sin actividad física registrada",
+      "low": "1-2 DÍAS (Incipiente)",
+      "low_desc": "Entrenamiento ocasional",
+      "mid": "3-5 DÍAS (Activo)",
+      "mid_desc": "Régimen disciplinado",
+      "daily": "DIARIO (Élite)",
+      "daily_desc": "Límite del potencial humano"
+    },
+    "goals": {
+      "str": "FUERZA BRUTA",
+      "weight": "PÉRDIDA DE PESO",
+      "agi": "AGILIDAD",
+      "disc": "DISCIPLINA DE HIERRO"
+    },
+    "back": "VOLVER AL PROTOCOLO",
+    "next": "SIGUIENTE FASE",
+    "awake": "DESPERTAR JUGADOR"
+  },
+  "analyzing": {
+    "title": "SISTEMA",
+    "title_highlight": "ESCANEO",
+    "tasks": [
+      "ESCANEANDO DATOS BIOMÉTRICOS...",
+      "CALIBRANDO MATRIZ DE ATRIBUTOS...",
+      "ANALIZANDO REGISTROS DE RENDIMIENTO...",
+      "MAPEANDO VÍAS NEURALES...",
+      "CALCULANDO RANGO INICIAL...",
+      "SINCRONIZANDO CON SERVIDOR...",
+      "FINALIZANDO PERFIL..."
+    ],
+    "scan": "ESCANEO",
+    "data": "DATOS",
+    "sync": "SINCRONÍA",
+    "valid": "VALIDADO",
+    "claim_rank": "RECLAMAR TU RANGO"
+  },
+  "rank_assignment": {
+    "initialized": "INICIALIZADO",
+    "level_initialized": "NIVEL {{level}} INICIALIZADO",
+    "player_status": "ESTADO DEL JUGADOR",
+    "rank_assigned": "RANGO ASIGNADO",
+    "e_class": "CAZADOR DE CLASE E",
+    "go_training": "IR AL ENTRENAMIENTO"
+  },
+  "level_up": {
+    "title": "¡Subiste de Nivel!",
+    "assign_points": "Asigna tus puntos de atributo",
+    "available_points": "Puntos Disponibles",
+    "awakening": "Despertando Potencial...",
+    "assign_more": "Asigna {{n}} puntos más",
+    "confirm": "Confirmar Despertar",
+    "stats": {
+      "str": "Fuerza",
+      "agi": "Agilidad",
+      "vit": "Vitalidad",
+      "int": "Inteligencia",
+      "luk": "Suerte",
+      "spd": "Velocidad"
+    }
+  },
+  "achievement_toast": {
+    "unlocked": "[ LOGRO DESBLOQUEADO ]"
+  },
+  "restricted": {
+    "access_denied": "ACCESO DENEGADO",
+    "login_prompt": "Inicia sesión para acceder a este contenido",
+    "login_button": "INICIAR SESIÓN"
+  }
+}

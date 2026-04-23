@@ -16,7 +16,6 @@ export function useAppNavigation() {
       }
       try {
         const upToDateProfile = await fetchProfile(user.id);
-        // Saltamos la encuesta forzando el Hub
         setScreen('hub');
       } catch (err) {
         setScreen('hub');

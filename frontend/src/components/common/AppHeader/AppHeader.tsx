@@ -1,4 +1,5 @@
 import { type FC, type ComponentType } from 'react';
+import { useLanguage } from '../../../LanguageContext';
 
 interface AppHeaderProps {
   title: string;
@@ -15,6 +16,7 @@ const AppHeader: FC<AppHeaderProps> = ({
   className = 'mb-10',
   showStatus = true 
 }) => {
+  const { t } = useLanguage();
   const parts = title.split(' ');
   const mainTitle = parts.slice(0, -1).join(' ');
   const lastWord = parts[parts.length - 1];
@@ -38,7 +40,9 @@ const AppHeader: FC<AppHeaderProps> = ({
       {showStatus && (
         <div className="ml-auto hidden sm:flex items-center gap-2 px-4 py-1 bg-white/5 border border-white/10 skew-x-[-15deg]">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-white/50 skew-x-[15deg]">System Online</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/50 skew-x-[15deg]">
+            {t('common.system_online')}
+          </span>
         </div>
       )}
     </header>

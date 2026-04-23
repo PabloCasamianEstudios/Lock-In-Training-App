@@ -1,7 +1,8 @@
-﻿import { useState, FC } from 'react';
+import { useState, FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, Target, Activity, Ruler, Dumbbell, X } from 'lucide-react';
 import { SurveyData } from '../../../types';
+import { useLanguage } from '../../../LanguageContext';
 
 interface Step {
   id: string;
@@ -22,6 +23,15 @@ interface SurveyStepperProps {
 }
 
 const SurveyStepper: FC<SurveyStepperProps> = ({ onComplete, onLogout }) => {
+  const { t } = useLanguage();
+
+  const steps: Step[] = [
+    { id: 'biometry', title: t('survey.steps.container'), icon: Ruler },
+    { id: 'performance', title: t('survey.steps.capacity'), icon: Activity },
+    { id: 'frequency', title: t('survey.steps.tuning'), icon: Dumbbell },
+    { id: 'goal', title: t('survey.steps.objective'), icon: Target }
+  ];
+
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<SurveyData>({
     gender: '',
@@ -64,10 +74,10 @@ const SurveyStepper: FC<SurveyStepperProps> = ({ onComplete, onLogout }) => {
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
               {[
-                { label: 'GENDER', field: 'gender' as const, type: 'select', opts: [{v:'M', l:'MALE'}, {v:'F', l:'FEMALE'}, {v:'O', l:'OTHER'}] },
-                { label: 'AGE', field: 'age' as const, type: 'number', placeholder: '24' },
-                { label: 'WEIGHT (KG)', field: 'weight' as const, type: 'number', placeholder: '85' },
-                { label: 'HEIGHT (CM)', field: 'height' as const, type: 'number', placeholder: '185' }
+                              { label: t('survey.fields.gender'), field: 'gender' as const, type: 'select', opts: [{v:'M', l: t('survey.fields.male')}, {v:'F', l: t('survey.fields.female')}, {v:'O', l: t('survey.fields.other')}] },
+                { label: t('survey.fields.age'), field: 'age' as const, type: 'number', placeholder: '24' },
+                { label: t('survey.fields.weight'), field: 'weight' as const, type: 'number', placeholder: '85' },
+                { label: t('survey.fields.height'), field: 'height' as const, type: 'number', placeholder: '185' }
               ].map(item => (
                 <div key={item.field} className="space-y-3">
                   <label className="text-sm font-black italic text-white uppercase tracking-widest">{item.label}</label>
@@ -105,7 +115,7 @@ const SurveyStepper: FC<SurveyStepperProps> = ({ onComplete, onLogout }) => {
             className="space-y-12"
           >
             <div className="space-y-6">
-              <p className="text-xl font-black italic text-white uppercase tracking-tighter">PUSH-UP CAPACITY</p>
+              <p className="text-xl font-black italic text-white uppercase tracking-tighter">{t('survey.pushup_capacity')}</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {['0-10', '10-30', '30-50', '50+'].map(val => (
                   <button
@@ -125,7 +135,7 @@ const SurveyStepper: FC<SurveyStepperProps> = ({ onComplete, onLogout }) => {
               </div>
             </div>
             <div className="space-y-6">
-              <p className="text-xl font-black italic text-white uppercase tracking-tighter">RUN ENDURANCE</p>
+              <p className="text-xl font-black italic text-white uppercase tracking-tighter">{t('survey.run_endurance')}</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {['<5M', '10M', '20M', '30M+'].map(val => (
                   <button
@@ -154,13 +164,13 @@ const SurveyStepper: FC<SurveyStepperProps> = ({ onComplete, onLogout }) => {
             exit={{ opacity: 0, x: -50 }}
             className="space-y-8"
           >
-            <p className="text-xl font-black italic text-white uppercase tracking-tighter text-center">CURRENT TRAINING TUNING</p>
+            <p className="text-xl font-black italic text-white uppercase tracking-tighter text-center">{t('survey.training_tuning')}</p>
             <div className="grid grid-cols-1 gap-6">
               {[
-                { id: 'never', label: 'ZERO (RANK E)', desc: 'No recorded physical activity' },
-                { id: '1-2', label: '1-2 DAYS (Incipient)', desc: 'Occasional training' },
-                { id: '3-5', label: '3-5 DAYS (Active)', desc: 'Disciplined regimen' },
-                { id: 'daily', label: 'DAILY (Elite)', desc: 'Boundary of human potential' },
+                { id: 'never', label: t('survey.frequency.never'), desc: t('survey.frequency.never_desc') },
+                { id: '1-2', label: t('survey.frequency.low'), desc: t('survey.frequency.low_desc') },
+                { id: '3-5', label: t('survey.frequency.mid'), desc: t('survey.frequency.mid_desc') },
+                { id: 'daily', label: t('survey.frequency.daily'), desc: t('survey.frequency.daily_desc') },
               ].map(opt => (
                 <button
                   key={opt.id}
@@ -183,13 +193,13 @@ const SurveyStepper: FC<SurveyStepperProps> = ({ onComplete, onLogout }) => {
             exit={{ opacity: 0, x: -50 }}
             className="space-y-8"
           >
-            <p className="text-xl font-black italic text-white uppercase tracking-tighter text-center">PRIMARY OBJECTIVE</p>
+            <p className="text-xl font-black italic text-white uppercase tracking-tighter text-center">{t('survey.primary_objective')}</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
-                { id: 'STR', label: 'BRUTE STRENGTH', color: 'bg-main' },
-                { id: 'WEIGHT', label: 'WEIGHT LOSS', color: 'bg-secondary-color' },
-                { id: 'AGI', label: 'AGILITY', color: 'bg-white' },
-                { id: 'DISC', label: 'IRON DISCIPLINE', color: 'bg-main' },
+                { id: 'STR', label: t('survey.goals.str'), color: 'bg-main' },
+                { id: 'WEIGHT', label: t('survey.goals.weight'), color: 'bg-secondary-color' },
+                { id: 'AGI', label: t('survey.goals.agi'), color: 'bg-white' },
+                { id: 'DISC', label: t('survey.goals.disc'), color: 'bg-main' },
               ].map(opt => (
                 <button
                   key={opt.id}
@@ -270,7 +280,7 @@ const SurveyStepper: FC<SurveyStepperProps> = ({ onComplete, onLogout }) => {
                 disabled={currentStep === 0}
                 className={`text-xl font-black italic uppercase tracking-tighter ${currentStep === 0 ? 'opacity-0' : 'text-white/40 hover:text-white transition-colors'}`}
               >
-                BACK TO PROTOCOL
+                {t('survey.back')}
               </button>
               
               <button
@@ -279,7 +289,7 @@ const SurveyStepper: FC<SurveyStepperProps> = ({ onComplete, onLogout }) => {
                 disabled={!isStepValid()}
                 className={`button-neon text-3xl px-16 ${!isStepValid() ? 'opacity-20 grayscale pointer-events-none' : ''}`}
               >
-                {currentStep === steps.length - 1 ? 'AWAKE PLAYER' : 'NEXT STAGE'}
+                {currentStep === steps.length - 1 ? t('survey.awake') : t('survey.next')}
               </button>
             </div>
           </div>

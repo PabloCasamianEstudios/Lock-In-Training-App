@@ -1,8 +1,11 @@
 import AppContent from './components/navigation/AppContent';
+import { LanguageProvider } from './LanguageContext';
 
 function App() {
   return (
-    <AppContent />
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }
 

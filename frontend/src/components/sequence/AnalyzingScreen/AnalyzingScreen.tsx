@@ -1,22 +1,16 @@
-﻿import { useState, useEffect, type FC } from "react";
+import { useState, useEffect, type FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Search, Zap, BarChart3 } from "lucide-react";
+import { useLanguage } from "../../../LanguageContext";
 
 interface AnalyzingScreenProps {
   onAnalysisComplete: () => void;
 }
 
-const tasks: string[] = [
-  "SCANNING BIOMETRIC DATA...",
-  "CALIBRATING ATTRIBUTE MATRIX...",
-  "ANALYZING PERFORMANCE LOGS...",
-  "MAPPING NEURAL PATHWAYS...",
-  "CALCULATING INITIAL RANK...",
-  "SYNCHRONIZING WITH SERVER...",
-  "FINALIZING PROFILE..."
-];
 
 const AnalyzingScreen: FC<AnalyzingScreenProps> = ({ onAnalysisComplete }) => {
+  const { t } = useLanguage();
+  const tasks: string[] = t('analyzing.tasks') as unknown as string[];
   const [progress, setProgress] = useState<number>(0);
   const [currentTask, setCurrentTask] = useState<string>("");
   const [completed, setCompleted] = useState<boolean>(false);
@@ -64,7 +58,7 @@ const AnalyzingScreen: FC<AnalyzingScreenProps> = ({ onAnalysisComplete }) => {
           <div className="space-y-12">
             <div className="space-y-4">
               <h2 className="text-6xl md:text-8xl font-black italic text-white tracking-tighter uppercase leading-none">
-                SYSTEM <span className="text-main">SCAN</span>
+                {t('analyzing.title')} <span className="text-main">{t('analyzing.title_highlight')}</span>
               </h2>
               <div className="h-4 w-48 bg-main transform -skew-x-12 mt-2" />
             </div>
@@ -92,10 +86,10 @@ const AnalyzingScreen: FC<AnalyzingScreenProps> = ({ onAnalysisComplete }) => {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {([
-                  { icon: Search, label: 'SCAN', active: progress > 10 },
-                  { icon: BarChart3, label: 'DATA', active: progress > 35 },
-                  { icon: Zap, label: 'SYNC', active: progress > 65 },
-                  { icon: ShieldCheck, label: 'VALID', active: progress > 90 },
+                  { icon: Search, label: t('analyzing.scan'), active: progress > 10 },
+                  { icon: BarChart3, label: t('analyzing.data'), active: progress > 35 },
+                  { icon: Zap, label: t('analyzing.sync'), active: progress > 65 },
+                  { icon: ShieldCheck, label: t('analyzing.valid'), active: progress > 90 },
                 ] as const).map((item, i) => (
                   <div 
                     key={i} 
@@ -119,7 +113,7 @@ const AnalyzingScreen: FC<AnalyzingScreenProps> = ({ onAnalysisComplete }) => {
                     onClick={onAnalysisComplete}
                     className="button-neon text-4xl px-20 relative group overflow-visible"
                   >
-                    <span className="relative z-10">CLAIM YOUR RANK</span>
+                    <span className="relative z-10">{t('analyzing.claim_rank')}</span>
                     <motion.div
                       className="absolute -inset-2 border-4 border-white opacity-40 group-hover:opacity-100 transition-opacity"
                       animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.8, 0.4] }}

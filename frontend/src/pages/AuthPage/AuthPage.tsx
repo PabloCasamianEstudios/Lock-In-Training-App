@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { User as UserIcon, Mail, Lock, LogIn, UserPlus, Globe } from 'lucide-react';
 import { LoginResponse } from '../../types';
+import { useLanguage } from '../../LanguageContext';
 
 interface AuthPageProps {
   onAuthComplete: (userData: LoginResponse) => void;
@@ -10,6 +11,7 @@ interface AuthPageProps {
 }
 
 const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
+  const { t } = useLanguage();
   const [isLogin, setIsLogin] = useState(true);
   const { login, register, loading, error, setError } = useAuth();
   const [localError, setLocalError] = useState<string | null>(null);
@@ -21,10 +23,10 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
   });
 
   const validate = (): string | null => {
-    if (!formData.email || !formData.password) return 'Protocol failure: Missing required credentials';
-    if (!isLogin && !formData.username) return 'Identity failure: Username is mandatory';
-    if (!formData.email.includes('@')) return 'Data corruption: Invalid email protocol format';
-    if (formData.password.length < 6) return 'Security alert: Key must be at least 6 characters';
+    if (!formData.email || !formData.password) return t('auth.errors.missing_credentials');
+    if (!isLogin && !formData.username) return t('auth.errors.username_mandatory');
+    if (!formData.email.includes('@')) return t('auth.errors.invalid_email');
+    if (formData.password.length < 6) return t('auth.errors.password_short');
     return null;
   };
 
@@ -41,9 +43,9 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
 
     try {
       if (!isLogin) {
-        setSuccessMessage('Profile alignment complete. Initializing neural link...');
+        setSuccessMessage(t('auth.messages.register_success'));
       } else {
-        setSuccessMessage('Credentials accepted. Accessing system...');
+        setSuccessMessage(t('auth.messages.login_success'));
       }
 
       const response = isLogin
@@ -88,8 +90,8 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
         <div className="system-card border-white shadow-[12px_12px_0px_var(--main-color)] p-12">
           <div className="mb-12 space-y-1">
             <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase leading-none">
-              {isLogin ? 'SYSTEM' : 'NEW'}
-              <span className="block text-main"> {isLogin ? 'ACCESS' : 'PLAYER'}</span>
+              {isLogin ? t('auth.system') : t('auth.new')}
+              <span className="block text-main"> {isLogin ? t('auth.access') : t('auth.player')}</span>
             </h2>
             <div className="h-2 w-24 bg-main transform -skew-x-12" />
           </div>
@@ -104,7 +106,7 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
                   exit={{ opacity: 0, height: 0, scale: 0.95 }}
                   className="bg-red-500/10 border-l-4 border-red-500 p-4 mb-4 transform -skew-x-12 flex items-start gap-4"
                 >
-                  <div className="bg-red-500 text-white font-black text-[10px] px-2 py-0.5 rounded-sm">ALERT</div>
+                  <div className="bg-red-500 text-white font-black text-[10px] px-2 py-0.5 rounded-sm">{t('auth.alert')}</div>
                   <p className="text-red-500 font-bold italic text-xs uppercase tracking-tighter leading-tight">
                     {activeError}
                   </p>
@@ -117,7 +119,7 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
                   exit={{ opacity: 0, height: 0, scale: 0.95 }}
                   className="bg-green-500/10 border-l-4 border-green-500 p-4 mb-4 transform -skew-x-12 flex items-start gap-4"
                 >
-                  <div className="bg-green-500 text-black font-black text-[10px] px-2 py-0.5 rounded-sm">SYSTEM</div>
+                  <div className="bg-green-500 text-black font-black text-[10px] px-2 py-0.5 rounded-sm">{t('auth.success')}</div>
                   <p className="text-green-500 font-bold italic text-xs uppercase tracking-tighter leading-tight">
                     {successMessage}
                   </p>
@@ -134,13 +136,13 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
                   exit={{ opacity: 0, height: 0 }}
                   className="space-y-2"
                 >
-                  <label className="text-xs text-white font-black uppercase italic tracking-widest">Username Profile</label>
+                  <label className="text-xs text-white font-black uppercase italic tracking-widest">{t('auth.username')}</label>
                   <div className="flex items-center bg-white transform -skew-x-12 px-4 focus-within:ring-4 focus-within:ring-main transition-all">
                     <UserIcon className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />
                     <input
                       type="text"
                       className="w-full bg-transparent border-none p-4 text-black font-black italic focus:outline-none transform skew-x-12"
-                      placeholder="e.g. SUNG_JIN_WOO"
+                      placeholder={t('auth.username_placeholder')}
                       value={formData.username}
                       onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                       required
@@ -151,7 +153,7 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
             </AnimatePresence>
 
             <div className="space-y-2">
-              <label className="text-xs text-white font-black uppercase italic tracking-widest">Email Protocol</label>
+              <label className="text-xs text-white font-black uppercase italic tracking-widest">{t('auth.email')}</label>
               <div className="flex items-center bg-white transform -skew-x-12 px-4 focus-within:ring-4 focus-within:ring-main transition-all">
                 <Mail className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />
                 <input
@@ -166,13 +168,13 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-white font-black uppercase italic tracking-widest">Secure Key</label>
+              <label className="text-xs text-white font-black uppercase italic tracking-widest">{t('auth.password')}</label>
               <div className="flex items-center bg-white transform -skew-x-12 px-4 focus-within:ring-4 focus-within:ring-main transition-all">
                 <Lock className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />
                 <input
                   type="password"
                   className="w-full bg-transparent border-none p-4 text-black font-black italic focus:outline-none transform skew-x-12"
-                  placeholder="your password"
+                  placeholder={t('auth.password_placeholder')}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
@@ -193,7 +195,7 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
                 ) : (
                   <>
                     {isLogin ? <LogIn className="w-6 h-6 mb-1" /> : <UserPlus className="w-6 h-6 mb-1" />}
-                    <span>{isLogin ? 'ENTER STAGE' : 'FINALIZE PROFILE'}</span>
+                    <span>{isLogin ? t('auth.enter_stage') : t('auth.finalize_profile')}</span>
                   </>
                 )}
               </motion.button>
@@ -204,7 +206,7 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
                   onClick={toggleMode}
                   className="text-[10px] text-white/50 uppercase hover:text-main transition-colors font-black tracking-[0.2em] italic"
                 >
-                  {isLogin ? "No data? Create initialization protocol" : "Already registered? Access system"}
+                  {isLogin ? t('auth.no_data') : t('auth.already_registered')}
                 </button>
 
                 <button
@@ -213,7 +215,7 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
                   className="text-[10px] text-secondary-color uppercase hover:text-white transition-colors flex items-center gap-2 font-black tracking-widest italic"
                 >
                   <Globe className="w-3 h-3" />
-                  GUEST OVERRIDE
+                  {t('auth.guest_override')}
                 </button>
               </div>
             </div>

@@ -1,6 +1,7 @@
 import { useState, type FC, useEffect, useMemo } from 'react';
 import { Timer, CheckCircle2, Square, CheckSquare, X } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../../LanguageContext';
 
 interface ActiveQuestViewProps {
   activeProgress: any;
@@ -10,6 +11,7 @@ interface ActiveQuestViewProps {
 }
 
 const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdateProgress, onComplete, onCancel }) => {
+  const { t } = useLanguage();
   const getInitialState = (key: string, defaultValue: any, isObject = false) => {
     try {
       const item = localStorage.getItem(`quest_${activeProgress.id}_${key}`);
@@ -106,7 +108,7 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
         <button 
           onClick={() => clearStorageAndAction(onCancel)}
           className="absolute top-4 right-4 p-2 bg-red-500/10 text-red-500 border-2 border-red-500/20 hover:bg-red-500 hover:text-white transition-all z-10"
-          title="Abort Protocol"
+          title={t('quest_view.abort')}
         >
           <X className="w-6 h-6" />
         </button>
@@ -115,25 +117,25 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
           <div className="bg-main p-2 transform -skew-x-12">
             <CheckCircle2 className="w-8 h-8 text-black" />
           </div>
-          <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">QUEST PROTOCOL</h1>
+          <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">{t('quest_view.protocol')}</h1>
         </div>
         <p className="text-main font-black italic uppercase tracking-widest text-xs mb-8 border-b-2 border-main pb-2 inline-block">
-          System-Generated Workout
+          {t('quest_view.system_workout')}
         </p>
 
         <div className="space-y-8 mb-12">
           {!hasStarted ? (
             <div className="py-12 flex flex-col items-center justify-center space-y-8">
                <div className="text-center space-y-2">
-                 <h2 className="text-2xl font-black italic text-white uppercase tracking-widest">Awaiting Initialization</h2>
-                 <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em]">Prepare your body. Protocol ready.</p>
+                 <h2 className="text-2xl font-black italic text-white uppercase tracking-widest">{t('quest_view.awaiting_init')}</h2>
+                 <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em]">{t('quest_view.prepare')}</p>
                </div>
 
                <button 
                 onClick={handleStart}
                 className="group relative px-12 py-6 bg-main title-hover transition-all"
                >
-                 <span className="relative z-10 text-3xl font-black italic text-black uppercase tracking-tighter">START QUEST</span>
+                 <span className="relative z-10 text-3xl font-black italic text-black uppercase tracking-tighter">{t('quest_view.start')}</span>
                  <div className="absolute inset-0 border-4 border-white translate-x-3 translate-y-3 group-hover:translate-x-1 group-hover:translate-y-1 transition-transform" />
                </button>
 
@@ -166,7 +168,7 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
                     </div>
                     
                     <div className="flex flex-col items-end">
-                      <span className="text-[10px] font-bold text-white/40 uppercase">Progress</span>
+                      <span className="text-[10px] font-bold text-white/40 uppercase">{t('quest_view.progress')}</span>
                       <span className={`text-2xl sm:text-3xl font-black italic ${isCompleted ? 'text-main' : 'text-white'}`}>
                         {progress} <span className="text-lg text-white/50">/ {target}</span>
                       </span>
@@ -210,7 +212,7 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
                 {formatTime(seconds)}
               </div>
               <p className="text-[10px] text-white/30 uppercase font-black italic mt-2 tracking-widest">
-                MISSION ELAPSED TIME
+                {t('quest_view.elapsed')}
               </p>
             </div>
             
@@ -224,7 +226,7 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
                 }
               `}
             >
-              COMPLETE ALL TASKS
+              {t('quest_view.complete')}
             </button>
           </div>
         )}

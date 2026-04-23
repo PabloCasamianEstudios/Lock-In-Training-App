@@ -1,7 +1,8 @@
-﻿import { useState, type FC, useEffect } from 'react';
+import { useState, type FC, useEffect } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import PopupWindow from '../../common/PopupWindow';
+import { useLanguage } from '../../../LanguageContext';
 
 interface ExerciseOption {
   id: string;
@@ -28,6 +29,7 @@ interface CreateQuestModalProps {
 }
 
 const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate, initialData, onUpdate }) => {
+  const { t } = useLanguage();
   const [title, setTitle] = useState('');
   const [exercises, setExercises] = useState<any[]>([{ name: MOCKED_EXERCISES[0].name, type: MOCKED_EXERCISES[0].type, value: 10 }]);
 
@@ -91,17 +93,17 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
     <PopupWindow
       isOpen={isOpen}
       onClose={onClose}
-      title={`${initialData ? 'EDIT' : 'NEW'} QUEST PROTOCOL`}
+      title={`${initialData ? t('quest_modal.edit') : t('quest_modal.new')} ${t('quest_modal.protocol')}`}
       maxWidth="max-w-md"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Quest Title</label>
+          <label className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">{t('quest_modal.title')}</label>
           <input 
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="E.G. MORNING GRIND"
+            placeholder={t('quest_modal.title_placeholder')}
             className="input-neon text-sm"
             required
           />
@@ -109,13 +111,13 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">Exercises</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">{t('quest_modal.exercises')}</label>
             <button 
               type="button"
               onClick={addExercise}
               className="flex items-center gap-1 text-[10px] font-black uppercase text-main hover:text-white transition-colors underline underline-offset-4 decoration-2"
             >
-              <Plus className="w-3 h-3" /> ADD NEW
+              <Plus className="w-3 h-3" /> {t('quest_modal.add_new')}
             </button>
           </div>
 
@@ -171,7 +173,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
             type="submit"
             className="w-full bg-main text-black font-black py-4 uppercase italic tracking-widest text-sm hover:bg-white transition-all shadow-[6px_6px_0px_rgba(255,255,255,0.1)] hover:shadow-[6px_6px_0px_var(--main-color)]"
           >
-            {initialData ? 'UPDATE PROTOCOL' : 'INITIALIZE PROTOCOL'}
+            {initialData ? t('quest_modal.update') : t('quest_modal.initialize')}
           </button>
         </div>
       </form>

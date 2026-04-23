@@ -6,6 +6,7 @@ import CreateQuestModal from '../../components/quests/CreateQuestModal';
 import ActiveQuestView from '../../components/quests/ActiveQuestView';
 import PageLayout from '../../components/common/PageLayout';
 import PopupWindow from '../../components/common/PopupWindow';
+import { useLanguage } from '../../LanguageContext';
 
 interface QuestsPageProps extends PageProps {
   onNavigate?: (tab: string, params?: any) => void;
@@ -13,6 +14,7 @@ interface QuestsPageProps extends PageProps {
 }
 
 const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfile }) => {
+  const { t } = useLanguage();
   const { quests, activeQuest, systemQuests, loading, error, startQuest, startSystemQuest, cancelQuest, completeQuest, createCustomQuest, updateCustomQuest, deleteCustomQuest, getCustomQuests } = useQuests(user?.id ?? null);
   const [activeSubTab, setActiveSubTab] = useState<'ALL' | 'DAILY' | 'ACTIVE' | 'YOURS' | 'SYSTEM'>('ALL');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,7 +43,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
       const response: any = await completeQuest(id);
       setSystemPopup({
         isOpen: true,
-        title: 'PROTOCOL SUCCESSFUL',
+        title: t('quests.protocol_success'),
         type: 'REWARDS',
         rewards: {
           gold: response?.goldReward || 0,
@@ -78,15 +80,15 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
 
   if (loading) {
     return (
-      <PageLayout title="QUEST PROTOCOLS" subtitle="DECRYPTING MISSION DATA..." icon={ScrollText}>
-        <div className="p-10 text-main animate-pulse font-black uppercase text-xs italic tracking-widest text-center mt-20">INITIALIZING QUEST PROTOCOL...</div>
+      <PageLayout title={t('quests.title')} subtitle={t('quests.subtitle_decrypting')} icon={ScrollText}>
+        <div className="p-10 text-main animate-pulse font-black uppercase text-xs italic tracking-widest text-center mt-20">{t('quests.initializing')}</div>
       </PageLayout>
     );
   }
   
   if (error) {
     return (
-      <PageLayout title="QUEST PROTOCOLS" subtitle="SYSTEM ERROR DETECTED" icon={ScrollText}>
+      <PageLayout title={t('quests.title')} subtitle={t('quests.error')} icon={ScrollText}>
          <div className="p-10 text-red-500 uppercase font-black text-center mt-20 border-4 border-red-500 bg-red-500/10">Error: {error}</div>
       </PageLayout>
     );
@@ -94,21 +96,21 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
 
   return (
     <PageLayout 
-      title="QUEST PROTOCOLS" 
-      subtitle="AVAILABLE COMBAT ASSIGNMENTS" 
+      title={t('quests.title')} 
+      subtitle={t('quests.subtitle_assignments')} 
       icon={ScrollText}
     >
       <div className="md:grid md:grid-cols-12 md:gap-12 items-start">
         {/* --- LEFT SIDE: FILTERS --- */}
         <aside className="md:col-span-3 lg:col-span-2 space-y-4 md:sticky md:top-4">
-          <h3 className="hidden md:block text-[10px] font-black uppercase tracking-[0.3em] text-white/40 italic mb-6 border-l-4 border-main pl-3">Protocols</h3>
+          <h3 className="hidden md:block text-[10px] font-black uppercase tracking-[0.3em] text-white/40 italic mb-6 border-l-4 border-main pl-3">{t('quests.protocols')}</h3>
           <nav className="flex md:flex-col items-center gap-2 overflow-x-auto no-scrollbar py-2 md:py-0 mb-4 md:mb-0">
             {[
-              { id: 'ALL', label: `ALL` },
-              { id: 'SYSTEM', label: `SYSTEM (${systemQuestsCount})` },
-              { id: 'DAILY', label: `DAILY (${dailyQuestsCount})` },
-              { id: 'ACTIVE', label: `ACTIVE (${activeQuestsCount})` },
-              { id: 'YOURS', label: `YOURS (${yoursQuestsCount})` },
+              { id: 'ALL', label: t('quests.tabs.all') },
+              { id: 'SYSTEM', label: `${t('quests.tabs.system')} (${systemQuestsCount})` },
+              { id: 'DAILY', label: `${t('quests.tabs.daily')} (${dailyQuestsCount})` },
+              { id: 'ACTIVE', label: `${t('quests.tabs.active')} (${activeQuestsCount})` },
+              { id: 'YOURS', label: `${t('quests.tabs.yours')} (${yoursQuestsCount})` },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -135,8 +137,8 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                 onCancel={(pid) => {
                   setSystemPopup({
                     isOpen: true,
-                    title: 'ABORT PROTOCOL',
-                    message: 'ARE YOU SURE YOU WANT TO TERMINATE THIS MISSION? ALL CURRENT EXPERIMENT DATA WILL BE PURGED.',
+                    title: t('quests.abort_protocol'),
+                    message: t('quests.terminate_mission'),
                     type: 'DANGER',
                     onConfirm: async () => {
                       try {
@@ -144,7 +146,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                       } catch (err: any) {
                         setSystemPopup({
                           isOpen: true,
-                          title: 'PROTOCOL FAILED',
+                          title: t('quests.protocol_failed'),
                           message: err.message || 'FAILED TO TERMINATE MISSION.',
                           type: 'DANGER'
                         });
@@ -157,7 +159,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
               <div className="flex flex-col items-center justify-center py-32 gap-6 border-4 border-dashed border-white/10 rounded-sm">
                 <Zap className="w-16 h-16 text-white/5" />
                 <p className="text-xs font-black text-white/20 uppercase italic tracking-[0.3em]">
-                  No active quests in progress
+                  {t('quests.no_active')}
                 </p>
               </div>
             )
@@ -179,7 +181,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                         </span>
                         {isSystem && (
                           <span className="text-[10px] font-black italic uppercase bg-main text-black px-3 py-1 transform -skew-x-12 shadow-[2px_2px_0px_white]">
-                            SYSTEM
+                            {t('quests.tabs.system')}
                           </span>
                         )}
                       </div>
@@ -202,8 +204,8 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                               e.stopPropagation();
                               setSystemPopup({
                                 isOpen: true,
-                                title: 'PURGE PROTOCOL',
-                                message: 'YOU ARE ABOUT TO DELETE THIS QUEST. THIS ACTION CANNOT BE UNDONE. PROCEED?',
+                                title: t('quests.purge_protocol'),
+                                message: t('quests.delete_warning'),
                                 type: 'DANGER',
                                 onConfirm: async () => {
                                   try {
@@ -282,7 +284,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                           } else {
                             setSystemPopup({
                               isOpen: true,
-                              title: 'SYSTEM OVERLOAD',
+                              title: t('quests.system_overload'),
                               message: 'ONLY ONE ACTIVE QUEST IS PERMITTED. COMPLETE OR FAIL THE CURRENT PROTOCOL FIRST.',
                               type: 'WARNING'
                             });
@@ -290,7 +292,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                         }}
                         className="bg-white text-black font-black text-[10px] px-6 py-3 transform -skew-x-12 hover:bg-main hover:text-white transition-all border-2 border-black shadow-[4px_4px_0px_var(--main-color)]"
                       >
-                        INITIALIZE
+                        {t('quests.initialize')}
                       </button>
                     </div>
 
@@ -338,7 +340,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                 <div className="bg-white/5 border-2 border-white/10 p-5 transform -skew-x-6 flex items-center justify-between shadow-inner">
                   <div className="flex items-center gap-4">
                     <Zap className="w-8 h-8 text-main" fill="currentColor" />
-                    <span className="font-black italic uppercase text-[10px] tracking-[0.2em] text-white/40">XP GAINED</span>
+                    <span className="font-black italic uppercase text-[10px] tracking-[0.2em] text-white/40">{t('quests.rewards.xp')}</span>
                   </div>
                   <span className="text-3xl font-black text-main">+{systemPopup.rewards?.xp}</span>
                 </div>
@@ -346,7 +348,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                 <div className="bg-white/5 border-2 border-white/10 p-5 transform -skew-x-6 flex items-center justify-between shadow-inner">
                   <div className="flex items-center gap-4">
                     <Coins className="w-8 h-8 text-yellow-500" fill="currentColor" />
-                    <span className="font-black italic uppercase text-[10px] tracking-[0.2em] text-white/40">GOLD ACQUIRED</span>
+                    <span className="font-black italic uppercase text-[10px] tracking-[0.2em] text-white/40">{t('quests.rewards.gold')}</span>
                   </div>
                   <span className="text-3xl font-black text-yellow-500">+{systemPopup.rewards?.gold}</span>
                 </div>
@@ -356,7 +358,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                 onClick={closePopup}
                 className="w-full py-5 bg-white text-black font-black uppercase italic tracking-[0.2em] hover:bg-main hover:text-white transition-all shadow-[6px_6px_0px_var(--main-color)] active:shadow-none active:translate-x-1 active:translate-y-1"
               >
-                COLLECT & CONTINUE
+                {t('quests.rewards.collect')}
               </button>
             </>
           ) : (

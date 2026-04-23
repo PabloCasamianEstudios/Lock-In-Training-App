@@ -1,7 +1,8 @@
-﻿import { type FC } from 'react';
+import { type FC } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Zap, Heart, Brain, Target, Star, Swords, RefreshCw } from 'lucide-react';
 import type { PlayerProfile, PlayerStats } from '../../../types';
+import { useLanguage } from '../../../LanguageContext';
 
 interface RankAssignmentProps {
   profile: PlayerProfile | null;
@@ -40,6 +41,7 @@ const itemVariants = {
 };
 
 const RankAssignment: FC<RankAssignmentProps> = ({ profile, onRestart, onEnterHub }) => {
+  const { t } = useLanguage();
   const { 
     stats = { STR: 1, AGI: 1, VIT: 1, INT: 1, DEX: 1, LUK: 1, DISC: 1 } as PlayerStats, 
     rank = 'E', 
@@ -85,7 +87,7 @@ const RankAssignment: FC<RankAssignmentProps> = ({ profile, onRestart, onEnterHu
               <h2 className="text-4xl font-black italic text-black tracking-tighter uppercase whitespace-nowrap bg-white px-6 py-2 transform -skew-x-12">
                 {username}
               </h2>
-              <p className="text-xs font-black text-black/60 uppercase tracking-widest italic pt-2">LEVEL {level} INITIALIZED</p>
+              <p className="text-xs font-black text-black/60 uppercase tracking-widest italic pt-2">{t('rank_assignment.level_initialized').replace('{{level}}', String(level))}</p>
             </div>
           </div>
 
@@ -93,7 +95,7 @@ const RankAssignment: FC<RankAssignmentProps> = ({ profile, onRestart, onEnterHu
             <div className="space-y-12">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-4xl font-black italic text-white tracking-tighter uppercase">PLAYER STATUS</h3>
+                  <h3 className="text-4xl font-black italic text-white tracking-tighter uppercase">{t('rank_assignment.player_status')}</h3>
                   <div className="h-2 w-32 bg-secondary-color transform -skew-x-12 mt-1" />
                 </div>
                 <button 
@@ -137,8 +139,8 @@ const RankAssignment: FC<RankAssignmentProps> = ({ profile, onRestart, onEnterHu
                 <div className="flex items-center gap-4">
                   <Shield className="w-8 h-8 text-black" />
                   <div className="text-black">
-                    <h4 className="text-xs font-black uppercase tracking-widest">RANK ASSIGNED</h4>
-                    <p className="text-2xl font-black italic tracking-tighter">E-CLASS HUNTER</p>
+                    <h4 className="text-xs font-black uppercase tracking-widest">{t('rank_assignment.rank_assigned')}</h4>
+                    <p className="text-2xl font-black italic tracking-tighter">{t('rank_assignment.e_class')}</p>
                   </div>
                 </div>
               </div>
@@ -149,7 +151,7 @@ const RankAssignment: FC<RankAssignmentProps> = ({ profile, onRestart, onEnterHu
                 onClick={onEnterHub}
                 className="button-neon flex-1 py-6 text-3xl font-black tracking-widest"
               >
-                GO TO TRAINING
+                {t('rank_assignment.go_training')}
               </motion.button>
             </div>
           </div>

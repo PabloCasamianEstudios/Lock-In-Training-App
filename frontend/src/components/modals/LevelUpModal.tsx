@@ -2,22 +2,24 @@ import React, { useState, FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp, ChevronDown, Trophy, Zap, Shield, Brain, Star, Wind } from 'lucide-react';
 import { PlayerProfile } from '../../types';
+import { useLanguage } from '../../LanguageContext';
 
 interface LevelUpModalProps {
   profile: PlayerProfile;
   onDistribute: (distribution: Record<string, number>) => Promise<any>;
 }
 
-const STAT_CONFIG: Record<string, { label: string; icon: any; color: string }> = {
-  STR: { label: 'Fuerza', icon: Zap, color: 'text-green-400' },
-  AGI: { label: 'Agilidad', icon: Zap, color: 'text-yellow-400' },
-  VIT: { label: 'Vitalidad', icon: Shield, color: 'text-red-500' },
-  INT: { label: 'Inteligencia', icon: Brain, color: 'text-blue-400' },
-  LUK: { label: 'Suerte', icon: Star, color: 'text-purple-400' },
-  SPD: { label: 'Velocidad', icon: Wind, color: 'text-cyan-400' },
+const STAT_CONFIG: Record<string, { icon: any; color: string; key: string }> = {
+  STR: { icon: Zap, color: 'text-green-400', key: 'str' },
+  AGI: { icon: Zap, color: 'text-yellow-400', key: 'agi' },
+  VIT: { icon: Shield, color: 'text-red-500', key: 'vit' },
+  INT: { icon: Brain, color: 'text-blue-400', key: 'int' },
+  LUK: { icon: Star, color: 'text-purple-400', key: 'luk' },
+  SPD: { icon: Wind, color: 'text-cyan-400', key: 'spd' },
 };
 
 export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) => {
+  const { t } = useLanguage();
   const [availablePoints, setAvailablePoints] = useState(profile.statPoints || 0);
   const [points, setPoints] = useState<Record<string, number>>({
     STR: 0, AGI: 0, VIT: 0, INT: 0, LUK: 0, SPD: 0
@@ -65,15 +67,15 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
         <div className="bg-main p-4 flex items-center gap-3">
           <Trophy className="w-8 h-8 text-black animate-bounce" />
           <div>
-            <h2 className="text-xl font-black text-black italic leading-none uppercase">Level Up!</h2>
-            <p className="text-[10px] font-bold text-black/60 uppercase tracking-widest mt-1">Assign your attribute points</p>
+            <h2 className="text-xl font-black text-black italic leading-none uppercase">{t('level_up.title')}</h2>
+            <p className="text-[10px] font-bold text-black/60 uppercase tracking-widest mt-1">{t('level_up.assign_points')}</p>
           </div>
         </div>
 
         <div className="p-6 space-y-6 overflow-y-auto custom-scrollbar">
           {/* Points Counter */}
           <div className="flex items-center justify-between bg-black/40 border-2 border-white/10 p-4 rounded-sm">
-            <span className="text-xs font-black text-white/40 uppercase tracking-tighter">Available Points</span>
+            <span className="text-xs font-black text-white/40 uppercase tracking-tighter">{t('level_up.available_points')}</span>
             <span className="text-4xl font-black text-main italic pr-2">{availablePoints}</span>
           </div>
 
@@ -81,7 +83,7 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Object.entries(STAT_CONFIG).map(([key, config]) => {
               const Icon = config.icon;
-              const label = config.label;
+              const label = t(`level_up.stats.${config.key}`);
               const currentValue = (profile.stats as any)?.[key] || 0;
               const addedValue = points[key] || 0;
               const totalAfter = currentValue + addedValue;
@@ -150,7 +152,7 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
                 ? 'bg-main text-black hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_0px_#000]'
                 : 'bg-zinc-800 text-white/20 cursor-not-allowed'}`}
           >
-            {isSubmitting ? 'Awakening Potential...' : availablePoints > 0 ? `Assign ${availablePoints} more points` : 'Confirm Awakening'}
+            {isSubmitting ? t('level_up.awakening') : availablePoints > 0 ? t('level_up.assign_more').replace('{{n}}', String(availablePoints)) : t('level_up.confirm')}
           </button>
         </div>
       </motion.div>

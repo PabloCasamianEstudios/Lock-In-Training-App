@@ -1,11 +1,13 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useEffect, useState, FC } from 'react';
+import { useLanguage } from '../../../LanguageContext';
 
 interface SplashScreenProps {
   onComplete: () => void;
 }
 
 const SplashScreen: FC<SplashScreenProps> = ({ onComplete }) => {
+  const { t } = useLanguage();
   const [progress, setProgress] = useState<number>(0);
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const SplashScreen: FC<SplashScreenProps> = ({ onComplete }) => {
       <div className="w-80 md:w-96 space-y-4 z-10">
         <div className="flex justify-between items-end px-2">
           <p className="text-xl font-black italic text-white uppercase tracking-tighter">
-            INITIALIZING PROTOCOL
+            {t('splash.initializing')}
           </p>
           <span className="text-2xl font-black italic text-main">{progress}%</span>
         </div>

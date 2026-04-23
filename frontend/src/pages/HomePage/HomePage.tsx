@@ -18,8 +18,10 @@ import { useHomeData } from '../../hooks/useHomeData';
 import PageLayout from '../../components/common/PageLayout';
 import BrutalistCard from '../../components/common/BrutalistCard';
 import ProgressBar from '../../components/common/ProgressBar';
+import { useLanguage } from '../../LanguageContext';
 
 const HomePage: FC<PageProps> = ({ user }) => {
+  const { t } = useLanguage();
   const { 
     username,
     profilePic,
@@ -59,10 +61,10 @@ const HomePage: FC<PageProps> = ({ user }) => {
 
   if (loading) {
     return (
-      <PageLayout title="HOME TERMINAL" subtitle="ESTABLISHING CORE LINK..." icon={Home}>
+      <PageLayout title={t('home.title')} subtitle={t('home.subtitle_establishing')} icon={Home}>
         <div className="flex items-center justify-center h-[50vh]">
           <div className="text-main animate-pulse font-black italic uppercase tracking-widest text-xs">
-            Loading System Data...
+            {t('home.loading')}
           </div>
         </div>
       </PageLayout>
@@ -71,8 +73,8 @@ const HomePage: FC<PageProps> = ({ user }) => {
 
   return (
     <PageLayout 
-      title="HOME TERMINAL" 
-      subtitle="SYSTEM PROTOCOLS ACTIVE" 
+      title={t('home.title')} 
+      subtitle={t('home.subtitle_active')} 
       icon={Home}
     >
       <div className="md:grid md:grid-cols-12 md:gap-12 items-start">
@@ -90,8 +92,8 @@ const HomePage: FC<PageProps> = ({ user }) => {
               <div className="flex-1 space-y-1">
                 <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none">{username}</h2>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black text-main uppercase italic">lv.{level}</span>
-                  <span className="text-[10px] font-black text-white/40 uppercase tracking-widest italic">RANK {rank}</span>
+                  <span className="text-[10px] font-black text-main uppercase italic">{t('common.level')}{level}</span>
+                  <span className="text-[10px] font-black text-white/40 uppercase tracking-widest italic">{t('common.rank')} {rank}</span>
                 </div>
                 <ProgressBar progress={xp % 1000} max={1000} className="h-1.5 mt-2" />
               </div>
@@ -106,14 +108,14 @@ const HomePage: FC<PageProps> = ({ user }) => {
                 </span>
                 <Shield className="w-4 h-4 text-main fill-main" />
               </div>
-              <span className="text-[9px] font-black uppercase tracking-widest text-white/40 italic">QUESTS</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-white/40 italic">{t('home.quests')}</span>
             </div>
 
             <div className="flex flex-col items-center justify-center p-5 border-r-2 border-white group hover:bg-main/5 transition-colors">
               <div className="flex items-center gap-2 mb-1">
                 <Trophy className="w-5 h-5 text-main" />
               </div>
-              <span className="text-[9px] font-black uppercase tracking-widest text-white/40 whitespace-nowrap italic">RANK {rank}</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-white/40 whitespace-nowrap italic">{t('common.rank')} {rank}</span>
             </div>
 
             <div className="flex flex-col items-center justify-center p-5 group hover:bg-main/5 transition-colors">
@@ -123,7 +125,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
                 </span>
                 <Flame className="w-5 h-5 text-orange-500 fill-orange-500" />
               </div>
-              <span className="text-[9px] font-black uppercase tracking-widest text-white/40 italic">STREAK</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-white/40 italic">{t('home.streak')}</span>
             </div>
           </BrutalistCard>
         </div>
@@ -141,7 +143,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
                     ? 'bg-main text-black border-main shadow-[4px_4px_0px_white]' 
                     : 'bg-black text-white/40 border-white/10 hover:border-white/40'}`}
               >
-                {tab}
+                {t(`home.tabs.${tab.toLowerCase()}`)}
               </button>
             ))}
           </nav>
@@ -185,7 +187,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
                     {dailyQuests.filter(q => !q.completed).length === 0 && (
                       <div className="flex flex-col items-center justify-center py-20 gap-4 border-4 border-dashed border-white/10 rounded-sm">
                         <Check className="w-12 h-12 text-main opacity-20" />
-                        <p className="text-xs font-black text-white/20 uppercase tracking-[0.3em] italic">No pending daily protocol</p>
+                        <p className="text-xs font-black text-white/20 uppercase tracking-[0.3em] italic">{t('home.no_pending')}</p>
                       </div>
                     )}
                   </div>
@@ -209,7 +211,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
                         <span className="text-xs font-black text-main italic">+{act.xpReward ?? 0} XP</span>
                       </div>
                     ))) : (
-                      <div className="col-span-full text-center py-20 text-white/20 italic font-black uppercase tracking-widest border-2 border-dashed border-white/5">No activity recorded</div>
+                      <div className="col-span-full text-center py-20 text-white/20 italic font-black uppercase tracking-widest border-2 border-dashed border-white/5">{t('home.no_activity')}</div>
                     )}
                   </div>
                 )}
@@ -235,7 +237,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
                     {/* PENDING REQUESTS */}
                     {pendingRequests && pendingRequests.length > 0 && (
                       <div className="space-y-4">
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-main italic border-l-4 border-main pl-4">INCOMING PROTOCOLS</h3>
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-main italic border-l-4 border-main pl-4">{t('home.incoming_protocols')}</h3>
                         <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-4">
                           {pendingRequests.map((req: any, i: number) => (
                             <div key={`req-${i}`} className="bg-main/5 border-2 border-main/20 p-5 flex items-center justify-between shadow-lg">
@@ -244,8 +246,8 @@ const HomePage: FC<PageProps> = ({ user }) => {
                                   {(req.sender?.username ?? '?').charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                  <p className="text-xs font-black text-white italic uppercase">{req.sender?.username ?? 'Hunter'}</p>
-                                  <p className="text-[9px] text-white/40 uppercase tracking-widest font-bold">Requesting Access</p>
+                                  <p className="text-xs font-black text-white italic uppercase">{req.sender?.username ?? t('common.hunter')}</p>
+                                  <p className="text-[9px] text-white/40 uppercase tracking-widest font-bold">{t('home.requesting_access')}</p>
                                 </div>
                               </div>
                               <div className="flex gap-3">
@@ -264,7 +266,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
 
                     {/* EXISTING FRIENDS */}
                     <div className="space-y-4">
-                      <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 italic border-l-4 border-white/20 pl-4">VERIFIED HUNTERS</h3>
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 italic border-l-4 border-white/20 pl-4">{t('home.verified_hunters')}</h3>
                       {friends.length > 0 ? (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                           {friends.map((friend, i) => (
@@ -274,8 +276,8 @@ const HomePage: FC<PageProps> = ({ user }) => {
                                   {(friend.username ?? '?').charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                  <p className="text-xs font-black text-white italic uppercase group-hover:text-main transition-colors">{friend.username ?? 'Hunter'}</p>
-                                  <p className="text-[9px] text-white/20 uppercase tracking-widest font-black">RANK {friend.rank || 'E'}</p>
+                                  <p className="text-xs font-black text-white italic uppercase group-hover:text-main transition-colors">{friend.username ?? t('common.hunter')}</p>
+                                  <p className="text-[9px] text-white/20 uppercase tracking-widest font-black">{t('common.rank')} {friend.rank || 'E'}</p>
                                 </div>
                               </div>
                               <ChevronRight className="w-5 h-5 text-white/10 group-hover:text-main transition-all transform group-hover:translate-x-1" />
@@ -286,9 +288,9 @@ const HomePage: FC<PageProps> = ({ user }) => {
                         <div className="flex flex-col items-center justify-center py-20 gap-6 border-2 border-dashed border-white/5 rounded-sm">
                           <Users className="w-16 h-16 text-white/5" />
                           <div className="text-center">
-                            <p className="text-xs font-black text-white/20 uppercase tracking-[0.4em] italic mb-4">Alone in the shadows...</p>
+                            <p className="text-xs font-black text-white/20 uppercase tracking-[0.4em] italic mb-4">{t('home.alone')}</p>
                             <button className="text-[10px] font-black text-main border-b-2 border-main/20 pb-1 hover:text-white hover:border-white transition-all uppercase italic tracking-widest">
-                              FIND HUNTERS
+                              {t('home.find_hunters')}
                             </button>
                           </div>
                         </div>
