@@ -11,11 +11,16 @@ import java.util.List;
 @Service
 public class ShopService {
 
-    @Autowired private UserRepository userRepository;
-    @Autowired private ItemRepository itemRepository;
-    @Autowired private UserItemRepository userItemRepository;
-    @Autowired private TitleRepository titleRepository;
-    @Autowired private UserTitleRepository userTitleRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ItemRepository itemRepository;
+    @Autowired
+    private UserItemRepository userItemRepository;
+    @Autowired
+    private TitleRepository titleRepository;
+    @Autowired
+    private UserTitleRepository userTitleRepository;
 
     public List<Item> getAllItems() {
         return itemRepository.findAll();
@@ -32,14 +37,12 @@ public class ShopService {
             throw new RuntimeException("Monedas insuficientes para comprar " + item.getName());
         }
 
-        // Deduct coins
         user.setCoins(user.getCoins() - item.getPrice());
         userRepository.save(user);
 
-        // Add to inventory
         UserItem userItem = userItemRepository.findByUserIdAndItemId(userId, itemId)
                 .orElse(new UserItem(user, item, 0));
-        
+
         userItem.setQuantity(userItem.getQuantity() + 1);
         userItemRepository.save(userItem);
 
@@ -57,12 +60,9 @@ public class ShopService {
             throw new RuntimeException("Monedas insuficientes para comprar el título: " + title.getName());
         }
 
-        // Check if already owned
         if (userTitleRepository.findByUserIdAndTitleId(userId, titleId).isPresent()) {
             throw new RuntimeException("Ya posees este título");
         }
-
-        // Deduct coins
         user.setCoins(user.getCoins() - title.getPrice());
         userRepository.save(user);
 

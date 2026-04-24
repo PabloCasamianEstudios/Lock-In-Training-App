@@ -4,9 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-/**
- * Automation component for Lock-In Competitive Cycles
- */
 @Component
 public class CompetitiveScheduler {
 
@@ -14,8 +11,7 @@ public class CompetitiveScheduler {
     private CompetitiveService competitiveService;
 
     /**
-     * Executes every 1st of the month at 00:00.
-     * Handles league promotions, demotions, and group shuffling.
+     * Se ejecuta el primer día del mes a las 00:00
      */
     @Scheduled(cron = "0 0 0 1 * *")
     public void scheduleMonthlyRotation() {
@@ -29,8 +25,7 @@ public class CompetitiveScheduler {
     }
 
     /**
-     * Executes every 6 months (Jan 1 and July 1) at 00:00.
-     * Handles the hard reset of levels, stats, and seasonal prestige points.
+     * Se ejecuta cada 6 meses
      */
     @Scheduled(cron = "0 0 0 1 1,7 *")
     public void scheduleSeasonalHardReset() {

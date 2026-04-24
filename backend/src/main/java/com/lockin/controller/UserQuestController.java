@@ -99,7 +99,8 @@ public class UserQuestController {
     }
 
     @PostMapping("/custom")
-    public ResponseEntity<Object> createCustomQuest(@RequestBody CreateQuestDTO dto, @RequestParam(required = false) Long userId) {
+    public ResponseEntity<Object> createCustomQuest(@RequestBody CreateQuestDTO dto,
+            @RequestParam(required = false) Long userId) {
         try {
             Quest quest = new Quest();
             quest.setTitle(dto.getTitle());
@@ -128,16 +129,16 @@ public class UserQuestController {
                 step.setQuest(quest);
                 step.setExercise(exercise);
                 step.setSeries(1); // Default to 1 series
-                
+
                 int reps = exDto.getReps() != null ? exDto.getReps() : 0;
                 int seconds = exDto.getSeconds() != null ? exDto.getSeconds() : 0;
-                
+
                 if (seconds > 0) {
                     step.setRepetitions(seconds); // Fallback repetitions to seconds for UI if needed
                 } else {
                     step.setRepetitions(reps);
                 }
-                
+
                 totalReps += reps;
                 totalSeconds += seconds;
                 steps.add(step);
@@ -148,22 +149,27 @@ public class UserQuestController {
             // Compute Rank
             int totalVolume = totalReps + (totalSeconds / 2); // basic metric
             String rank = "E";
-            if (totalVolume >= 1000) rank = "S";
-            else if (totalVolume >= 500) rank = "A";
-            else if (totalVolume >= 200) rank = "B";
-            else if (totalVolume >= 100) rank = "C";
-            else if (totalVolume >= 50) rank = "D";
+            if (totalVolume >= 1000)
+                rank = "S";
+            else if (totalVolume >= 500)
+                rank = "A";
+            else if (totalVolume >= 200)
+                rank = "B";
+            else if (totalVolume >= 100)
+                rank = "C";
+            else if (totalVolume >= 50)
+                rank = "D";
             quest.setRankDifficulty(rank);
 
             // Compute description
             String generatedDescription = dto.getExercises().stream()
-                .map(e -> {
-                    if (e.getSeconds() != null && e.getSeconds() > 0) {
-                        return e.getSeconds() + "s " + e.getName();
-                    }
-                    return e.getReps() + " " + e.getName();
-                })
-                .collect(Collectors.joining(", "));
+                    .map(e -> {
+                        if (e.getSeconds() != null && e.getSeconds() > 0) {
+                            return e.getSeconds() + "s " + e.getName();
+                        }
+                        return e.getReps() + " " + e.getName();
+                    })
+                    .collect(Collectors.joining(", "));
             quest.setDescription(generatedDescription);
 
             // Rewards logic
@@ -178,17 +184,19 @@ public class UserQuestController {
     }
 
     @PutMapping("/custom/{id}")
-    public ResponseEntity<Object> updateCustomQuest(@PathVariable Long id, @RequestBody CreateQuestDTO dto, @RequestParam Long userId) {
+    public ResponseEntity<Object> updateCustomQuest(@PathVariable Long id, @RequestBody CreateQuestDTO dto,
+            @RequestParam Long userId) {
         try {
             Quest quest = questRepository.findById(id).orElse(null);
-            if (quest == null) return ResponseEntity.status(404).body("Misión no encontrada");
-            
+            if (quest == null)
+                return ResponseEntity.status(404).body("Misión no encontrada");
+
             if (quest.getCreatorId() == 0 || !quest.getCreatorId().equals(userId)) {
                 return ResponseEntity.status(403).body("No tienes permiso para modificar esta misión");
             }
 
             quest.setTitle(dto.getTitle());
-            
+
             // Clear and add new steps
             quest.getSteps().clear();
             List<QuestStep> steps = new ArrayList<>();
@@ -208,23 +216,28 @@ public class UserQuestController {
                 step.setQuest(quest);
                 step.setExercise(exercise);
                 step.setSeries(1);
-                
+
                 int reps = exDto.getReps() != null ? exDto.getReps() : 0;
                 int seconds = exDto.getSeconds() != null ? exDto.getSeconds() : 0;
                 step.setRepetitions(seconds > 0 ? seconds : reps);
-                
+
                 totalVolume += (reps + (seconds / 2));
                 steps.add(step);
             }
             quest.getSteps().addAll(steps);
-            
+
             // Re-calculate rewards and rank
             String rank = "E";
-            if (totalVolume >= 1000) rank = "S";
-            else if (totalVolume >= 500) rank = "A";
-            else if (totalVolume >= 200) rank = "B";
-            else if (totalVolume >= 100) rank = "C";
-            else if (totalVolume >= 50) rank = "D";
+            if (totalVolume >= 1000)
+                rank = "S";
+            else if (totalVolume >= 500)
+                rank = "A";
+            else if (totalVolume >= 200)
+                rank = "B";
+            else if (totalVolume >= 100)
+                rank = "C";
+            else if (totalVolume >= 50)
+                rank = "D";
             quest.setRankDifficulty(rank);
             quest.setXpReward(totalVolume * 2L);
             quest.setGoldReward(totalVolume);
@@ -239,7 +252,8 @@ public class UserQuestController {
     public ResponseEntity<Object> deleteCustomQuest(@PathVariable Long id, @RequestParam Long userId) {
         try {
             Quest quest = questRepository.findById(id).orElse(null);
-            if (quest == null) return ResponseEntity.status(404).body("Misión no encontrada");
+            if (quest == null)
+                return ResponseEntity.status(404).body("Misión no encontrada");
 
             if (quest.getCreatorId() == 0 || !quest.getCreatorId().equals(userId)) {
                 return ResponseEntity.status(403).body("No tienes permiso para eliminar esta misión");
@@ -247,7 +261,8 @@ public class UserQuestController {
 
             // Verificar si hay progreso asociado
             if (progressRepository.existsByQuestId(id)) {
-                return ResponseEntity.badRequest().body("No se puede eliminar la misión: otros usuarios (o tú mismo) tienen progreso activo o completado en ella.");
+                return ResponseEntity.badRequest().body(
+                        "No se puede eliminar la misión: otros usuarios (o tú mismo) tienen progreso activo o completado en ella.");
             }
 
             questRepository.delete(quest);
@@ -256,6 +271,7 @@ public class UserQuestController {
             return ResponseEntity.badRequest().body("Error al eliminar la misión: " + e.getMessage());
         }
     }
+
     @DeleteMapping("/progress/{progressId}")
     public ResponseEntity<Object> cancelQuest(@PathVariable Long progressId) {
         try {
@@ -274,8 +290,7 @@ public class UserQuestController {
         try {
             List<SystemQuestOffer> offers = systemQuestService.getOrFillOffers(userId);
             User user = userRepository.findById(userId).orElseThrow();
-            
-            // Mapear a una lista de Quests con recompensas ajustadas visualmente
+
             List<Quest> adjustedQuests = offers.stream().map(offer -> {
                 Quest q = offer.getQuest();
                 Quest copy = new Quest();
@@ -285,15 +300,14 @@ public class UserQuestController {
                 copy.setType(q.getType());
                 copy.setRankDifficulty(q.getRankDifficulty());
                 copy.setSteps(q.getSteps());
-                
-                // Aplicar multiplicadores
+
                 double multiplier = systemQuestService.calculateMultiplier(user, q);
-                copy.setXpReward((long)(q.getXpReward() * multiplier));
-                copy.setGoldReward((long)(q.getGoldReward() * multiplier));
-                
+                copy.setXpReward((long) (q.getXpReward() * multiplier));
+                copy.setGoldReward((long) (q.getGoldReward() * multiplier));
+
                 return copy;
             }).collect(Collectors.toList());
-            
+
             return ResponseEntity.ok(adjustedQuests);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -305,23 +319,19 @@ public class UserQuestController {
         try {
             User user = userRepository.findById(userId).orElseThrow();
             Quest quest = questRepository.findById(questId).orElseThrow();
-            
-            // Calcular multiplicador y recompensas finales
+
             double multiplier = systemQuestService.calculateMultiplier(user, quest);
             long finalXp = (long) (quest.getXpReward() * multiplier);
             long finalGold = (long) (quest.getGoldReward() * multiplier);
-
-            // Crear el progreso con la recompensa ajustada FINAL
             UserQuestProgress progress = new UserQuestProgress();
             progress.setUser(user);
             progress.setQuest(quest);
             progress.setStatus(UserQuestProgress.QuestStatus.ACTIVE);
             progress.setAppliedXpReward(finalXp);
             progress.setAppliedGoldReward(finalGold);
-            
-            // ELIMINAR la oferta del pool de este usuario para que se reponga una nueva
+
             systemQuestService.removeOffer(userId, questId);
-            
+
             return ResponseEntity.ok(progressRepository.save(progress));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

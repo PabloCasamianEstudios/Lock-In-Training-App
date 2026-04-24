@@ -30,7 +30,8 @@ public class QuestService {
                 .orElseThrow(() -> new RuntimeException("Progreso no encontrado"));
 
         if ("MUTE".equals(progress.getUser().getRole())) {
-            throw new RuntimeException("Tu cuenta ha sido silenciada por actividad sospechosa. No puedes completar misiones.");
+            throw new RuntimeException(
+                    "Tu cuenta ha sido silenciada por actividad sospechosa. No puedes completar misiones.");
         }
 
         if (progress.getStatus() == UserQuestProgress.QuestStatus.COMPLETED) {
@@ -39,35 +40,32 @@ public class QuestService {
 
         User user = progress.getUser();
         Quest quest = progress.getQuest();
-        
+
         int oldLevel = user.getLevel();
 
-        // Apply Rewards
         long xpToApply = progress.getAppliedXpReward() != null ? progress.getAppliedXpReward() : quest.getXpReward();
-        long goldToApply = progress.getAppliedGoldReward() != null ? progress.getAppliedGoldReward() : quest.getGoldReward();
-        
+        long goldToApply = progress.getAppliedGoldReward() != null ? progress.getAppliedGoldReward()
+                : quest.getGoldReward();
+
         user.setXp(user.getXp() + xpToApply);
         user.setCoins(user.getCoins() + goldToApply);
 
-        // Points increase (scaling with level)
         user.setTotalPoints(user.getTotalPoints() + (xpToApply / 10));
 
-        // Level-Up Logic (Scaling)
         processLevelUp(user);
-        
+
         int levelsGained = user.getLevel() - oldLevel;
 
-        // Achievements and Counters
         user.setCompletedWorkouts(user.getCompletedWorkouts() + 1);
         java.util.List<Achievement> unlockedAchievements = achievementService.checkAndUnlock(user);
 
-        // Update Progress
         progress.setStatus(UserQuestProgress.QuestStatus.COMPLETED);
         progress.setCompletionTime(LocalDateTime.now());
 
         // ANTI-CHEAT CHECK
         protectionService.validateQuestSpeed(progress);
-        protectionService.logActivity(user, UserActivityLog.ActivityType.QUEST_COMPLETED, 1, "Quest ID: " + quest.getId());
+        protectionService.logActivity(user, UserActivityLog.ActivityType.QUEST_COMPLETED, 1,
+                "Quest ID: " + quest.getId());
         protectionService.logActivity(user, UserActivityLog.ActivityType.XP_GAIN, quest.getXpReward(), "Quest reward");
 
         progressRepository.save(progress);
@@ -81,7 +79,7 @@ public class QuestService {
         });
 
         User savedUser = userRepository.save(user);
-        
+
         return QuestCompletionResponse.builder()
                 .user(savedUser)
                 .xpReward(quest.getXpReward())
@@ -99,15 +97,13 @@ public class QuestService {
                 user.setXp(user.getXp() - xpRequired);
                 user.setLevel(user.getLevel() + 1);
                 user.setStatPoints(user.getStatPoints() + 4);
-                
-                // LOG LEVEL UP FOR SECURITY
-                protectionService.logActivity(user, UserActivityLog.ActivityType.LEVEL_UP, 1, "Leveled up to " + user.getLevel());
+
+                protectionService.logActivity(user, UserActivityLog.ActivityType.LEVEL_UP, 1,
+                        "Leveled up to " + user.getLevel());
             } else {
                 break;
             }
         }
-        
-        // If max level reached, cap XP or handle excess? For now, we just stop leveling.
     }
 
     private long calculateRequiredXP(int level) {

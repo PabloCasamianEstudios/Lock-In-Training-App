@@ -59,7 +59,8 @@ public class AchievementService {
 
                     // Assign Title reward if present
                     if (a.getTitleReward() != null) {
-                        if (userTitleRepository.findByUserIdAndTitleId(user.getId(), a.getTitleReward().getId()).isEmpty()) {
+                        if (userTitleRepository.findByUserIdAndTitleId(user.getId(), a.getTitleReward().getId())
+                                .isEmpty()) {
                             UserTitle ut = new UserTitle();
                             ut.setUser(user);
                             ut.setTitle(a.getTitleReward());

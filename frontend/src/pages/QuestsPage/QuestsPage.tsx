@@ -55,7 +55,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
         window.dispatchEvent(new CustomEvent('achievement_unlocked', { detail: response.unlockedAchievements }));
       }
 
-      // Sincronizamos el perfil global para que el modal de Level Up se active
+
       if (fetchProfile && user?.id) {
         await fetchProfile(user.id);
       }

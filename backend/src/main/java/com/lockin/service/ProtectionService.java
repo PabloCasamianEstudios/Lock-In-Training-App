@@ -22,17 +22,17 @@ public class ProtectionService {
     private UserRepository userRepository;
     @Lazy
     @Autowired
-    private ProtectionService self; // Self-injection for proxying transactions
+    private ProtectionService self;
 
     // --- CONFIGURABLE THRESHOLDS ---
-    private static final int MAX_QUESTS_PER_MINUTE = 3;
-    private static final int MAX_LEVELS_PER_5_MINUTES = 5;
-    private static final int MIN_QUEST_DURATION_SECONDS = 10; // Minimum time to complete a single quest
+    private static final int MAX_QUESTS_PER_MINUTE = 30;
+    private static final int MAX_LEVELS_PER_5_MINUTES = 500;
+    private static final int MIN_QUEST_DURATION_SECONDS = 1;
 
     @Transactional
     public void logActivity(User user, UserActivityLog.ActivityType type, double amount, String metadata) {
         if ("MUTE".equals(user.getRole()))
-            return; // Already banned
+            return;
 
         UserActivityLog log = new UserActivityLog();
         log.setUser(user);
@@ -41,7 +41,6 @@ public class ProtectionService {
         log.setMetadata(metadata);
         activityLogRepository.save(log);
 
-        // Immediate check for potential cheating
         checkIntegrity(user, type);
     }
 
@@ -87,8 +86,9 @@ public class ProtectionService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void muteUser(User user, String reason) {
-        if ("ADMIN".equals(user.getRole())) return;
-        
+        if ("ADMIN".equals(user.getRole()))
+            return;
+
         System.err.println(
                 "ALERT [ANTI-CHEAT]: Muting user " + user.getUsername() + " (ID: " + user.getId() + ") for: " + reason);
         user.setRole("MUTE");

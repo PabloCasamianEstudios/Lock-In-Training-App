@@ -25,8 +25,8 @@ public class LeagueGenerationService {
     private final UserLeagueRepository userLeagueRepository;
 
     public LeagueGenerationService(UserRepository userRepository,
-                                   LeagueRepository leagueRepository,
-                                   UserLeagueRepository userLeagueRepository) {
+            LeagueRepository leagueRepository,
+            UserLeagueRepository userLeagueRepository) {
         this.userRepository = userRepository;
         this.leagueRepository = leagueRepository;
         this.userLeagueRepository = userLeagueRepository;
@@ -123,22 +123,19 @@ public class LeagueGenerationService {
             case "B" -> 1000;
             case "A" -> 2000;
             case "S" -> 5000;
-            case "SS" -> 10000;
             default -> 100;
         };
     }
 
     private long defaultXpRewardByRank(String rank) {
         return switch (normalizeRank(rank)) {
-            case "E" -> 50;
-            case "D" -> 100;
-            case "C" -> 200;
-            case "B" -> 400;
-            case "A" -> 800;
-            case "S" -> 1500;
-            case "SS" -> 3000;
+            case "E" -> 500;
+            case "D" -> 1000;
+            case "C" -> 2000;
+            case "B" -> 4000;
+            case "A" -> 8000;
+            case "S" -> 150000;
             default -> 50;
         };
     }
 }
-

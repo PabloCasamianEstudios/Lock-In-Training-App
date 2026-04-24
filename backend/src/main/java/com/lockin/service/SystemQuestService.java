@@ -46,19 +46,19 @@ public class SystemQuestService {
                 Quest quest = new Quest();
                 quest.setType(Quest.QuestType.SYSTEM);
                 quest.setRankDifficulty(rank);
-                quest.setCreatorId(0L); // System
+                quest.setCreatorId(0L);
                 quest.setTitle("Contrato de Rango " + rank + " #" + (existingCount + i + 1));
 
-                int rankVal = RANKS.indexOf(rank) + 1; // 1 to 6
+                int rankVal = RANKS.indexOf(rank) + 1;
 
                 // 1. Número de ejercicios escala con el rango
                 int numSteps;
                 if (rankVal <= 2)
                     numSteps = 1 + rand.nextInt(2); // E, D: 1-2
                 else if (rankVal <= 5)
-                    numSteps = 2 + rand.nextInt(2); // C: 2-3
+                    numSteps = 2 + rand.nextInt(2); // C, B, A: 2-3
                 else
-                    numSteps = 3 + rand.nextInt(2); // B, A, S: 3-4
+                    numSteps = 3 + rand.nextInt(2); // S: 3-4
 
                 // 2. Multiplicadores de repeticiones mucho más agresivos
                 // E: 1x, D: 2x, C: 5x, B: 12x, A: 25x, S: 50x
@@ -109,7 +109,6 @@ public class SystemQuestService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         List<SystemQuestOffer> currentOffers = new ArrayList<>(offerRepository.findByUserId(userId));
 
-        // Calcular distribución ideal para el rango ACTUAL (usando seasonRank)
         String userRank = user.getSeasonRank() != null ? user.getSeasonRank() : "E";
         int userRankIdx = RANKS.indexOf(userRank);
         if (userRankIdx == -1)
@@ -124,14 +123,10 @@ public class SystemQuestService {
 
         Map<String, Integer> targets = new HashMap<>();
         targets.put(r, 2);
-        // Si ya somos rango E, el 'rMinus' sumará al E. Si somos S, 'rPlus' sumará al
-        // S.
         targets.put(rMinus, targets.getOrDefault(rMinus, 0) + 2);
         targets.put(rPlus, targets.getOrDefault(rPlus, 0) + 2);
 
         System.out.println("[SystemQuestService] Ideal target distribution: " + targets);
-
-        // 1. Identificar misiones que sobran o ya no encajan
         List<SystemQuestOffer> toDelete = new ArrayList<>();
         Map<String, Integer> currentCounts = new HashMap<>();
 
@@ -151,11 +146,10 @@ public class SystemQuestService {
 
         if (!toDelete.isEmpty()) {
             offerRepository.deleteAll(toDelete);
-            offerRepository.flush(); // Asegurar borrado inmediato
+            offerRepository.flush();
             currentOffers.removeAll(toDelete);
         }
 
-        // 2. Rellenar si faltan hasta llegar a 6 con la nueva distribución
         if (currentOffers.size() < 6) {
             System.out.println("[SystemQuestService] Gaps detected (" + currentOffers.size() + "/6). Filling gaps...");
             fillGaps(user, currentOffers);
@@ -170,7 +164,6 @@ public class SystemQuestService {
         if (userRankIdx == -1)
             userRankIdx = 0;
 
-        // Necesitamos: 2 de R, 2 de R-1, 2 de R+1
         Map<String, Integer> targets = new HashMap<>();
         String r = RANKS.get(userRankIdx);
         String rMinus = RANKS.get(Math.max(0, userRankIdx - 1));
@@ -180,7 +173,6 @@ public class SystemQuestService {
         targets.put(rMinus, targets.getOrDefault(rMinus, 0) + 2);
         targets.put(rPlus, targets.getOrDefault(rPlus, 0) + 2);
 
-        // Contar qué tenemos ya
         for (SystemQuestOffer offer : currentOffers) {
             String qRank = offer.getQuest().getRankDifficulty();
             if (targets.containsKey(qRank)) {
@@ -188,7 +180,6 @@ public class SystemQuestService {
             }
         }
 
-        // Rellenar
         List<Quest> allSystemQuests = questRepository.findAll().stream()
                 .filter(q -> q.getType() == Quest.QuestType.SYSTEM)
                 .collect(Collectors.toList());
