@@ -4,6 +4,7 @@ import { RepCounter } from '../../services/exercise/RepCounter';
 import { ArrowLeft, CheckCircle, Activity, Camera as CameraIcon } from 'lucide-react';
 import apiClient from '../../services/apiClient';
 import type { PageProps } from '../../types';
+import { useLanguage } from '../../LanguageContext';
 
 const mpPose: any = {};
 const mpDrawing: any = {};
@@ -26,6 +27,7 @@ interface WorkoutCameraPageProps extends PageProps {
 }
 
 const WorkoutCameraPage: FC<WorkoutCameraPageProps> = ({ user, questId, targetReps = 10, exerciseType = 'PUSHUPS', onNavigate }) => {
+  const { t } = useLanguage();
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const repCounter = useRef(new RepCounter());
@@ -120,7 +122,7 @@ const WorkoutCameraPage: FC<WorkoutCameraPageProps> = ({ user, questId, targetRe
           <ArrowLeft className="w-6 h-6" />
         </button>
         <div className="flex flex-col items-center">
-          <h1 className="text-main font-black italic tracking-widest text-xl">DETECCIÃ“N DE IA</h1>
+          <h1 className=" text-main font-black italic tracking-widest text-xl">{t('camera.ai_detection')}</h1>
           <p className="text-[10px] text-white/50 uppercase tracking-widest">{exerciseType}: {count} / {targetReps}</p>
         </div>
         <div className="w-10" />
@@ -130,7 +132,7 @@ const WorkoutCameraPage: FC<WorkoutCameraPageProps> = ({ user, questId, targetRe
         {!isLoaded && (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white/50 gap-4">
             <Activity className="w-12 h-12 animate-spin text-main" />
-            <span className="text-xs uppercase tracking-widest animate-pulse">Sincronizando con el sistema...</span>
+            <span className="text-xs uppercase tracking-widest animate-pulse">{t('camera.syncing')}</span>
           </div>
         )}
 
@@ -162,19 +164,18 @@ const WorkoutCameraPage: FC<WorkoutCameraPageProps> = ({ user, questId, targetRe
         {completed ? (
           <div className="flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-500">
             <div className="flex items-center gap-2 text-green-500 font-black italic text-2xl uppercase">
-              <CheckCircle className="w-8 h-8" /> OBJETIVO COMPLETADO
+              <CheckCircle className="w-8 h-8" /> {t('camera.objective_completed')}
             </div>
             <button
               onClick={handleFinishQuest}
               className="w-full py-4 bg-green-600 hover:bg-green-500 text-black font-black uppercase tracking-widest transition-all skew-x-[-10deg] shadow-[5px_5px_0_white]"
             >
-              <span className="skew-x-[10deg] inline-block">RECLAMAR RECOMPENSA</span>
+              <span className="skew-x-[10deg] inline-block">{t('camera.claim_reward')}</span>
             </button>
           </div>
         ) : (
           <div className="text-white/40 text-[10px] uppercase tracking-[0.2em] italic leading-relaxed">
-            Ponte frente a la cÃ¡mara de forma lateral. <br />
-            AsegÃºrate de que tus brazos y pecho sean visibles para el "Sistema".
+            {t('camera.position_hint')}
           </div>
         )}
         {error && <div className="mt-4 text-red-500 text-xs font-bold uppercase">{error}</div>}

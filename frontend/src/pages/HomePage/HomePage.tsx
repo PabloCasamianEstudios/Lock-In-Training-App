@@ -5,21 +5,23 @@ import {
   Trophy, 
   Flame, 
   ChevronRight, 
-  Bell, 
   Users, 
   Lightbulb, 
   Activity as ActivityIcon,
   X,
-  Check
+  Check,
+  Home
 } from 'lucide-react';
 import { socialService } from '../../services/socialService';
 import type { PageProps } from '../../types';
 import { useHomeData } from '../../hooks/useHomeData';
-import AppHeader from '../../components/common/AppHeader';
+import PageLayout from '../../components/common/PageLayout';
 import BrutalistCard from '../../components/common/BrutalistCard';
 import ProgressBar from '../../components/common/ProgressBar';
+import { useLanguage } from '../../LanguageContext';
 
 const HomePage: FC<PageProps> = ({ user }) => {
+  const { t } = useLanguage();
   const { 
     username,
     profilePic,
@@ -59,229 +61,250 @@ const HomePage: FC<PageProps> = ({ user }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-main animate-pulse font-black italic uppercase tracking-widest">
-          Loading System Data...
+      <PageLayout title={t('home.title')} subtitle={t('home.subtitle_establishing')} icon={Home}>
+        <div className="flex items-center justify-center h-[50vh]">
+          <div className="text-main animate-pulse font-black italic uppercase tracking-widest text-xs">
+            {t('home.loading')}
+          </div>
         </div>
-      </div>
+      </PageLayout>
     );
   }
 
   return (
-    <div className="max-w-md mx-auto space-y-6 pb-20">
-      <AppHeader title="HOME" />
-
-      <BrutalistCard>
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full border-2 border-white flex items-center justify-center bg-zinc-800 overflow-hidden">
-            {profilePic ? (
-              <img src={profilePic} alt="Avatar" className="w-full h-full object-cover" />
-            ) : (
-              <Users className="w-8 h-8 text-white/50" />
-            )}
-          </div>
-          <div className="flex-1">
-            <h2 className="text-xl font-black text-white leading-tight">{username}</h2>
-            <div className="flex items-end justify-between">
-              <span className="text-sm font-bold text-white/60">lv.{level}</span>
-              <span className="text-sm font-black text-white/40 uppercase tracking-widest">RANK {rank}</span>
+    <PageLayout 
+      title={t('home.title')} 
+      subtitle={t('home.subtitle_active')} 
+      icon={Home}
+    >
+      <div className="md:grid md:grid-cols-12 md:gap-12 items-start">
+        {/* --- PROFILE SIDEBAR --- */}
+        <div className="md:col-span-5 lg:col-span-4 space-y-8 md:sticky md:top-4">
+          <BrutalistCard padding="p-6">
+            <div className="flex items-center gap-5">
+              <div className="w-20 h-20 rounded-sm border-2 border-white flex items-center justify-center bg-zinc-900 overflow-hidden shadow-[4px_4px_0px_var(--main-color)] transform -rotate-3 transition-transform hover:rotate-0">
+                {profilePic ? (
+                  <img src={profilePic} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <Users className="w-10 h-10 text-white/20" />
+                )}
+              </div>
+              <div className="flex-1 space-y-1">
+                <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none">{username}</h2>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black text-main uppercase italic">{t('common.level')}{level}</span>
+                  <span className="text-[10px] font-black text-white/40 uppercase tracking-widest italic">{t('common.rank')} {rank}</span>
+                </div>
+                <ProgressBar progress={xp % 1000} max={1000} className="h-1.5 mt-2" />
+              </div>
             </div>
-            <ProgressBar progress={xp % 1000} max={1000} className="mt-1" />
-          </div>
+          </BrutalistCard>
+
+          <BrutalistCard variant="accent" padding="p-0" className="grid grid-cols-3 overflow-hidden shadow-[8px_8px_0px_white]">
+            <div className="flex flex-col items-center justify-center p-5 border-r-2 border-white group hover:bg-main/5 transition-colors">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-2xl font-black italic text-white leading-none tracking-tighter">
+                  {activeQuestsCount}/1
+                </span>
+                <Shield className="w-4 h-4 text-main fill-main" />
+              </div>
+              <span className="text-[9px] font-black uppercase tracking-widest text-white/40 italic">{t('home.quests')}</span>
+            </div>
+
+            <div className="flex flex-col items-center justify-center p-5 border-r-2 border-white group hover:bg-main/5 transition-colors">
+              <div className="flex items-center gap-2 mb-1">
+                <Trophy className="w-5 h-5 text-main" />
+              </div>
+              <span className="text-[9px] font-black uppercase tracking-widest text-white/40 whitespace-nowrap italic">{t('common.rank')} {rank}</span>
+            </div>
+
+            <div className="flex flex-col items-center justify-center p-5 group hover:bg-main/5 transition-colors">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-2xl font-black italic text-white leading-none tracking-tighter">
+                  {streak}
+                </span>
+                <Flame className="w-5 h-5 text-orange-500 fill-orange-500" />
+              </div>
+              <span className="text-[9px] font-black uppercase tracking-widest text-white/40 italic">{t('home.streak')}</span>
+            </div>
+          </BrutalistCard>
         </div>
-      </BrutalistCard>
 
-      <BrutalistCard variant="accent" padding="p-0" className="grid grid-cols-3 overflow-hidden">
-        <div className="flex flex-col items-center justify-center p-4 border-r-2 border-white group hover:bg-main/5 transition-colors">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xl font-black italic text-white leading-none tracking-tighter">
-              {activeQuestsCount}/1
-            </span>
-            <Shield className="w-4 h-4 text-main fill-main" />
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-white/40">QUESTS</span>
-        </div>
+        {/* --- MAIN CONTENT AREA --- */}
+        <div className="md:col-span-7 lg:col-span-8 mt-12 md:mt-0">
+          {/* --- TABS --- */}
+          <nav className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-6 md:mb-4">
+            {(['FEED', 'ACTIVITY', 'TIPS', 'FRIENDS'] as const).map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap
+                  ${activeTab === tab 
+                    ? 'bg-main text-black border-main shadow-[4px_4px_0px_white]' 
+                    : 'bg-black text-white/40 border-white/10 hover:border-white/40'}`}
+              >
+                {t(`home.tabs.${tab.toLowerCase()}`)}
+              </button>
+            ))}
+          </nav>
 
-        <div className="flex flex-col items-center justify-center p-4 border-r-2 border-white group hover:bg-main/5 transition-colors">
-          <div className="flex items-center gap-2 mb-1">
-            <Trophy className="w-5 h-5 text-main" />
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-white/40 whitespace-nowrap">RANK {rank}</span>
-        </div>
-
-        <div className="flex flex-col items-center justify-center p-4 group hover:bg-main/5 transition-colors">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xl font-black italic text-white leading-none tracking-tighter">
-              {streak}
-            </span>
-            <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-white/40">STREAK</span>
-        </div>
-      </BrutalistCard>
-
-      {/* --- TABS --- */}
-      <nav className="flex items-center justify-between gap-1 overflow-x-auto no-scrollbar py-2">
-        {(['FEED', 'ACTIVITY', 'TIPS', 'FRIENDS'] as const).map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-1.5 text-[10px] font-black border-2 transition-all uppercase tracking-widest whitespace-nowrap
-              ${activeTab === tab 
-                ? 'bg-main text-black border-main' 
-                : 'bg-black text-white/40 border-white/20 hover:border-white/40'}`}
-          >
-            {tab}
-          </button>
-        ))}
-      </nav>
-
-      {/* --- TAB CONTENT --- */}
-      <main className="min-h-[300px]">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-          >
-            {activeTab === 'FEED' && (
-              <div className="space-y-4">
-                {dailyQuests.filter(q => !q.completed).map((quest, i) => (
-                  <div key={quest.id || i} className="bg-black border-4 border-white p-6 relative overflow-hidden shadow-[10px_10px_0px_white] group hover:border-main transition-colors">
-                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-main/5 text-main/5 rounded-full blur-3xl group-hover:bg-main/20 transition-all" />
-                    <h3 className="text-3xl font-black italic tracking-tighter text-white leading-none mb-2 uppercase group-hover:text-main transition-colors">{quest.title}</h3>
-                    <div className="space-y-2 mb-6">
-                      <p className="text-xs text-white/60 leading-relaxed italic uppercase font-bold">
-                        {quest.description || 'System-assigned daily protocol'}
-                      </p>
-                    </div>
-                    <div className="flex justify-between items-end">
-                      <div className="flex gap-4">
-                        <span className="text-[10px] font-black text-main tracking-widest italic flex items-center gap-1">
-                          <Flame className="w-3 h-3" />
-                          EXP +{quest.xpReward}
-                        </span>
+          {/* --- TAB CONTENT --- */}
+          <div className="min-h-[400px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                {activeTab === 'FEED' && (
+                  <div className="space-y-6">
+                    {dailyQuests.filter(q => !q.completed).map((quest, i) => (
+                      <div key={quest.id || i} className="bg-black border-4 border-white p-8 relative overflow-hidden shadow-[12px_12px_0px_white] group hover:border-main transition-all hover:-translate-y-1">
+                        <div className="absolute -top-10 -right-10 w-40 h-40 bg-main/5 text-main/5 rounded-full blur-3xl group-hover:bg-main/20 transition-all" />
+                        <div className="relative z-10">
+                          <h3 className="text-4xl font-black italic tracking-tighter text-white leading-none mb-3 uppercase group-hover:text-main transition-colors">{quest.title}</h3>
+                          <p className="text-xs text-white/60 leading-relaxed italic uppercase font-bold mb-8 border-l-2 border-white/20 pl-4">
+                            {quest.description || 'System-assigned daily protocol'}
+                          </p>
+                          <div className="flex justify-between items-end">
+                            <div className="flex gap-6">
+                              <span className="text-[10px] font-black text-main tracking-[0.2em] italic flex items-center gap-2 bg-main/10 px-3 py-1 rounded-sm border border-main/20">
+                                <Flame className="w-4 h-4" />
+                                EXP +{quest.xpReward}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <span className="block text-[8px] font-black text-white/20 uppercase mb-1">PROGRESION</span>
+                              <span className="text-[12px] font-black text-white italic tracking-widest">{quest.completedRepetitions || 0} / {quest.totalRepetitions || 1} REPS</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <span className="text-[10px] font-black text-white/30 tracking-widest italic">{quest.completedRepetitions || 0} / {quest.totalRepetitions || 1} REPS</span>
-                    </div>
-                  </div>
-                ))}
+                    ))}
 
-                {dailyQuests.filter(q => !q.completed).length === 0 && (
-                  <div className="text-center py-10 text-white/20 italic font-black uppercase tracking-widest border-2 border-dashed border-white/10">
-                    No pending daily protocol
+                    {dailyQuests.filter(q => !q.completed).length === 0 && (
+                      <div className="flex flex-col items-center justify-center py-20 gap-4 border-4 border-dashed border-white/10 rounded-sm">
+                        <Check className="w-12 h-12 text-main opacity-20" />
+                        <p className="text-xs font-black text-white/20 uppercase tracking-[0.3em] italic">{t('home.no_pending')}</p>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-            )}
 
-            {activeTab === 'ACTIVITY' && (
-              <div className="space-y-3">
-                {activity.length > 0 ? (activity.slice(0, 5).map((act, i) => (
-                  <div key={i} className="bg-black/40 border border-white/10 p-4 flex items-center justify-between group hover:border-main transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-main/10 rounded-sm">
-                        <ActivityIcon className="w-4 h-4 text-main" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-black text-white uppercase italic">{act.title ?? 'Quest'}</p>
-                        <p className="text-[10px] text-white/30 uppercase tracking-widest">
-                          {act.completionTime ? new Date(act.completionTime).toLocaleDateString() : 'In progress'}
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-xs font-black text-main italic">+{act.xpReward ?? 0} XP</span>
-                  </div>
-                ))) : (
-                  <div className="text-center py-10 text-white/20 italic font-black uppercase tracking-widest">No activity recorded</div>
-                )}
-              </div>
-            )}
-
-            {activeTab === 'TIPS' && (
-              <div className="space-y-4">
-                {tips.map((tip, i) => (
-                  <div key={i} className="bg-black border-2 border-white/20 p-4 relative group hover:border-main transition-colors shadow-[4px_4px_0px_rgba(255,255,255,0.1)] hover:shadow-[4px_4px_0px_var(--main-color)]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Lightbulb className="w-4 h-4 text-main" />
-                      <h4 className="text-xs font-black text-white uppercase italic">{tip.title}</h4>
-                    </div>
-                    <p className="text-xs text-white/50 leading-relaxed">{tip.description}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {activeTab === 'FRIENDS' && (
-              <div className="space-y-6">
-                
-                {/* PENDING REQUESTS */}
-                {pendingRequests && pendingRequests.length > 0 && (
-                  <div className="space-y-3">
-                    <h3 className="text-[10px] font-black uppercase tracking-widest text-main italic">INCOMING PROTOCOLS</h3>
-                    {pendingRequests.map((req: any, i: number) => (
-                      <div key={`req-${i}`} className="bg-main/10 border border-main/30 p-3 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full border border-main/50 bg-main/20 flex items-center justify-center text-xs font-black text-main">
-                            {(req.sender?.username ?? '?').charAt(0).toUpperCase()}
+                {activeTab === 'ACTIVITY' && (
+                  <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-4">
+                    {activity.length > 0 ? (activity.slice(0, 10).map((act, i) => (
+                      <div key={i} className="bg-black/40 border-2 border-white/5 p-5 flex items-center justify-between group hover:border-main/40 transition-all hover:bg-black/60">
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 bg-white/5 rounded-sm group-hover:bg-main/10 transition-colors">
+                            <ActivityIcon className="w-5 h-5 text-white/20 group-hover:text-main transition-colors" />
                           </div>
                           <div>
-                            <p className="text-xs font-black text-white italic">{req.sender?.username ?? 'Hunter'}</p>
-                            <p className="text-[10px] text-white/50 uppercase tracking-widest">Requesting Access</p>
+                            <p className="text-[11px] font-black text-white uppercase italic tracking-wider">{act.title ?? 'Quest'}</p>
+                            <p className="text-[9px] text-white/30 uppercase tracking-[0.2em] mt-1">
+                              {act.completionTime ? new Date(act.completionTime).toLocaleDateString() : 'In progress'}
+                            </p>
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          <button onClick={() => handleRejectRequest(req.id)} className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 transition-colors">
-                            <X className="w-4 h-4 text-red-500" />
-                          </button>
-                          <button onClick={() => handleAcceptRequest(req.id)} className="p-2 bg-main/10 hover:bg-main/20 border border-main/30 transition-colors">
-                            <Check className="w-4 h-4 text-main" />
-                          </button>
+                        <span className="text-xs font-black text-main italic">+{act.xpReward ?? 0} XP</span>
+                      </div>
+                    ))) : (
+                      <div className="col-span-full text-center py-20 text-white/20 italic font-black uppercase tracking-widest border-2 border-dashed border-white/5">{t('home.no_activity')}</div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'TIPS' && (
+                  <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
+                    {tips.map((tip, i) => (
+                      <div key={i} className="bg-black border-2 border-white/10 p-6 relative group hover:border-main transition-all shadow-[6px_6px_0px_rgba(255,255,255,0.05)] hover:shadow-[6px_6px_0px_var(--main-color)] hover:-translate-y-1">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="p-2 bg-main/10 rounded-full">
+                            <Lightbulb className="w-5 h-5 text-main" />
+                          </div>
+                          <h4 className="text-[11px] font-black text-white uppercase italic tracking-widest">{tip.title}</h4>
                         </div>
+                        <p className="text-xs text-white/40 leading-relaxed italic font-medium">{tip.description}</p>
                       </div>
                     ))}
                   </div>
                 )}
 
-                {/* EXISTING FRIENDS */}
-                <div className="space-y-3">
-                  <h3 className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">VERIFIED HUNTERS</h3>
-                  {friends.length > 0 ? (friends.map((friend, i) => (
-                    <div key={i} className="bg-black border border-white/10 p-3 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full border border-white/20 bg-zinc-800 flex items-center justify-center text-xs font-black text-white/40">
-                          {(friend.username ?? '?').charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="text-xs font-black text-white italic">{friend.username ?? 'Hunter'}</p>
-                          <p className="text-[10px] text-white/30 uppercase tracking-widest">RANK {friend.rank || 'E'}</p>
+                {activeTab === 'FRIENDS' && (
+                  <div className="space-y-10">
+                    {/* PENDING REQUESTS */}
+                    {pendingRequests && pendingRequests.length > 0 && (
+                      <div className="space-y-4">
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-main italic border-l-4 border-main pl-4">{t('home.incoming_protocols')}</h3>
+                        <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-4">
+                          {pendingRequests.map((req: any, i: number) => (
+                            <div key={`req-${i}`} className="bg-main/5 border-2 border-main/20 p-5 flex items-center justify-between shadow-lg">
+                              <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-sm border-2 border-main/30 bg-main/10 flex items-center justify-center text-sm font-black text-main transform -rotate-3">
+                                  {(req.sender?.username ?? '?').charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                  <p className="text-xs font-black text-white italic uppercase">{req.sender?.username ?? t('common.hunter')}</p>
+                                  <p className="text-[9px] text-white/40 uppercase tracking-widest font-bold">{t('home.requesting_access')}</p>
+                                </div>
+                              </div>
+                              <div className="flex gap-3">
+                                <button onClick={() => handleRejectRequest(req.id)} className="p-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-black border border-red-500/30 transition-all rounded-sm">
+                                  <X className="w-5 h-5" />
+                                </button>
+                                <button onClick={() => handleAcceptRequest(req.id)} className="p-2.5 bg-main/10 hover:bg-main text-main hover:text-black border border-main/30 transition-all rounded-sm">
+                                  <Check className="w-5 h-5" />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-white/20" />
+                    )}
+
+                    {/* EXISTING FRIENDS */}
+                    <div className="space-y-4">
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 italic border-l-4 border-white/20 pl-4">{t('home.verified_hunters')}</h3>
+                      {friends.length > 0 ? (
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {friends.map((friend, i) => (
+                            <div key={i} className="bg-black/40 border-2 border-white/5 p-4 flex items-center justify-between hover:bg-white/5 hover:border-main/40 transition-all cursor-pointer group rounded-sm shadow-md">
+                              <div className="flex items-center gap-4">
+                                <div className="w-11 h-11 rounded-sm border border-white/10 bg-zinc-900 flex items-center justify-center text-xs font-black text-white/30 group-hover:text-main group-hover:border-main/40 transition-all">
+                                  {(friend.username ?? '?').charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                  <p className="text-xs font-black text-white italic uppercase group-hover:text-main transition-colors">{friend.username ?? t('common.hunter')}</p>
+                                  <p className="text-[9px] text-white/20 uppercase tracking-widest font-black">{t('common.rank')} {friend.rank || 'E'}</p>
+                                </div>
+                              </div>
+                              <ChevronRight className="w-5 h-5 text-white/10 group-hover:text-main transition-all transform group-hover:translate-x-1" />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-20 gap-6 border-2 border-dashed border-white/5 rounded-sm">
+                          <Users className="w-16 h-16 text-white/5" />
+                          <div className="text-center">
+                            <p className="text-xs font-black text-white/20 uppercase tracking-[0.4em] italic mb-4">{t('home.alone')}</p>
+                            <button className="text-[10px] font-black text-main border-b-2 border-main/20 pb-1 hover:text-white hover:border-white transition-all uppercase italic tracking-widest">
+                              {t('home.find_hunters')}
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  ))) : (
-                    <div className="flex flex-col items-center justify-center py-12 gap-4">
-                      <Users className="w-12 h-12 text-white/10" />
-                      <p className="text-xs font-black text-white/20 uppercase tracking-[0.2em]">Alone in the shadows...</p>
-                      <button className="text-[10px] font-black text-main border-b border-main pb-1 hover:text-white hover:border-white transition-all uppercase italic">
-                        FIND HUNTERS
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </main>
-    </div>
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </PageLayout>
   );
 };
 
 export default HomePage;
-
-
-
-

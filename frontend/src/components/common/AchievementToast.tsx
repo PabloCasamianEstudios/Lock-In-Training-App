@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy } from 'lucide-react';
 import type { Achievement } from '../../types';
+import { useLanguage } from '../../LanguageContext';
 
 const AchievementToast = () => {
+  const { t } = useLanguage();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
 
   useEffect(() => {
@@ -47,7 +49,7 @@ const AchievementToast = () => {
             </div>
             <div className="flex-1">
               <p className="text-[10px] font-black uppercase text-main italic tracking-[0.2em] mb-1">
-                [ ACHIEVEMENT UNLOCKED ]
+                {t('achievement_toast.unlocked')}
               </p>
               <h4 className="text-white font-black uppercase text-lg leading-tight truncate">
                 {currentAchievement.title}

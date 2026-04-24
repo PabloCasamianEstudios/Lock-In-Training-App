@@ -1,24 +1,52 @@
-﻿import { type FC } from 'react';
-import { MoreVertical } from 'lucide-react';
+import { type FC, type ComponentType } from 'react';
+import { useLanguage } from '../../../LanguageContext';
 
 interface AppHeaderProps {
   title: string;
+  subtitle?: string;
+  icon?: ComponentType<{ className?: string }>;
   className?: string;
+  showStatus?: boolean;
 }
 
-const AppHeader: FC<AppHeaderProps> = ({ title, className = '-mx-4 -mt-4 mb-4' }) => {
+const AppHeader: FC<AppHeaderProps> = ({ 
+  title, 
+  subtitle, 
+  icon: Icon, 
+  className = 'mb-10',
+  showStatus = true 
+}) => {
+  const { t } = useLanguage();
+  const parts = title.split(' ');
+  const mainTitle = parts.slice(0, -1).join(' ');
+  const lastWord = parts[parts.length - 1];
+
   return (
-    <header className={`flex justify-between items-center bg-black/40 p-4 border-b border-white/10 ${className}`}>
-      <h1 className="text-3xl font-black italic tracking-tighter text-white uppercase">{title}</h1>
-      <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
-        <MoreVertical className="w-6 h-6 text-white" />
-      </button>
+    <header className={`flex items-center gap-4 border-b-4 border-white pb-6 ${className}`}>
+      {Icon && (
+        <Icon className="w-10 h-10 text-main drop-shadow-[0_0_10px_var(--main-glow)]" />
+      )}
+      <div className="flex flex-col">
+        <h1 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter leading-none">
+          {mainTitle} <span className="text-main text-glow">{lastWord}</span>
+        </h1>
+        {subtitle && (
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 italic mt-1">
+            {subtitle}
+          </span>
+        )}
+      </div>
+      
+      {showStatus && (
+        <div className="ml-auto hidden sm:flex items-center gap-2 px-4 py-1 bg-white/5 border border-white/10 skew-x-[-15deg]">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/50 skew-x-[15deg]">
+            {t('common.system_online')}
+          </span>
+        </div>
+      )}
     </header>
   );
 };
 
 export default AppHeader;
-
-
-
-
