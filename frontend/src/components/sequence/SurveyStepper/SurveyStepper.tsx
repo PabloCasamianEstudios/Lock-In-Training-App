@@ -88,7 +88,7 @@ const SurveyStepper: FC<SurveyStepperProps> = ({ onComplete, onLogout }) => {
                         value={formData[item.field]}
                         onChange={(e) => updateData(item.field, e.target.value)}
                       >
-                        <option value="">SELECT...</option>
+                        <option value="">{t('survey.fields.select')}</option>
                         {item.opts?.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
                       </select>
                     </div>
@@ -244,7 +244,7 @@ const SurveyStepper: FC<SurveyStepperProps> = ({ onComplete, onLogout }) => {
           <button
             onClick={onLogout}
             className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-red-500 transition-all duration-300 transform -skew-x-12 z-50 group"
-            title="LOGOUT"
+            title={t('profile.emergency_logout')}
           >
             <X className="w-6 h-6 text-white group-hover:scale-110" />
           </button>

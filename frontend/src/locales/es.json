@@ -248,7 +248,8 @@
       "height": "ALTURA (CM)",
       "male": "MASCULINO",
       "female": "FEMENINO",
-      "other": "OTRO"
+      "other": "OTRO",
+      "select": "SELECCIONAR..."
     },
     "pushup_capacity": "CAPACIDAD DE FLEXIONES",
     "run_endurance": "RESISTENCIA DE CARRERA",
