@@ -7,6 +7,20 @@ import PageLayout from '../../components/common/PageLayout';
 import type { PageProps } from '../../types';
 import { useLanguage } from '../../LanguageContext';
 import PopupWindow from '../../components/common/PopupWindow';
+import { StatsChart } from '../../components/profile/StatsChart';
+import { AchievementsGrid, type Achievement } from '../../components/profile/AchievementsGrid';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const MOCK_ACHIEVEMENTS: Achievement[] = [
+  { id: '1', title: 'FIRST BLOOD', completed: true },
+  { id: '2', title: 'IRON BODY', completed: true },
+  { id: '3', title: 'NIGHT OWL', completed: false },
+  { id: '4', title: 'SHADOW MONARCH', completed: false },
+  { id: '5', title: '10K RUN', completed: false },
+  { id: '6', title: 'ONE PUNCH', completed: false },
+  { id: '7', title: 'S CLASS', completed: false },
+  { id: '8', title: 'SYSTEM ERROR', completed: false },
+];
 
 const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
   const { t, language, setLanguage } = useLanguage();
@@ -16,6 +30,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
   const [loading, setLoading] = useState(!isOwnProfile);
   const [actionLoading, setActionLoading] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'STATS' | 'ACHIEVEMENTS'>('STATS');
 
   useEffect(() => {
     if (!isOwnProfile && targetId && user?.id) {
@@ -73,7 +88,6 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
       icon={UserCircle}
     >
       <div className="space-y-12 max-w-6xl mx-auto">
-        {/* --- PROFILE HEADER (TOP) --- */}
         <div className="flex flex-col items-center gap-8 border-b-4 border-white/10 pb-12 relative">
           <div className="relative group">
             <div className="w-32 h-32 md:w-48 md:h-48 bg-main rounded-sm transform -rotate-3 overflow-hidden border-4 border-white shadow-[12px_12px_0px_var(--secondary-color)] group-hover:scale-105 transition-all duration-500 hover:rotate-0">
@@ -125,62 +139,71 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
           </div>
         </div>
 
-        {/* --- STATS & CONTROLS (BOTTOM) --- */}
-        <div className="space-y-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: Award, label: t('profile.achievements'), value: `0 ${t('profile.unlocked')}` },
-              { icon: ShieldCheck, label: t('profile.total_logs'), value: `0 ${t('profile.sessions')}` },
-              { icon: Database, label: t('profile.account_status'), value: displayUser?.isGuest ? t('profile.guest_override') : t('profile.verified_protocol') },
-              { icon: Mail, label: t('profile.notifications'), value: `0 ${t('profile.new_debts')}` }
-            ].map((stat, i) => (
-              <div key={i} className="bg-white/5 border-4 border-white/5 p-8 space-y-4 hover:border-main/40 transition-all cursor-default group hover:-translate-y-2 shadow-lg">
-                <div className="flex items-center gap-4">
-                  <stat.icon className="w-6 h-6 text-main group-hover:scale-125 transition-transform" />
-                  <h3 className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">{stat.label}</h3>
-                </div>
-                <p className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">{stat.value}</p>
-              </div>
-            ))}
-          </div>
-
-          {isOwnProfile && (
-            <div className="bg-black border-4 border-white p-10 relative overflow-hidden shadow-[16px_16px_0px_white] transform -rotate-1">
-              <h2 className="text-4xl font-black italic uppercase text-white mb-12 border-l-8 border-main pl-8 tracking-tighter">{t('profile.control_panel')}</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <button 
+        <div className="space-y-8">
+          <nav className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-8 border-b border-white/10">
+            <button
+              onClick={() => setActiveTab('STATS')}
+              className={`px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap
+                ${activeTab === 'STATS'
+                  ? 'bg-main text-black border-main shadow-[4px_4px_0px_white]'
+                  : 'bg-black text-white/40 border-white/20 hover:border-white/40'}`}
+            >
+              STATS
+            </button>
+            <button
+              onClick={() => setActiveTab('ACHIEVEMENTS')}
+              className={`px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap
+                ${activeTab === 'ACHIEVEMENTS'
+                  ? 'bg-main text-black border-main shadow-[4px_4px_0px_white]'
+                  : 'bg-black text-white/40 border-white/20 hover:border-white/40'}`}
+            >
+              {t('profile.achievements')}
+            </button>
+            {isOwnProfile && (
+              <>
+                <button
                   onClick={() => setIsSettingsOpen(true)}
-                  className="flex items-center gap-8 p-8 group hover:bg-main/5 transition-all transform -skew-x-3 border-4 border-white/5 hover:border-main/40 text-left bg-zinc-900/50"
+                  className="px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap bg-black text-white/40 border-white/20 hover:border-white/40"
                 >
-                  <div className="p-5 bg-white/5 group-hover:bg-main/20 transition-colors border-2 border-white/10 group-hover:border-main/30">
-                    <Settings className="w-10 h-10 text-white/20 group-hover:text-main transition-colors" />
-                  </div>
-                  <div>
-                    <h4 className="text-2xl font-black uppercase italic text-white leading-none">{t('profile.system_settings')}</h4>
-                    <p className="text-[10px] uppercase font-black tracking-widest text-white/20 mt-2">{t('profile.modify_interface')}</p>
-                  </div>
+                  {t('profile.system_settings')}
                 </button>
-
-                <button 
+                <button
                   onClick={onLogout}
-                  className="flex items-center gap-8 p-8 group hover:bg-red-500/5 transition-all transform -skew-x-3 border-4 border-white/5 hover:border-red-500/50 text-left bg-zinc-900/50"
+                  className="px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap bg-black text-red-500/80 border-red-500/50 hover:bg-red-500/10 hover:border-red-500"
                 >
-                  <div className="p-5 bg-white/5 group-hover:bg-red-500/20 transition-colors border-2 border-white/10 group-hover:border-red-500/30">
-                    <LogOut className="w-10 h-10 text-white/20 group-hover:text-red-500 transition-colors" />
-                  </div>
-                  <div>
-                    <h4 className="text-2xl font-black uppercase italic text-red-500/80 group-hover:text-red-500 leading-none">{t('profile.emergency_logout')}</h4>
-                    <p className="text-[10px] uppercase font-black tracking-widest text-white/20 mt-2">{t('profile.terminate_session')}</p>
-                  </div>
+                  {t('profile.emergency_logout')}
                 </button>
-              </div>
-            </div>
-          )}
+              </>
+            )}
+          </nav>
+
+          <AnimatePresence mode="wait">
+            {activeTab === 'STATS' && (
+              <motion.div
+                key="stats"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <StatsChart stats={((displayProfile as any)?.stats as Record<string, number>) || {}} />
+              </motion.div>
+            )}
+            {activeTab === 'ACHIEVEMENTS' && (
+              <motion.div
+                key="achievements"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <AchievementsGrid achievements={MOCK_ACHIEVEMENTS} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-      {/* --- POPUP --- */}
       <PopupWindow
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
