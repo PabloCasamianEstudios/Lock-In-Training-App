@@ -13,6 +13,7 @@ import RankingsPage from '../../pages/RankingsPage';
 import ProfilePage from '../../pages/ProfilePage';
 import AdminPage from '../../pages/AdminPage';
 import WorkoutCameraPage from '../../pages/WorkoutCameraPage';
+import PrivacyPolicyPage from '../../pages/PrivacyPolicyPage';
 import RestrictedAccess from '../common/RestrictedAccess';
 import LevelUpModal from '../modals/LevelUpModal';
 import AchievementToast from '../common/AchievementToast';
@@ -39,6 +40,7 @@ const pageMap: Record<string, ComponentType<PageProps>> = {
   profile: ProfilePage,
   admin: AdminPage,
   workout: WorkoutCameraPage,
+  privacy: PrivacyPolicyPage,
 };
 
 /* --- MAIN LAYOUT --- */

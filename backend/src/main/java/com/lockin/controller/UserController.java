@@ -78,6 +78,7 @@ public class UserController {
         return ResponseEntity.ok(updated);
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         return userRepository.findById(id)

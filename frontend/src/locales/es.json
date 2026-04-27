@@ -111,6 +111,8 @@
     "theme": "TEMA DE INTERFAZ",
     "dark": "OSCURO",
     "light": "CLARO",
+    "privacy_policy": "POLÍTICA DE PRIVACIDAD",
+    "user_manual": "MANUAL DE USUARIO",
     "save": "GUARDAR CAMBIOS"
   },
   "auth": {

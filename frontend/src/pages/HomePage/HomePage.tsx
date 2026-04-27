@@ -71,6 +71,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
     );
   }
 
+
   return (
     <PageLayout 
       title={t('home.title')} 
@@ -234,6 +235,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
 
                 {activeTab === 'FRIENDS' && (
                   <div className="space-y-10">
+
                     {/* PENDING REQUESTS */}
                     {pendingRequests && pendingRequests.length > 0 && (
                       <div className="space-y-4">

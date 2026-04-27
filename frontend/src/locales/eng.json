@@ -111,6 +111,8 @@
     "theme": "INTERFACE THEME",
     "dark": "DARK",
     "light": "LIGHT",
+    "privacy_policy": "PRIVACY POLICY",
+    "user_manual": "USER MANUAL",
     "save": "SAVE CHANGES"
   },
   "auth": {

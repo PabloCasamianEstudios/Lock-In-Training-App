@@ -13,7 +13,7 @@ import { AchievementsGrid, type Achievement } from '../../components/profile/Ach
 import { motion, AnimatePresence } from 'framer-motion';
 
 
-const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
+const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavigate }) => {
   const { t, language, setLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const isOwnProfile = !targetId || targetId === user?.id;
@@ -398,6 +398,41 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
               {theme === 'dark' ? 'PROTOCOL: NIGHT_VISION_ENABLED' : 'PROTOCOL: DAYLIGHT_OVERRIDE'}
             </p>
           </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-main mb-2">
+                <ShieldCheck className="w-5 h-5" />
+                <h3 className="text-sm font-black uppercase italic tracking-widest">{t('settings.privacy_policy')}</h3>
+              </div>
+              <button 
+                onClick={() => {
+                  setIsSettingsOpen(false);
+                  onNavigate?.('privacy');
+                }}
+                className="w-full bg-zinc-900 border-4 border-white/10 p-5 text-white font-black italic uppercase hover:bg-white/5 hover:border-main transition-all flex items-center justify-center gap-3 group"
+              >
+                VIEW PROTOCOL
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-main mb-2">
+                <Download className="w-5 h-5" />
+                <h3 className="text-sm font-black uppercase italic tracking-widest">{t('settings.user_manual')}</h3>
+              </div>
+              <a 
+                href="/manual.pdf" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-zinc-900 border-4 border-white/10 p-5 text-white font-black italic uppercase hover:bg-white/5 hover:border-main transition-all flex items-center justify-center gap-3 group text-center no-underline"
+              >
+                DOWNLOAD PDF
+              </a>
+            </div>
+          </div>
+
+          <div className="h-1 bg-white/5 w-full my-4" />
 
           <div className="space-y-4">
             <div className="flex items-center gap-3 text-main mb-2">
