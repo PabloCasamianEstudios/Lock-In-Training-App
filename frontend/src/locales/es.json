@@ -108,6 +108,9 @@
     "select_language": "Seleccionar Idioma de Protocolo",
     "spanish": "Español",
     "english": "Inglés",
+    "theme": "TEMA DE INTERFAZ",
+    "dark": "OSCURO",
+    "light": "CLARO",
     "save": "GUARDAR CAMBIOS"
   },
   "auth": {

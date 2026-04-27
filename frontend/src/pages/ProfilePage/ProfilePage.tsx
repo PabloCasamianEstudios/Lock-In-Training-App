@@ -1,11 +1,12 @@
 import { type FC, useState, useEffect } from 'react';
-import { User as UserIcon, ShieldCheck, Mail, Database, Award, Settings, LogOut, Loader2, UserCircle, Globe, Edit2, Trophy, Download } from 'lucide-react';
+import { User as UserIcon, ShieldCheck, Mail, Database, Award, Settings, LogOut, Loader2, UserCircle, Globe, Edit2, Trophy, Download, Moon, Sun } from 'lucide-react';
 import { userService } from '../../services/userService';
 import { socialService } from '../../services/socialService';
 import type { User } from '../../types';
 import PageLayout from '../../components/common/PageLayout';
 import type { PageProps } from '../../types';
 import { useLanguage } from '../../LanguageContext';
+import { useTheme } from '../../ThemeContext';
 import PopupWindow from '../../components/common/PopupWindow';
 import { StatsChart } from '../../components/profile/StatsChart';
 import { AchievementsGrid, type Achievement } from '../../components/profile/AchievementsGrid';
@@ -14,6 +15,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
   const { t, language, setLanguage } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
   const isOwnProfile = !targetId || targetId === user?.id;
   const [targetProfile, setTargetProfile] = useState<User | null>(null);
   const [friendStatus, setFriendStatus] = useState<'NONE' | 'PENDING' | 'ACCEPTED' | 'REJECTED'>('NONE');
@@ -329,6 +331,28 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
             </div>
             <p className="text-[10px] text-white/20 font-black uppercase italic tracking-[0.2em]">
               {t('settings.select_language')}
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 text-main mb-2">
+              {theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+              <h3 className="text-sm font-black uppercase italic tracking-widest">{t('settings.theme')}</h3>
+            </div>
+            
+            <div 
+              onClick={toggleTheme}
+              className="w-full bg-zinc-900 border-4 border-white/10 p-4 flex items-center justify-between cursor-pointer hover:border-main transition-all group"
+            >
+              <span className="text-white font-black italic uppercase">
+                {theme === 'dark' ? t('settings.dark') : t('settings.light')}
+              </span>
+              <div className={`w-14 h-7 border-2 border-white/20 relative transition-all ${theme === 'light' ? 'bg-main border-main' : 'bg-black'}`}>
+                <div className={`absolute top-0.5 bottom-0.5 w-5 transition-all ${theme === 'light' ? 'right-0.5 bg-black' : 'left-0.5 bg-main'}`} />
+              </div>
+            </div>
+            <p className="text-[10px] text-white/20 font-black uppercase italic tracking-[0.2em]">
+              {theme === 'dark' ? 'PROTOCOL: NIGHT_VISION_ENABLED' : 'PROTOCOL: DAYLIGHT_OVERRIDE'}
             </p>
           </div>
 

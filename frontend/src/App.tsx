@@ -1,10 +1,13 @@
 import AppContent from './components/navigation/AppContent';
 import { LanguageProvider } from './LanguageContext';
+import { ThemeProvider } from './ThemeContext';
 
 function App() {
   return (
     <LanguageProvider>
-      <AppContent />
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </LanguageProvider>
   );
 }
