@@ -184,6 +184,11 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                             {t('quests.tabs.system')}
                           </span>
                         )}
+                        {quest.isMandatory && (
+                          <span className="text-[10px] font-black italic uppercase bg-red-600 text-white px-3 py-1 transform -skew-x-12 shadow-[2px_2px_0px_white] animate-pulse">
+                            MANDATORY
+                          </span>
+                        )}
                       </div>
                       {isOwner && !isSystem && (
                         <div className="flex gap-3">
@@ -236,12 +241,18 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
                     </h3>
 
                     <div className="space-y-2 mb-8 border-l-2 border-white/10 pl-4 py-2">
-                      {quest.steps?.map((step: any, idx: number) => (
-                        <div key={idx} className="flex items-center gap-3 text-[11px] text-white/40 font-black uppercase italic tracking-wider">
-                          <div className="w-1.5 h-1.5 bg-main rounded-full shadow-[0_0_5px_var(--main-color)]" />
-                          {step.exercise?.name || 'Exercise'}: {step.repetitions || step.duration || 0} {step.exercise?.type === 'SECONDS' ? 'SEC' : 'REPS'}
+                      {quest.steps && quest.steps.length > 0 ? (
+                        quest.steps.map((step: any, idx: number) => (
+                          <div key={idx} className="flex items-center gap-3 text-[11px] text-white/40 font-black uppercase italic tracking-wider">
+                            <div className="w-1.5 h-1.5 bg-main rounded-full shadow-[0_0_5px_var(--main-color)]" />
+                            {step.exercise?.name || 'Exercise'}: {step.repetitions || step.duration || 0} {step.exercise?.type === 'SECONDS' ? 'SEC' : 'REPS'}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-[10px] text-white/20 italic font-black uppercase tracking-widest">
+                          {quest.description || 'NO MISSION DATA'}
                         </div>
-                      ))}
+                      )}
                     </div>
 
                     <div className="flex justify-between items-end">

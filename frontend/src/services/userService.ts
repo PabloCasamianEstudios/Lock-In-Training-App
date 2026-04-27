@@ -41,6 +41,9 @@ export const userService = {
   distributeStats: async (userId: number, distribution: Record<string, number>): Promise<any> => {
     await apiClient<any>(`/api/user/${userId}/distribute-stats`, { body: distribution });
     return userService.getUserProfile(userId);
-  }
-};
+  },
 
+  checkDailyStatus: async (userId: number): Promise<boolean> => {
+    return apiClient<boolean>(`/api/user/${userId}/daily-completed`);
+  },
+};

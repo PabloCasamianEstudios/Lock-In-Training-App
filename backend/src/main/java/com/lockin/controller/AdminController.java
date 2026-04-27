@@ -7,6 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Random;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -371,5 +375,40 @@ public class AdminController {
         if (entity.getName() == null || entity.getName().isEmpty())
             return ResponseEntity.badRequest().body("Nombre requerido");
         return ResponseEntity.ok(titleRepository.save(entity));
+    }
+
+    @PostMapping("/quests/assign-daily-mandatories")
+    public ResponseEntity<Object> assignDailyMandatories() {
+        try {
+            List<User> users = userRepository.findAll();
+            LocalDate today = LocalDate.now();
+            LocalDateTime now = LocalDateTime.now();
+            int count = 0;
+
+            for (User user : users) {
+                // Verificar si ya tiene la obligatoria de hoy
+                boolean exists = userQuestProgressRepository.findByUserId(user.getId()).stream()
+                        .anyMatch(p -> p.isMandatoryDaily() 
+                                    && p.getStartTime() != null 
+                                    && p.getStartTime().toLocalDate().equals(today));
+                
+                if (!exists) {
+                    // Generar una
+                    String rank = (user.getSeasonRank() != null) ? user.getSeasonRank() : "E";
+                    List<Quest> pool = questRepository.findByType(Quest.QuestType.SYSTEM).stream()
+                            .filter(q -> rank.equals(q.getRankDifficulty()))
+                            .toList();
+                    
+                    if (!pool.isEmpty()) {
+                        systemQuestService.generateMandatoryDaily(user);
+                        count++;
+                    }
+                }
+            }
+            return ResponseEntity.ok("Se han asignado " + count + " misiones diarias obligatorias.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error al asignar: " + e.getMessage());
+        }
     }
 }

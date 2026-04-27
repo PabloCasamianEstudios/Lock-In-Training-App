@@ -28,6 +28,9 @@ public class UserQuestProgress {
     private Long appliedXpReward;
     private Long appliedGoldReward;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean isMandatoryDaily = false;
+
     private LocalDateTime startTime = LocalDateTime.now();
     private LocalDateTime completionTime;
 

@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class SystemQuestService {
@@ -235,4 +237,57 @@ public class SystemQuestService {
             return 0.5;
         return 1.0;
     }
+
+    @Transactional
+    public UserQuestProgress generateMandatoryDaily(User user) {
+        String rank = (user.getSeasonRank() != null) ? user.getSeasonRank() : "E";
+        List<Quest> pool = questRepository.findByType(Quest.QuestType.SYSTEM).stream()
+                .filter(q -> rank.equals(q.getRankDifficulty()))
+                .toList();
+        
+        if (pool.isEmpty()) return null;
+
+        Quest base = pool.get(new Random().nextInt(pool.size()));
+        
+        Quest daily = new Quest();
+        daily.setTitle("DIARIA: " + base.getTitle());
+        daily.setType(Quest.QuestType.DAILY);
+        daily.setRankDifficulty(base.getRankDifficulty());
+        daily.setXpReward(base.getXpReward() * 3);
+        daily.setGoldReward(base.getGoldReward() * 3);
+        daily.setCreatorId(user.getId());
+        
+        if (base.getSteps() != null) {
+            for (QuestStep bs : base.getSteps()) {
+                QuestStep ds = new QuestStep();
+                ds.setExercise(bs.getExercise());
+                ds.setSeries(bs.getSeries());
+                ds.setRepetitions((int)(bs.getRepetitions() * 1.5));
+                daily.addStep(ds);
+            }
+        }
+        
+        // Generar descripción basada en los nuevos steps
+        String desc = daily.getSteps().stream()
+                .map(s -> s.getSeries() + "x" + s.getRepetitions() + " " + s.getExercise().getName())
+                .collect(Collectors.joining(", "));
+        daily.setDescription(desc);
+        
+        daily = questRepository.save(daily);
+        questRepository.flush();
+        
+        UserQuestProgress progress = new UserQuestProgress();
+        progress.setUser(user);
+        progress.setQuest(daily);
+        progress.setMandatoryDaily(true);
+        progress.setStatus(UserQuestProgress.QuestStatus.ACTIVE);
+        progress.setStartTime(LocalDateTime.now());
+        progress.setAppliedGoldReward(daily.getGoldReward());
+        progress.setAppliedXpReward(daily.getXpReward());
+        
+        return userQuestProgressRepository.save(progress);
+    }
+
+    @Autowired
+    private UserQuestProgressRepository userQuestProgressRepository;
 }

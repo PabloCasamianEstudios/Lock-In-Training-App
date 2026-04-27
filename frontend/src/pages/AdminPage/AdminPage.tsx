@@ -164,6 +164,8 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
         url = `${API_BASE_URL}/api/quests/active/${testId}`;
       } else if (type === 'quest-system-pool') {
         url = `${API_BASE_URL}/api/admin/quests/generate-system-pool`;
+      } else if (type === 'quest-assign-dailies') {
+        url = `${API_BASE_URL}/api/admin/quests/assign-daily-mandatories`;
       } else if (type === 'comp-monthly') {
         url = `${API_BASE_URL}/api/admin/competitive/monthly-update`;
       } else if (type === 'comp-season') {
@@ -637,6 +639,11 @@ const AdminPage: FC = () => {
                   key="quest-system-pool"
                   method="post" title="System: Generate Global Pool (300 Quests)" entity="quests" type="quest-system-pool"
                   colorClass="bg-orange-600" borderClass="border-orange-600/20" bgClass="bg-orange-600/10 hover:bg-orange-600/20"
+                />
+                <SwaggerBlock
+                  key="quest-assign-dailies"
+                  method="post" title="System: Assign Mandatory Dailies (All Users)" entity="quests" type="quest-assign-dailies"
+                  colorClass="bg-orange-800" borderClass="border-orange-800/20" bgClass="bg-orange-800/10 hover:bg-orange-800/20"
                 />
               </>
             )}

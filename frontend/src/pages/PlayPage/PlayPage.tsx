@@ -49,7 +49,12 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
     try {
       const data = await apiClient<AdventureSession>(`/api/adventure/current/${user!.id}`);
       setSession(data);
-    } catch (err) {
+    } catch (err: any) {
+      // 404 is expected if no active session exists
+      if (err.status !== 404) {
+        console.error("Error fetching session", err);
+      }
+      setSession(null);
     }
   };
 

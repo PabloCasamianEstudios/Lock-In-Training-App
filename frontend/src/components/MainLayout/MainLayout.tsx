@@ -1,7 +1,8 @@
-import { useState, type FC, type ComponentType } from 'react';
+import { useState, type FC, type ComponentType, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Scroll, Swords, Trophy, User, ChevronDown, LogOut, Database, Lock } from 'lucide-react';
 import type { AppUser, PlayerProfile, PageProps } from '../../types';
+import { userService } from '../../services/userService';
 
 /* --- PAGES MAP --- */
 import HomePage from '../../pages/HomePage';
@@ -52,6 +53,19 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
   const [activeTab, setActiveTab] = useState<string>('home');
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
   const [navParams, setNavParams] = useState<any>({});
+  const [isDailyDone, setIsDailyDone] = useState<boolean>(true); // Default to true to avoid flash
+
+  const refreshDailyStatus = () => {
+    if (user?.id && !user.isGuest) {
+      userService.checkDailyStatus(user.id)
+        .then((done: boolean) => setIsDailyDone(done))
+        .catch((err: Error) => console.error('Error checking daily status:', err));
+    }
+  };
+
+  useEffect(() => {
+    refreshDailyStatus();
+  }, [user?.id, activeTab]);
 
   const handleNavigate = (tab: string, params: any = {}) => {
     setActiveTab(tab);
@@ -63,7 +77,9 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
   const username = user?.username || 'HUNTER';
   const isGuest = user?.isGuest;
 
-  const isRestricted = isGuest && !['home', 'rankings'].includes(activeTab);
+  const isRestrictedByGuest = isGuest && !['home', 'rankings'].includes(activeTab);
+  const isRestrictedByDaily = !isGuest && !isDailyDone && activeTab === 'play';
+  const isRestricted = isRestrictedByGuest || isRestrictedByDaily;
 
   return (
     <div className="hub-root">
@@ -81,15 +97,16 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
 
           <div className="hub-nav-links items-center">
             {tabs.filter(t => t.id !== 'play').map(tab => {
-              const restricted = isGuest && !['home', 'rankings'].includes(tab.id);
+              const restrictedByGuest = isGuest && !['home', 'rankings'].includes(tab.id);
+              // Daily restricted only blocks PLAY, which is filtered out here
               return (
                 <button
                   key={tab.id}
                   onClick={() => handleNavigate(tab.id)}
-                  className={`hub-nav-link ${activeTab === tab.id ? 'hub-nav-link-active' : ''} ${restricted ? 'opacity-40' : ''} flex items-center gap-2`}
+                  className={`hub-nav-link ${activeTab === tab.id ? 'hub-nav-link-active' : ''} ${restrictedByGuest ? 'opacity-40' : ''} flex items-center gap-2`}
                 >
                   {tab.label}
-                  {restricted && <Lock className="w-3 h-3" />}
+                  {restrictedByGuest && <Lock className="w-3 h-3" />}
                 </button>
               );
             })}
@@ -102,12 +119,13 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
                   ? 'bg-main text-black border-main shadow-[4px_4px_0_white]' 
                   : 'bg-black text-main border-main hover:bg-main hover:text-black hover:-translate-y-1 shadow-[4px_4px_0_var(--main-color)]'
                 }
-                ${isGuest ? 'grayscale opacity-50 cursor-not-allowed' : ''}
+                ${isGuest || (!isDailyDone && activeTab !== 'play') ? 'grayscale opacity-50' : ''}
+                ${!isDailyDone && !isGuest ? 'border-red-500 text-red-500 shadow-[4px_4px_0_rgba(239,68,68,0.5)]' : ''}
               `}
             >
               <Swords className="w-4 h-4" />
               ADVENTURE
-              {isGuest && <Lock className="w-3 h-3" />}
+              {(isGuest || !isDailyDone) && <Lock className="w-3 h-3" />}
             </button>
           </div>
 
@@ -163,8 +181,15 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
             transition={{ duration: 0.2 }}
             className="hub-page"
           >
-            {isRestricted ? (
+            {isRestrictedByGuest ? (
               <RestrictedAccess onLogout={onLogout} />
+            ) : isRestrictedByDaily ? (
+              <RestrictedAccess 
+                onLogout={refreshDailyStatus} 
+                title="DIARIA PENDIENTE"
+                message="TU CONTRATO DIARIO NO HA SIDO CUMPLIDO. EL COLISEO PERMANECERÁ CERRADO HASTA QUE COMPLETES TU MISIÓN OBLIGATORIA."
+                buttonText="VERIFICAR ESTADO"
+              />
             ) : (
               <ActivePage 
                 user={user} 
@@ -184,7 +209,9 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
           const Icon = tab.icon;
           const isPlay = tab.id === 'play';
           const isActive = activeTab === tab.id;
-          const restricted = isGuest && !['home', 'rankings'].includes(tab.id);
+          const restrictedByGuest = isGuest && !['home', 'rankings'].includes(tab.id);
+          const restrictedByDaily = !isGuest && !isDailyDone && tab.id === 'play';
+          const restricted = restrictedByGuest || restrictedByDaily;
 
           if (isPlay) {
             return (
