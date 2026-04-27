@@ -1,5 +1,5 @@
 import { type FC, useState, useEffect } from 'react';
-import { User as UserIcon, ShieldCheck, Mail, Database, Award, Settings, LogOut, Loader2, UserCircle, Globe, Edit2, Trophy } from 'lucide-react';
+import { User as UserIcon, ShieldCheck, Mail, Database, Award, Settings, LogOut, Loader2, UserCircle, Globe, Edit2, Trophy, Download } from 'lucide-react';
 import { userService } from '../../services/userService';
 import { socialService } from '../../services/socialService';
 import type { User } from '../../types';
@@ -87,6 +87,22 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const handleExportData = () => {
+    if (!displayProfile) return;
+    
+    const dataStr = JSON.stringify(displayProfile, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `lockin_data_${displayUser?.username || 'user'}_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   if (loading) {
@@ -313,6 +329,23 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
             </div>
             <p className="text-[10px] text-white/20 font-black uppercase italic tracking-[0.2em]">
               {t('settings.select_language')}
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 text-main mb-2">
+              <Download className="w-5 h-5" />
+              <h3 className="text-sm font-black uppercase italic tracking-widest">BACKUP DATA</h3>
+            </div>
+            <button 
+              onClick={handleExportData}
+              className="w-full bg-zinc-900 border-4 border-white/10 p-5 text-white font-black italic uppercase hover:bg-white/5 hover:border-main transition-all flex items-center justify-center gap-3 group"
+            >
+              EXPORT TO JSON
+              <Download className="w-4 h-4 text-main group-hover:scale-120 transition-transform" />
+            </button>
+            <p className="text-[9px] text-white/20 font-black uppercase italic tracking-[0.1em] text-center">
+              DESCARGA TU EXPEDIENTE DE CAZADOR COMPLETO
             </p>
           </div>
 

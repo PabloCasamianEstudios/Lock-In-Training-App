@@ -1,5 +1,5 @@
-import { useState, type FC, useEffect } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { useState, type FC, useEffect, useRef } from 'react';
+import { Plus, Trash2, Download, FileUp } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import PopupWindow from '../../common/PopupWindow';
 import { useLanguage } from '../../../LanguageContext';
@@ -32,6 +32,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
   const { t } = useLanguage();
   const [title, setTitle] = useState('');
   const [exercises, setExercises] = useState<any[]>([{ name: MOCKED_EXERCISES[0].name, type: MOCKED_EXERCISES[0].type, value: 10 }]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (initialData) {
@@ -69,6 +70,50 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
     setExercises(newExercises);
   };
 
+  const handleExport = () => {
+    const questData = {
+      title,
+      steps: exercises.map(ex => ({
+        exercise: { name: ex.name, type: ex.type },
+        repetitions: ex.value
+      }))
+    };
+    const dataStr = JSON.stringify(questData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `quest_${title.replace(/\s+/g, '_').toLowerCase()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string);
+        if (json.title) setTitle(json.title);
+        if (json.steps && Array.isArray(json.steps)) {
+          setExercises(json.steps.map((s: any) => ({
+            name: s.exercise?.name || 'PUSH-UPS',
+            type: s.exercise?.type || 'REPS',
+            value: s.repetitions || 10
+          })));
+        }
+      } catch (err) {
+        console.error('Error parsing quest JSON:', err);
+        alert('Invalid quest file');
+      }
+    };
+    reader.readAsText(file);
+    // Reset file input
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || exercises.length === 0) return;
@@ -96,6 +141,35 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
       title={`${initialData ? t('quest_modal.edit') : t('quest_modal.new')} ${t('quest_modal.protocol')}`}
       maxWidth="max-w-md"
     >
+      <div className="flex justify-end gap-3 mb-4 -mt-2">
+        {initialData ? (
+          <button 
+            type="button"
+            onClick={handleExport}
+            className="flex items-center gap-2 text-[9px] font-black uppercase italic bg-white/5 border border-white/10 px-3 py-1.5 hover:bg-white/10 transition-all text-white/60 hover:text-main"
+          >
+            <Download className="w-3 h-3" /> EXPORT JSON
+          </button>
+        ) : (
+          <>
+            <button 
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-2 text-[9px] font-black uppercase italic bg-white/5 border border-white/10 px-3 py-1.5 hover:bg-white/10 transition-all text-white/60 hover:text-main"
+            >
+              <FileUp className="w-3 h-3" /> IMPORT JSON
+            </button>
+            <input 
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImport}
+              accept=".json"
+              className="hidden"
+            />
+          </>
+        )}
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
           <label className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">{t('quest_modal.title')}</label>
