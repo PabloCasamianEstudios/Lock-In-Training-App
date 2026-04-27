@@ -87,6 +87,13 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/by-username/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+        return userRepository.findByUsername(username)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/{id}/quests")
     public ResponseEntity<List<Map<String, Object>>> getUserQuests(@PathVariable Long id) {
         if (!userRepository.existsById(id)) {

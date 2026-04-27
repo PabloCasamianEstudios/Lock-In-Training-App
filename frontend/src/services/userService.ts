@@ -25,6 +25,10 @@ export const userService = {
     }
     return fullProfile;
   },
+
+  getUserByUsername: async (username: string): Promise<any> => {
+    return apiClient<any>(`/api/user/by-username/${username}`);
+  },
   
   getUserAchievements: async (id: number): Promise<any[]> => {
     return apiClient<any[]>(`/api/user/${id}/achievements`);

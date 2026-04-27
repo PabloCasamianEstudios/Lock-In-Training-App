@@ -142,41 +142,6 @@ const RankRow: FC<RankRowProps> = ({ player, position, isCurrentUser, onClick })
   );
 };
 
-interface FriendRowProps {
-  friend: User;
-  position: number;
-}
-const FriendRow: FC<FriendRowProps> = ({ friend, position }) => {
-  const { t } = useLanguage();
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: position * 0.07 }}
-      className="flex items-center gap-3 p-3 border-b border-white/10 last:border-0 hover:bg-white/5 transition-colors"
-    >
-      <span className="text-sm font-black italic w-6 text-right flex-shrink-0 text-white/40">{position}</span>
-      <div className="w-10 h-10 rounded-full border border-white/20 bg-zinc-800 flex items-center justify-center text-xs font-black text-white/50 flex-shrink-0">
-        {(friend.username?.[0] || '?').toUpperCase()}
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-xs font-black text-white uppercase italic truncate">{friend.username}</p>
-        <ProgressBar
-          progress={(friend.xp || 0) % 1000}
-          max={1000}
-          height="h-1"
-          className="mt-1 max-w-[120px]"
-        />
-      </div>
-      <div className="text-right flex-shrink-0">
-        <p className={`text-xs font-black uppercase ${rankColor(friend.rank)}`}>
-          {t('common.rank')} {friend.rank || 'E'}
-        </p>
-        <p className="text-[10px] text-white/30">{t('common.level')}{friend.level}</p>
-      </div>
-    </motion.div>
-  );
-};
 
 const EmptyState: FC<{ message: string }> = ({ message }) => (
   <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
@@ -213,7 +178,7 @@ const LoadingSkeleton = () => (
   </div>
 );
 
-const RankingsPage: FC<PageProps> = ({ user, onNavigate }) => {
+const RankingsPage: FC<PageProps> = ({ user, profile, onNavigate }) => {
   const { t } = useLanguage();
   const { globalTop, friends, leaguePlayers, loading, activeTab, setActiveTab } = useRankings(user?.id);
   const currentUserId = user?.id;
@@ -224,7 +189,20 @@ const RankingsPage: FC<PageProps> = ({ user, onNavigate }) => {
     { id: 'YOUR_LEAGUE' as const, label: t('rankings.tabs.league') },
   ];
 
-  const sortedFriends = [...friends].sort((a, b) => (b.totalPoints ?? 0) - (a.totalPoints ?? 0));
+  const currentUserAsUser: any = user && profile ? {
+    ...user,
+    ...profile,
+    id: user.id,
+    totalPoints: (profile as any).totalPoints || 0,
+    seasonPoints: (profile as any).seasonPoints || 0,
+  } : null;
+
+  const friendsWithMe = currentUserAsUser ? [...friends.filter(f => f.id !== user?.id), currentUserAsUser] : friends;
+  const sortedFriends = [...friendsWithMe].sort((a, b) => {
+    const pointsA = a.totalPoints || 0;
+    const pointsB = b.totalPoints || 0;
+    return pointsB - pointsA;
+  });
 
   const podium = globalTop.slice(0, 3);
 
@@ -333,34 +311,83 @@ const RankingsPage: FC<PageProps> = ({ user, onNavigate }) => {
         {activeTab === 'FRIENDS' && (
           <motion.div
             key="friends"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
+            className="md:grid md:grid-cols-12 md:gap-12 items-start"
           >
-            {sortedFriends.length === 0 ? (
-              <EmptyState message={t('rankings.summon_allies')} />
+            {friends.length === 0 ? (
+              <div className="col-span-full"><EmptyState message={t('rankings.summon_allies')} /></div>
             ) : (
-              <div className="grid md:grid-cols-2 gap-10">
-                <BrutalistCard padding="p-0" className="h-fit shadow-[8px_8px_0px_white] border-4 border-white">
-                  <div className="p-4 border-b-2 border-white bg-white/5">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 italic">
-                      {t('rankings.combat_circle')}
-                    </p>
+              <>
+                {/* Podium Side */}
+                <div className="md:col-span-5 lg:col-span-4 mb-12 md:mb-0 md:sticky md:top-4">
+                  <h2 className="text-center text-4xl font-black italic tracking-tighter text-white mb-12 uppercase border-b-2 border-white/5 pb-4">
+                    {t('rankings.tabs.friends')} <span className="text-main">RANK</span>
+                  </h2>
+
+                  <div className="flex items-end justify-around gap-2 mb-12">
+                    {[1, 0, 2].map(idx => {
+                      const friendPodium = sortedFriends.slice(0, 3);
+                      if (!friendPodium[idx]) return <div key={`empty_friend_${idx}`} className="w-1/3" />;
+                      
+                      const playerDto: RankingUserDTO = {
+                        ...friendPodium[idx],
+                        totalPoints: friendPodium[idx].totalPoints || 0,
+                        seasonPoints: friendPodium[idx].seasonPoints || 0,
+                        level: friendPodium[idx].level || 1,
+                        rank: friendPodium[idx].rank || 'E'
+                      };
+
+                      return (
+                        <PodiumCard
+                          key={`friend_podium_${playerDto.id}_${idx}`}
+                          player={playerDto}
+                          position={idx as 0 | 1 | 2}
+                          isCurrentUser={playerDto.id === currentUserId}
+                        />
+                      );
+                    })}
                   </div>
-                  {sortedFriends.slice(0, Math.ceil(sortedFriends.length / 2)).map((friend, i) => (
-                    <FriendRow key={friend.id} friend={friend} position={i + 1} />
-                  ))}
-                </BrutalistCard>
-                {sortedFriends.length > 1 && (
-                   <BrutalistCard padding="p-0" className="h-fit shadow-[8px_8px_0px_white] border-4 border-white">
-                    <div className="p-4 border-b-2 border-white bg-white/5 md:hidden"></div>
-                    {sortedFriends.slice(Math.ceil(sortedFriends.length / 2)).map((friend, i) => (
-                      <FriendRow key={friend.id} friend={friend} position={Math.ceil(sortedFriends.length / 2) + i + 1} />
-                    ))}
+
+                  <div className="hidden md:block bg-main/5 border-l-4 border-main p-5 shadow-lg">
+                    <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-main italic">
+                      <Star className="w-5 h-5 fill-main" />
+                      {t('rankings.live_status')}
+                    </div>
+                    <p className="text-[9px] text-white/40 mt-2 font-bold uppercase">{t('rankings.performance_tracked')}</p>
+                  </div>
+                </div>
+
+                {/* Leaderboard Side */}
+                <div className="md:col-span-7 lg:col-span-8">
+                  <BrutalistCard padding="p-0" className="shadow-[12px_12px_0px_white] border-4 border-white">
+                    {sortedFriends.slice(0, 10).map((friend, i) => {
+                      const playerDto: RankingUserDTO = {
+                        ...friend,
+                        totalPoints: friend.totalPoints || 0,
+                        seasonPoints: friend.seasonPoints || 0,
+                        level: friend.level || 1,
+                        rank: friend.rank || 'E'
+                      };
+                      return (
+                        <RankRow
+                          key={playerDto.id}
+                          player={playerDto}
+                          position={i + 1}
+                          isCurrentUser={playerDto.id === currentUserId}
+                          onClick={() => {
+                            if (onNavigate) {
+                              onNavigate('profile', { targetId: playerDto.id });
+                            }
+                          }}
+                        />
+                      );
+                    })}
                   </BrutalistCard>
-                )}
-              </div>
+                </div>
+              </>
             )}
           </motion.div>
         )}

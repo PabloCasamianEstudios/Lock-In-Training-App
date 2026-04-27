@@ -13,6 +13,7 @@ import {
   Home
 } from 'lucide-react';
 import { socialService } from '../../services/socialService';
+import { userService } from '../../services/userService';
 import type { PageProps } from '../../types';
 import { useHomeData } from '../../hooks/useHomeData';
 import PageLayout from '../../components/common/PageLayout';
@@ -40,6 +41,52 @@ const HomePage: FC<PageProps> = ({ user }) => {
   } = useHomeData(user?.id);
 
   const [activeTab, setActiveTab] = useState<'FEED' | 'ACTIVITY' | 'TIPS' | 'FRIENDS'>('FEED');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResult, setSearchResult] = useState<any | null>(null);
+  const [searchStatus, setSearchStatus] = useState<'NONE' | 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'SELF' | 'NOT_FOUND' | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim() || !user?.id) return;
+    if (searchQuery.toLowerCase() === user.username.toLowerCase()) {
+      setSearchStatus('SELF');
+      setSearchResult(user);
+      return;
+    }
+
+    setIsSearching(true);
+    setSearchResult(null);
+    setSearchStatus(null);
+    try {
+      const foundUser = await userService.getUserByUsername(searchQuery);
+      if (foundUser) {
+        setSearchResult(foundUser);
+        const statusData = await socialService.getFriendshipStatus(user.id, foundUser.id);
+        setSearchStatus(statusData.status);
+      }
+    } catch (err) {
+      console.error('Search failed:', err);
+      setSearchResult(null);
+      setSearchStatus('NOT_FOUND');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleAddFriend = async (targetId: number) => {
+    if (!user?.id) return;
+    setIsAdding(true);
+    try {
+      await socialService.sendFriendRequest(user.id, targetId);
+      setSearchStatus('PENDING');
+      refresh();
+    } catch (err) {
+      console.error('Failed to send request:', err);
+    } finally {
+      setIsAdding(false);
+    }
+  };
 
   const handleAcceptRequest = async (requestId: number) => {
     try {
@@ -244,16 +291,75 @@ const HomePage: FC<PageProps> = ({ user }) => {
                         <div className="flex-1">
                           <input 
                             type="text" 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                             placeholder={t('home.enter_username')}
                             className="w-full bg-zinc-900 border-4 border-white/10 p-4 text-white font-black italic uppercase focus:border-main outline-none transition-all"
                           />
                         </div>
                         <button 
-                          className="bg-main text-black px-8 font-black italic uppercase text-xs hover:bg-white transition-all shadow-[4px_4px_0px_white]"
+                          onClick={handleSearch}
+                          disabled={isSearching}
+                          className="bg-main text-black px-8 font-black italic uppercase text-xs hover:bg-white transition-all shadow-[4px_4px_0px_white] disabled:opacity-50"
                         >
-                          {t('home.scan')}
+                          {isSearching ? '...' : t('home.scan')}
                         </button>
                       </div>
+
+                      {/* SEARCH RESULT */}
+                      <AnimatePresence>
+                        {searchResult && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="bg-black border-4 border-white p-6 shadow-[8px_8px_0px_var(--main-color)] flex items-center justify-between group"
+                          >
+                            <div className="flex items-center gap-5">
+                              <div className="w-16 h-16 bg-zinc-900 border-2 border-white/20 flex items-center justify-center text-xl font-black text-white/20 group-hover:text-main group-hover:border-main/50 transition-all overflow-hidden">
+                                {searchResult.profilePic ? (
+                                  <img src={searchResult.profilePic} alt="Avatar" className="w-full h-full object-cover" />
+                                ) : (
+                                  searchResult.username.charAt(0).toUpperCase()
+                                )}
+                              </div>
+                              <div>
+                                <h4 className="text-xl font-black italic uppercase text-white group-hover:text-main transition-colors">{searchResult.username}</h4>
+                                <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em]">{t('common.rank')} {searchResult.rank || 'E'}</p>
+                              </div>
+                            </div>
+
+                            <div>
+                              {searchStatus === 'SELF' ? (
+                                <span className="text-[10px] font-black italic uppercase text-white/20 bg-white/5 px-4 py-2 border-2 border-white/10">{t('profile.it_is_you') || 'SYSTEM: SELF'}</span>
+                              ) : searchStatus === 'ACCEPTED' ? (
+                                <span className="text-[10px] font-black italic uppercase text-main bg-main/10 px-4 py-2 border-2 border-main/50">{t('profile.already_friends')}</span>
+                              ) : searchStatus === 'PENDING' ? (
+                                <span className="text-[10px] font-black italic uppercase text-white/40 bg-white/5 px-4 py-2 border-2 border-white/20">{t('profile.request_sent')}</span>
+                              ) : (
+                                <button 
+                                  onClick={() => handleAddFriend(searchResult.id)}
+                                  disabled={isAdding}
+                                  className="bg-main text-black px-6 py-3 font-black italic uppercase text-xs hover:bg-white transition-all shadow-[4px_4px_0px_white] active:shadow-none active:translate-x-1 active:translate-y-1"
+                                >
+                                  {isAdding ? t('profile.processing') : t('profile.add_friend')}
+                                </button>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                        {!searchResult && searchStatus === 'NOT_FOUND' && !isSearching && (
+                          <motion.p 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-[10px] font-black text-red-500 uppercase italic tracking-[0.3em] bg-red-500/5 p-4 border-l-4 border-red-500"
+                          >
+                            {t('home.hunter_not_found') || 'SYSTEM ERROR: HUNTER NOT FOUND'}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+
                     </div>
 
                     {/* PENDING REQUESTS */}

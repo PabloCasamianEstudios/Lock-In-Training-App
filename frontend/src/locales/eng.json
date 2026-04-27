@@ -11,6 +11,7 @@
     "processing": "PROCESS...",
     "request_sent": "REQUEST SENT",
     "already_friends": "ALREADY FRIENDS",
+    "it_is_you": "IT IS YOU",
     "achievements": "ACHIEVEMENTS",
     "total_logs": "TOTAL LOGS",
     "account_status": "ACCOUNT STATUS",
@@ -48,7 +49,8 @@
     "find_hunters": "FIND HUNTERS",
     "search_hunter": "SEARCH HUNTER",
     "enter_username": "ENTER USERNAME...",
-    "scan": "SCAN"
+    "scan": "SCAN",
+    "hunter_not_found": "HUNTER NOT FOUND IN DATABASE"
   },
   "rankings": {
     "title": "GLOBAL RANKINGS",

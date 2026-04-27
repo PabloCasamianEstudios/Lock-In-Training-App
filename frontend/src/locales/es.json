@@ -11,6 +11,7 @@
     "processing": "PROCESANDO...",
     "request_sent": "SOLICITUD ENVIADA",
     "already_friends": "YA SON AMIGOS",
+    "it_is_you": "ERES TÚ",
     "achievements": "LOGROS",
     "total_logs": "REGISTROS TOTALES",
     "account_status": "ESTADO DE CUENTA",
@@ -48,7 +49,8 @@
     "find_hunters": "BUSCAR CAZADORES",
     "search_hunter": "BUSCAR CAZADOR",
     "enter_username": "INGRESAR USERNAME...",
-    "scan": "SCAN"
+    "scan": "SCAN",
+    "hunter_not_found": "CAZADOR NO ENCONTRADO EN LA BASE DE DATOS"
   },
   "rankings": {
     "title": "RANKINGS GLOBALES",
