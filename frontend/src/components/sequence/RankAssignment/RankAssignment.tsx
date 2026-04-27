@@ -46,7 +46,7 @@ const RankAssignment: FC<RankAssignmentProps> = ({ profile, onRestart, onEnterHu
     stats = { STR: 1, AGI: 1, VIT: 1, INT: 1, DEX: 1, LUK: 1, DISC: 1 } as PlayerStats, 
     rank = 'E', 
     level = 1, 
-    username = 'HUNTER',
+    username = t('common.hunter'),
     biometria = {} 
   } = profile || {};
 
@@ -57,7 +57,7 @@ const RankAssignment: FC<RankAssignmentProps> = ({ profile, onRestart, onEnterHu
       <div className="scanline" />
 
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] select-none pointer-events-none">
-        <h1 className="text-[40vw] font-black italic tracking-tighter transform -rotate-12">INITIALIZED</h1>
+        <h1 className="text-[40vw] font-black italic tracking-tighter transform -rotate-12">{t('rank_assignment.initialized')}</h1>
       </div>
 
       <motion.div
@@ -69,7 +69,7 @@ const RankAssignment: FC<RankAssignmentProps> = ({ profile, onRestart, onEnterHu
         <div className="system-card border-white shadow-[20px_20px_0px_var(--main-color)] p-0 md:flex rounded-none overflow-hidden bg-white/5 backdrop-blur-md">
           <div className="w-full md:w-2/5 bg-main p-12 flex flex-col items-center justify-center relative overflow-hidden">
             <div className="absolute inset-0 opacity-10 flex items-center justify-center">
-              <span className="text-[20rem] font-black italic tracking-tighter text-black">RANK</span>
+              <span className="text-[20rem] font-black italic tracking-tighter text-black">{t('common.rank')}</span>
             </div>
             
             <motion.div

@@ -197,9 +197,9 @@
     "override_trial": "DEBUG: OVERRIDE TRIAL (ADVANCE PROTOCOL)",
     "waiting_gm": "WAITING FOR GAME MASTER...",
     "errors": {
-      "gm_connection": "Falló la conexión con el Game Master.",
-      "quest_pending": "Deberás completar la Quest Físicamente antes de continuar.",
-      "skip_failed": "No se pudo saltar la prueba."
+      "gm_connection": "Game Master connection failed.",
+      "quest_pending": "You must physically complete the Quest before continuing.",
+      "skip_failed": "Could not skip the trial."
     }
   },
   "camera": {
@@ -248,7 +248,8 @@
       "height": "HEIGHT (CM)",
       "male": "MALE",
       "female": "FEMALE",
-      "other": "OTHER"
+      "other": "OTHER",
+      "select": "SELECT..."
     },
     "pushup_capacity": "PUSH-UP CAPACITY",
     "run_endurance": "RUN ENDURANCE",
