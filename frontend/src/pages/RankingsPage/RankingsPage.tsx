@@ -68,7 +68,7 @@ const PodiumCard: FC<PodiumCardProps> = ({ player, position, isCurrentUser }) =>
       className={`flex flex-col items-center gap-2 ${isCenter ? 'scale-110 z-10' : 'opacity-85'}`}
     >
       <MedalIcon className={`${medal.size} ${medal.color}`} />
-      <div className={`relative ${rankGlow(player.rank)}`}>
+      <div className={`relative`}>
         <Avatar
           src={player.profilePic}
           username={player.username}
