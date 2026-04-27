@@ -314,6 +314,32 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/{id}/equip-title/{titleId}")
+    public ResponseEntity<Object> equipTitle(@PathVariable Long id, @PathVariable Long titleId) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<UserTitle> allUserTitles = userTitleRepository.findByUserId(id);
+        UserTitle target = null;
+
+        for (UserTitle ut : allUserTitles) {
+            if (ut.getTitle().getId().equals(titleId)) {
+                ut.setEquipped(true);
+                target = ut;
+            } else {
+                ut.setEquipped(false);
+            }
+        }
+
+        if (target == null) {
+            return ResponseEntity.badRequest().body("No posees este título.");
+        }
+
+        userTitleRepository.saveAll(allUserTitles);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{id}/league-players")
     public ResponseEntity<List<RankingUserDTO>> getLeaguePlayers(@PathVariable Long id) {
         User user = userRepository.findById(id).orElse(null);
@@ -343,7 +369,7 @@ public class UserController {
     private RankingUserDTO mapToRankingDTO(User user) {
         String titleName = userTitleRepository.findByUserIdAndIsEquippedTrue(user.getId())
                 .map(ut -> ut.getTitle().getName())
-                .orElse("Hunter");
+                .orElse("Sin título");
 
         return RankingUserDTO.builder()
                 .id(user.getId())

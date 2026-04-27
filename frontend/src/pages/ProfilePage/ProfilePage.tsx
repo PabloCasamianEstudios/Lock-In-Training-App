@@ -1,5 +1,5 @@
 import { type FC, useState, useEffect } from 'react';
-import { User as UserIcon, ShieldCheck, Mail, Database, Award, Settings, LogOut, Loader2, UserCircle, Globe } from 'lucide-react';
+import { User as UserIcon, ShieldCheck, Mail, Database, Award, Settings, LogOut, Loader2, UserCircle, Globe, Edit2, Trophy } from 'lucide-react';
 import { userService } from '../../services/userService';
 import { socialService } from '../../services/socialService';
 import type { User } from '../../types';
@@ -22,6 +22,8 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'STATS' | 'ACHIEVEMENTS'>('STATS');
   const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [titles, setTitles] = useState<any[]>([]);
+  const [isTitlePickerOpen, setIsTitlePickerOpen] = useState(false);
 
   useEffect(() => {
     if (!isOwnProfile && targetId && user?.id) {
@@ -29,20 +31,28 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
       Promise.all([
         userService.getUserProfile(targetId, false),
         socialService.getFriendshipStatus(user.id, targetId),
-        userService.getUserAchievements(targetId)
+        userService.getUserAchievements(targetId),
+        userService.getUserTitles(targetId)
       ])
-        .then(([profileData, statusData, achData]) => {
+        .then(([profileData, statusData, achData, titleData]) => {
           setTargetProfile(profileData);
           setFriendStatus(statusData.status);
           setAchievements(achData);
+          setTitles(titleData);
         })
         .catch(err => console.error('[ProfilePage] Failed to fetch target data:', err))
         .finally(() => setLoading(false));
     } else if (isOwnProfile && user?.id) {
       setLoading(true);
-      userService.getUserAchievements(user.id)
-        .then(achData => setAchievements(achData))
-        .catch(err => console.error('[ProfilePage] Failed to fetch achievements:', err))
+      Promise.all([
+        userService.getUserAchievements(user.id),
+        userService.getUserTitles(user.id)
+      ])
+        .then(([achData, titleData]) => {
+          setAchievements(achData);
+          setTitles(titleData);
+        })
+        .catch(err => console.error('[ProfilePage] Failed to fetch achievements/titles:', err))
         .finally(() => setLoading(false));
     }
   }, [isOwnProfile, targetId, user?.id]);
@@ -62,6 +72,22 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
 
   const displayUser = isOwnProfile ? user : targetProfile;
   const displayProfile = isOwnProfile ? profile : targetProfile;
+  const equippedTitle = titles.find(t => t.isEquipped)?.name || 'Sin título';
+
+  const handleEquipTitle = async (titleId: number) => {
+    if (!user?.id) return;
+    setActionLoading(true);
+    try {
+      await userService.equipTitle(user.id, titleId);
+      const updatedTitles = await userService.getUserTitles(user.id);
+      setTitles(updatedTitles);
+      setIsTitlePickerOpen(false);
+    } catch (err) {
+      console.error('Error equipping title:', err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -105,6 +131,19 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
             <h2 className="text-4xl md:text-7xl font-black italic uppercase text-white tracking-tighter leading-none">
               {displayUser?.username || 'HUNTER_X'}
             </h2>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <span className="text-main font-black italic uppercase tracking-widest text-sm md:text-xl">
+                "{equippedTitle}"
+              </span>
+              {isOwnProfile && (
+                <button 
+                  onClick={() => setIsTitlePickerOpen(true)}
+                  className="p-1 hover:bg-white/10 text-white/40 hover:text-main transition-all rounded-sm"
+                >
+                  <Edit2 className="w-4 h-4" />
+                </button>
+              )}
+            </div>
             <div className="flex flex-wrap gap-6 justify-center items-center">
               <span className="text-[10px] md:text-xs bg-white text-black px-4 py-1 font-black uppercase tracking-widest italic transform -skew-x-12">
                 {displayUser?.email || 'OFFLINE_PROTOCOL'}
@@ -202,6 +241,49 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
           </AnimatePresence>
         </div>
       </div>
+
+      <PopupWindow
+        isOpen={isTitlePickerOpen}
+        onClose={() => setIsTitlePickerOpen(false)}
+        title="ELIGE TU TÍTULO"
+        maxWidth="max-w-md"
+      >
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 no-scrollbar">
+          {titles.length === 0 ? (
+            <div className="text-center py-8 opacity-40">
+              <p className="font-black italic uppercase tracking-widest text-xs">No tienes títulos desbloqueados</p>
+            </div>
+          ) : (
+            titles.map((t) => (
+              <button
+                key={t.id}
+                onClick={() => handleEquipTitle(t.titleId)}
+                disabled={actionLoading || t.isEquipped}
+                className={`w-full p-6 border-4 text-left transition-all group flex items-center gap-4
+                  ${t.isEquipped 
+                    ? 'bg-main border-main text-black cursor-default' 
+                    : 'bg-black border-white/10 text-white hover:border-main active:translate-x-1 active:translate-y-1'
+                  }
+                  ${actionLoading ? 'opacity-50 pointer-events-none' : ''}
+                `}
+              >
+                <div className={`p-3 border-2 ${t.isEquipped ? 'border-black' : 'border-white/20 group-hover:border-main'}`}>
+                  <Trophy className="w-5 h-5" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-black italic uppercase tracking-tighter text-lg leading-none">{t.name}</p>
+                  <p className={`text-[10px] font-bold uppercase mt-1 ${t.isEquipped ? 'text-black/60' : 'text-white/40'}`}>
+                    {t.description}
+                  </p>
+                </div>
+                {t.isEquipped && (
+                  <span className="text-[10px] font-black italic uppercase bg-black text-main px-2 py-1">EQUIPADO</span>
+                )}
+              </button>
+            ))
+          )}
+        </div>
+      </PopupWindow>
 
       <PopupWindow
         isOpen={isSettingsOpen}

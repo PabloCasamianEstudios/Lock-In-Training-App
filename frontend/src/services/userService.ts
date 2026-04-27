@@ -30,6 +30,14 @@ export const userService = {
     return apiClient<any[]>(`/api/user/${id}/achievements`);
   },
 
+  getUserTitles: async (id: number): Promise<any[]> => {
+    return apiClient<any[]>(`/api/user/${id}/titles`);
+  },
+
+  equipTitle: async (userId: number, titleId: number): Promise<void> => {
+    await apiClient<void>(`/api/user/${userId}/equip-title/${titleId}`, { method: 'POST' });
+  },
+
   distributeStats: async (userId: number, distribution: Record<string, number>): Promise<any> => {
     await apiClient<any>(`/api/user/${userId}/distribute-stats`, { body: distribution });
     return userService.getUserProfile(userId);
