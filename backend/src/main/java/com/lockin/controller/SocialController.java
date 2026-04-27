@@ -41,6 +41,7 @@ public class SocialController {
         return ResponseEntity.ok(friendshipRepository.save(friendship));
     }
 
+
     @PostMapping("/friends/accept/{requestId}")
     public ResponseEntity<Object> acceptRequest(@PathVariable Long requestId) {
         Friendship friendship = friendshipRepository.findById(requestId).orElse(null);

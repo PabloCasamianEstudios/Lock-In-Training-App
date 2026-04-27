@@ -72,6 +72,8 @@ const HomePage: FC<PageProps> = ({ user }) => {
   }
 
 
+
+
   return (
     <PageLayout 
       title={t('home.title')} 
@@ -235,6 +237,24 @@ const HomePage: FC<PageProps> = ({ user }) => {
 
                 {activeTab === 'FRIENDS' && (
                   <div className="space-y-10">
+                    {/* BYSCARR AMIGOS */}
+                    <div className="space-y-4">
+                      <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 italic border-l-4 border-white/20 pl-4">{t('home.search_hunter')}</h3>
+                      <div className="flex gap-4">
+                        <div className="flex-1">
+                          <input 
+                            type="text" 
+                            placeholder={t('home.enter_username')}
+                            className="w-full bg-zinc-900 border-4 border-white/10 p-4 text-white font-black italic uppercase focus:border-main outline-none transition-all"
+                          />
+                        </div>
+                        <button 
+                          className="bg-main text-black px-8 font-black italic uppercase text-xs hover:bg-white transition-all shadow-[4px_4px_0px_white]"
+                        >
+                          {t('home.scan')}
+                        </button>
+                      </div>
+                    </div>
 
                     {/* PENDING REQUESTS */}
                     {pendingRequests && pendingRequests.length > 0 && (

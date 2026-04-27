@@ -45,7 +45,10 @@
     "requesting_access": "Requesting Access",
     "verified_hunters": "VERIFIED HUNTERS",
     "alone": "Alone in the shadows...",
-    "find_hunters": "FIND HUNTERS"
+    "find_hunters": "FIND HUNTERS",
+    "search_hunter": "SEARCH HUNTER",
+    "enter_username": "ENTER USERNAME...",
+    "scan": "SCAN"
   },
   "rankings": {
     "title": "GLOBAL RANKINGS",
@@ -205,7 +208,10 @@
       "gm_connection": "Game Master connection failed.",
       "quest_pending": "You must physically complete the Quest before continuing.",
       "skip_failed": "Could not skip the trial."
-    }
+    },
+    "daily_pending": "DAILY PENDING",
+    "daily_lock_msg": "YOUR DAILY CONTRACT HAS NOT BEEN FULFILLED. THE COLISEUM WILL REMAIN CLOSED UNTIL YOU COMPLETE YOUR MANDATORY MISSION.",
+    "verify_status": "VERIFY STATUS"
   },
   "camera": {
     "ai_detection": "AI DETECTION",

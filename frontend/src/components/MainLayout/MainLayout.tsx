@@ -17,6 +17,7 @@ import PrivacyPolicyPage from '../../pages/PrivacyPolicyPage';
 import RestrictedAccess from '../common/RestrictedAccess';
 import LevelUpModal from '../modals/LevelUpModal';
 import AchievementToast from '../common/AchievementToast';
+import { useLanguage } from '../../LanguageContext';
 
 interface Tab {
   id: string;
@@ -53,6 +54,7 @@ interface MainLayoutProps {
 }
 
 const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeStats, fetchProfile }) => {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<string>('home');
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
   const [navParams, setNavParams] = useState<any>({});
@@ -201,9 +203,9 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
             ) : isRestrictedByDaily ? (
               <RestrictedAccess 
                 onLogout={refreshDailyStatus} 
-                title="DIARIA PENDIENTE"
-                message="TU CONTRATO DIARIO NO HA SIDO CUMPLIDO. EL COLISEO PERMANECERÁ CERRADO HASTA QUE COMPLETES TU MISIÓN OBLIGATORIA."
-                buttonText="VERIFICAR ESTADO"
+                title={t('adventure.daily_pending')}
+                message={t('adventure.daily_lock_msg')}
+                buttonText={t('adventure.verify_status')}
               />
             ) : (
               <ActivePage 

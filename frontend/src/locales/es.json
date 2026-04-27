@@ -45,7 +45,10 @@
     "requesting_access": "Solicitando Acceso",
     "verified_hunters": "CAZADORES VERIFICADOS",
     "alone": "Solo en las sombras...",
-    "find_hunters": "BUSCAR CAZADORES"
+    "find_hunters": "BUSCAR CAZADORES",
+    "search_hunter": "BUSCAR CAZADOR",
+    "enter_username": "INGRESAR USERNAME...",
+    "scan": "SCAN"
   },
   "rankings": {
     "title": "RANKINGS GLOBALES",
@@ -205,7 +208,10 @@
       "gm_connection": "Falló la conexión con el Game Master.",
       "quest_pending": "Deberás completar la Quest Físicamente antes de continuar.",
       "skip_failed": "No se pudo saltar la prueba."
-    }
+    },
+    "daily_pending": "DIARIA PENDIENTE",
+    "daily_lock_msg": "TU CONTRATO DIARIO NO HA SIDO CUMPLIDO. EL COLISEO PERMANECERÁ CERRADO HASTA QUE COMPLETES TU MISIÓN OBLIGATORIA.",
+    "verify_status": "VERIFICAR ESTADO"
   },
   "camera": {
     "ai_detection": "DETECCIÓN DE IA",
