@@ -38,7 +38,9 @@ public class UserController {
     private final UserItemRepository userItemRepository;
     private final UserTitleRepository userTitleRepository;
     private final UserLeagueRepository userLeagueRepository;
-    private final StatRepository statRepository; // esto me da fallo maga, me pone nervioso la consola :c
+    private final StatRepository statRepository;
+    private final com.lockin.repository.AchievementRepository achievementRepository;
+    private final com.lockin.repository.UserAchievementRepository userAchievementRepository;
 
     public UserController(UserSurveyService userSurveyService,
             UserRepository userRepository,
@@ -48,7 +50,9 @@ public class UserController {
             UserItemRepository userItemRepository,
             UserTitleRepository userTitleRepository,
             UserLeagueRepository userLeagueRepository,
-            StatRepository statRepository) {
+            StatRepository statRepository,
+            com.lockin.repository.AchievementRepository achievementRepository,
+            com.lockin.repository.UserAchievementRepository userAchievementRepository) {
         this.userSurveyService = userSurveyService;
         this.userRepository = userRepository;
         this.userQuestProgressRepository = userQuestProgressRepository;
@@ -58,6 +62,8 @@ public class UserController {
         this.userTitleRepository = userTitleRepository;
         this.userLeagueRepository = userLeagueRepository;
         this.statRepository = statRepository;
+        this.achievementRepository = achievementRepository;
+        this.userAchievementRepository = userAchievementRepository;
     }
 
     @PostMapping("/survey")
@@ -277,6 +283,34 @@ public class UserController {
             data.put("isEquipped", ut.isEquipped());
             response.add(data);
         }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/achievements")
+    public ResponseEntity<List<Map<String, Object>>> getUserAchievements(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<com.lockin.model.Achievement> allAchievements = achievementRepository.findAll();
+        List<com.lockin.model.UserAchievement> userAchievements = userAchievementRepository.findByUser(user);
+        
+        List<Long> unlockedIds = userAchievements.stream()
+                .map(ua -> ua.getAchievement().getId())
+                .toList();
+
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (com.lockin.model.Achievement ach : allAchievements) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("id", ach.getId());
+            data.put("title", ach.getTitle());
+            data.put("description", ach.getDescription());
+            data.put("iconUrl", ach.getIconUrl());
+            data.put("completed", unlockedIds.contains(ach.getId()));
+            response.add(data);
+        }
+
         return ResponseEntity.ok(response);
     }
 

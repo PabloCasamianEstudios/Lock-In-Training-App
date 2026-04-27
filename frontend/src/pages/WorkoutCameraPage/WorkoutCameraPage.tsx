@@ -10,14 +10,14 @@ const mpPose: any = {};
 const mpDrawing: any = {};
 const mpCamera: any = {};
 
-const Pose = (mpPose as any).Pose || (window as any).Pose || class { setOptions() {}; onResults() {}; send() {}; close() {} };
+const Pose = (mpPose as any).Pose || (window as any).Pose || class { setOptions() { }; onResults() { }; send() { }; close() { } };
 const POSE_CONNECTIONS = (mpPose as any).POSE_CONNECTIONS || (window as any).POSE_CONNECTIONS || [];
-const drawConnectors = (mpDrawing as any).drawConnectors || (window as any).drawConnectors || (() => {});
-const drawLandmarks = (mpDrawing as any).drawLandmarks || (window as any).drawLandmarks || (() => {});
-const Camera = (mpCamera as any).Camera || (window as any).Camera || class { start() {}; stop() {} };
+const drawConnectors = (mpDrawing as any).drawConnectors || (window as any).drawConnectors || (() => { });
+const drawLandmarks = (mpDrawing as any).drawLandmarks || (window as any).drawLandmarks || (() => { });
+const Camera = (mpCamera as any).Camera || (window as any).Camera || class { start() { }; stop() { } };
 
 
-
+//ESTE CODIGO AL FINAL NO LO HEMOS USADO
 
 
 interface WorkoutCameraPageProps extends PageProps {
@@ -65,7 +65,6 @@ const WorkoutCameraPage: FC<WorkoutCameraPageProps> = ({ user, questId, targetRe
         drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#00FF00', lineWidth: 4 });
         drawLandmarks(canvasCtx, results.poseLandmarks, { color: '#FF0000', lineWidth: 2 });
 
-        // Actualizar lÃ³gica de conteo
         if (!completed) {
           const hasRepped = repCounter.current.updatePushups(results.poseLandmarks);
           if (hasRepped) {

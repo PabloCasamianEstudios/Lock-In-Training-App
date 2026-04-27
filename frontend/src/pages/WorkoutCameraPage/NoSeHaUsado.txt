@@ -1,0 +1,2 @@
+Este código no se ha usado en el proyecto final.
+Lo dejamos por si en el futuro se quiere implementar esta funcionalidad.

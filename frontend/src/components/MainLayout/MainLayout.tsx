@@ -73,7 +73,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
       <nav className="hub-navbar">
         <div className="hub-navbar-inner">
           <button
-            onClick={() => setActiveTab('home')}
+            onClick={() => handleNavigate('home')}
             className="hub-logo"
           >
             LOCK <span style={{ color: 'var(--main-color)' }}>IN</span>
@@ -85,7 +85,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleNavigate(tab.id)}
                   className={`hub-nav-link ${activeTab === tab.id ? 'hub-nav-link-active' : ''} ${restricted ? 'opacity-40' : ''} flex items-center gap-2`}
                 >
                   {tab.label}
@@ -95,7 +95,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
             })}
 
             <button
-              onClick={() => setActiveTab('play')}
+              onClick={() => handleNavigate('play')}
               disabled={isGuest}
               className={`ml-4 px-4 py-1.5 font-black italic tracking-widest text-sm transform -skew-x-12 border-2 transition-all flex items-center gap-2
                 ${activeTab === 'play' 
@@ -129,14 +129,14 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
                 className="hub-dropdown"
               >
                 <button
-                  onClick={() => { setActiveTab('profile'); setUserMenuOpen(false); }}
+                  onClick={() => { handleNavigate('profile'); setUserMenuOpen(false); }}
                   className="hub-dropdown-item"
                 >
                   <User className="w-4 h-4" /> PROFILE {isGuest && <Lock className="w-3 h-3 ml-auto opacity-50" />}
                 </button>
                 {user?.role === 'ADMIN' && (
                   <button
-                    onClick={() => { setActiveTab('admin'); setUserMenuOpen(false); }}
+                    onClick={() => { handleNavigate('admin'); setUserMenuOpen(false); }}
                     className="hub-dropdown-item text-orange-500"
                   >
                     <Database className="w-4 h-4" /> ADMIN PANEL
@@ -190,7 +190,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleNavigate(tab.id)}
                 className={`hub-bottom-play ${isActive ? 'hub-bottom-play-active' : ''} ${restricted ? 'grayscale opacity-50' : ''} relative`}
               >
                 <Swords className="w-7 h-7" />
@@ -202,7 +202,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleNavigate(tab.id)}
               className={`hub-bottom-btn ${isActive ? 'hub-bottom-btn-active' : ''} ${restricted ? 'opacity-30' : ''}`}
             >
               <div className="relative">

@@ -11,16 +11,6 @@ import { StatsChart } from '../../components/profile/StatsChart';
 import { AchievementsGrid, type Achievement } from '../../components/profile/AchievementsGrid';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const MOCK_ACHIEVEMENTS: Achievement[] = [
-  { id: '1', title: 'FIRST BLOOD', completed: true },
-  { id: '2', title: 'IRON BODY', completed: true },
-  { id: '3', title: 'NIGHT OWL', completed: false },
-  { id: '4', title: 'SHADOW MONARCH', completed: false },
-  { id: '5', title: '10K RUN', completed: false },
-  { id: '6', title: 'ONE PUNCH', completed: false },
-  { id: '7', title: 'S CLASS', completed: false },
-  { id: '8', title: 'SYSTEM ERROR', completed: false },
-];
 
 const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
   const { t, language, setLanguage } = useLanguage();
@@ -31,19 +21,28 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
   const [actionLoading, setActionLoading] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'STATS' | 'ACHIEVEMENTS'>('STATS');
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
 
   useEffect(() => {
     if (!isOwnProfile && targetId && user?.id) {
       setLoading(true);
       Promise.all([
         userService.getUserProfile(targetId, false),
-        socialService.getFriendshipStatus(user.id, targetId)
+        socialService.getFriendshipStatus(user.id, targetId),
+        userService.getUserAchievements(targetId)
       ])
-        .then(([profileData, statusData]) => {
+        .then(([profileData, statusData, achData]) => {
           setTargetProfile(profileData);
           setFriendStatus(statusData.status);
+          setAchievements(achData);
         })
         .catch(err => console.error('[ProfilePage] Failed to fetch target data:', err))
+        .finally(() => setLoading(false));
+    } else if (isOwnProfile && user?.id) {
+      setLoading(true);
+      userService.getUserAchievements(user.id)
+        .then(achData => setAchievements(achData))
+        .catch(err => console.error('[ProfilePage] Failed to fetch achievements:', err))
         .finally(() => setLoading(false));
     }
   }, [isOwnProfile, targetId, user?.id]);
@@ -197,7 +196,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <AchievementsGrid achievements={MOCK_ACHIEVEMENTS} />
+                <AchievementsGrid achievements={achievements} />
               </motion.div>
             )}
           </AnimatePresence>
