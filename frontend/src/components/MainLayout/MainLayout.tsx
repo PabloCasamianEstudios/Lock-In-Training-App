@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Scroll, Swords, Trophy, User, ChevronDown, LogOut, Database, Lock } from 'lucide-react';
 import type { AppUser, PlayerProfile, PageProps } from '../../types';
 import { userService } from '../../services/userService';
+import { questService } from '../../services/questService';
 
 /* --- PAGES MAP --- */
 import HomePage from '../../pages/HomePage';
@@ -53,19 +54,32 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
   const [activeTab, setActiveTab] = useState<string>('home');
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
   const [navParams, setNavParams] = useState<any>({});
-  const [isDailyDone, setIsDailyDone] = useState<boolean>(true); // Default to true to avoid flash
+  const [isDailyDone, setIsDailyDone] = useState<boolean>(true); 
 
   const refreshDailyStatus = () => {
     if (user?.id && !user.isGuest) {
-      userService.checkDailyStatus(user.id)
-        .then((done: boolean) => setIsDailyDone(done))
-        .catch((err: Error) => console.error('Error checking daily status:', err));
+      questService.getDailyQuests(user.id)
+        .then((dailies: any[]) => {
+          const completed = dailies.length > 0 && dailies.some(q => q.completed);
+          setIsDailyDone(completed);
+        })
+        .catch((err: Error) => {
+          console.error('Error checking daily status:', err);
+          userService.checkDailyStatus(user.id!)
+            .then((done: boolean) => setIsDailyDone(done));
+        });
     }
   };
 
   useEffect(() => {
     refreshDailyStatus();
   }, [user?.id, activeTab]);
+
+  useEffect(() => {
+    const handleQuestCompleted = () => refreshDailyStatus();
+    window.addEventListener('quest_completed', handleQuestCompleted);
+    return () => window.removeEventListener('quest_completed', handleQuestCompleted);
+  }, [user?.id]);
 
   const handleNavigate = (tab: string, params: any = {}) => {
     setActiveTab(tab);
@@ -98,7 +112,6 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
           <div className="hub-nav-links items-center">
             {tabs.filter(t => t.id !== 'play').map(tab => {
               const restrictedByGuest = isGuest && !['home', 'rankings'].includes(tab.id);
-              // Daily restricted only blocks PLAY, which is filtered out here
               return (
                 <button
                   key={tab.id}
@@ -195,7 +208,10 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
                 user={user} 
                 profile={profile} 
                 onNavigate={handleNavigate} 
-                fetchProfile={fetchProfile}
+                fetchProfile={async (uid: number) => {
+                  if (fetchProfile) await fetchProfile(uid);
+                  window.dispatchEvent(new CustomEvent('quest_completed'));
+                }}
                 {...navParams}
               />
             )}
