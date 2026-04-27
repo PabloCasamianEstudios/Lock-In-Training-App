@@ -1,4 +1,4 @@
-import { type FC, useState, useEffect } from 'react';
+import { type FC, useState, useEffect, useRef } from 'react';
 import { User as UserIcon, ShieldCheck, Mail, Database, Award, Settings, LogOut, Loader2, UserCircle, Globe, Edit2, Trophy, Download, Moon, Sun } from 'lucide-react';
 import { userService } from '../../services/userService';
 import { socialService } from '../../services/socialService';
@@ -26,6 +26,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [titles, setTitles] = useState<any[]>([]);
   const [isTitlePickerOpen, setIsTitlePickerOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!isOwnProfile && targetId && user?.id) {
@@ -107,6 +108,32 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
     URL.revokeObjectURL(url);
   };
 
+  const handleProfilePicClick = () => {
+    if (isOwnProfile) {
+      fileInputRef.current?.click();
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user?.id) return;
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64String = reader.result as string;
+      setActionLoading(true);
+      try {
+        await userService.updateProfilePicture(user.id, base64String);
+        window.location.reload();
+      } catch (err) {
+        console.error('Failed to update profile picture:', err);
+      } finally {
+        setActionLoading(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   if (loading) {
     return (
       <PageLayout 
@@ -133,11 +160,27 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId }) => {
       <div className="space-y-12 max-w-6xl mx-auto">
         <div className="flex flex-col items-center gap-8 border-b-4 border-white/10 pb-12 relative">
           <div className="relative group">
-            <div className="w-32 h-32 md:w-48 md:h-48 bg-main rounded-sm transform -rotate-3 overflow-hidden border-4 border-white shadow-[12px_12px_0px_var(--secondary-color)] group-hover:scale-105 transition-all duration-500 hover:rotate-0">
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              className="hidden" 
+              accept="image/*" 
+              onChange={handleFileChange} 
+            />
+            <div 
+              onClick={handleProfilePicClick}
+              className={`w-32 h-32 md:w-48 md:h-48 bg-main rounded-sm transform -rotate-3 overflow-hidden border-4 border-white shadow-[12px_12px_0px_var(--secondary-color)] transition-all duration-500 
+                ${isOwnProfile ? 'cursor-pointer hover:scale-105 hover:rotate-0 hover:border-main' : ''} group`}
+            >
               {displayProfile?.profilePic ? (
                 <img src={displayProfile.profilePic} alt={displayUser?.username} className="w-full h-full object-cover transform rotate-3 scale-110 group-hover:rotate-0 group-hover:scale-100 transition-all duration-500" />
               ) : (
                 <UserIcon className="w-full h-full text-black p-8 transform rotate-3 group-hover:rotate-0 transition-all duration-500" />
+              )}
+              {isOwnProfile && (
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Edit2 className="w-8 h-8 text-white" />
+                </div>
               )}
             </div>
             <div className="absolute -bottom-3 -right-3 bg-black border-4 border-white px-5 py-2 font-black text-sm md:text-lg text-main transform -skew-x-12 z-10 shadow-xl">

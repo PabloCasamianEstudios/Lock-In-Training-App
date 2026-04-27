@@ -46,4 +46,13 @@ export const userService = {
   checkDailyStatus: async (userId: number): Promise<boolean> => {
     return apiClient<boolean>(`/api/user/${userId}/daily-completed`);
   },
+  
+  updateProfilePicture: async (userId: number, profilePic: string): Promise<User> => {
+    const updated = await apiClient<User>(`/api/user/${userId}/profile-picture`, {
+      method: 'PUT',
+      body: { profilePic }
+    });
+    localStorage.setItem('lockin_profile', JSON.stringify(updated));
+    return updated;
+  }
 };

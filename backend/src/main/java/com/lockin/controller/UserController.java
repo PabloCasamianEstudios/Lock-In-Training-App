@@ -485,4 +485,14 @@ public class UserController {
 
         return ResponseEntity.ok(user);
     }
+
+    @PutMapping("/{id}/profile-picture")
+    public ResponseEntity<User> updateProfilePicture(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) return ResponseEntity.notFound().build();
+        
+        user.setProfilePic(payload.get("profilePic"));
+        User updated = userRepository.save(user);
+        return ResponseEntity.ok(updated);
+    }
 }
