@@ -29,13 +29,20 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!isOwnProfile && targetId && user?.id) {
+    const userIdToFetch = targetId || user?.id;
+    if (userIdToFetch) {
       setLoading(true);
+      const isTargetingSelf = !targetId || targetId === user?.id;
+
+      const fetchFriendStatus = (!isTargetingSelf && user?.id) 
+        ? socialService.getFriendshipStatus(user.id, targetId!)
+        : Promise.resolve({ status: 'ACCEPTED' as const });
+
       Promise.all([
-        userService.getUserProfile(targetId, false),
-        socialService.getFriendshipStatus(user.id, targetId),
-        userService.getUserAchievements(targetId),
-        userService.getUserTitles(targetId)
+        userService.getUserProfile(userIdToFetch, isTargetingSelf),
+        fetchFriendStatus,
+        userService.getUserAchievements(userIdToFetch),
+        userService.getUserTitles(userIdToFetch)
       ])
         .then(([profileData, statusData, achData, titleData]) => {
           setTargetProfile(profileData);
@@ -43,19 +50,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
           setAchievements(achData);
           setTitles(titleData);
         })
-        .catch(err => console.error('[ProfilePage] Failed to fetch target data:', err))
-        .finally(() => setLoading(false));
-    } else if (isOwnProfile && user?.id) {
-      setLoading(true);
-      Promise.all([
-        userService.getUserAchievements(user.id),
-        userService.getUserTitles(user.id)
-      ])
-        .then(([achData, titleData]) => {
-          setAchievements(achData);
-          setTitles(titleData);
-        })
-        .catch(err => console.error('[ProfilePage] Failed to fetch achievements/titles:', err))
+        .catch(err => console.error('[ProfilePage] Failed to fetch profile data:', err))
         .finally(() => setLoading(false));
     }
   }, [isOwnProfile, targetId, user?.id]);
@@ -73,8 +68,8 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
     }
   };
 
-  const displayUser = isOwnProfile ? user : targetProfile;
-  const displayProfile = isOwnProfile ? profile : targetProfile;
+  const displayUser = targetProfile || user;
+  const displayProfile = targetProfile || profile;
   const equippedTitle = titles.find(t => t.isEquipped)?.name || 'Sin título';
 
   const handleEquipTitle = async (titleId: number) => {

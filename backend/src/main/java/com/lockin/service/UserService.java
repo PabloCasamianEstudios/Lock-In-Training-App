@@ -4,12 +4,17 @@ import com.lockin.model.dtos.LoginRequest;
 import com.lockin.model.dtos.UserRegistrationDTO;
 import com.lockin.config.JwtUtils;
 import com.lockin.model.User;
+import com.lockin.model.Stat;
+import com.lockin.model.UserStat;
 import com.lockin.repository.UserRepository;
+import com.lockin.repository.StatRepository;
+import com.lockin.repository.UserStatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -17,14 +22,20 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
+    private final StatRepository statRepository;
+    private final UserStatRepository userStatRepository;
 
     @Autowired
     public UserService(UserRepository userRepository,
             BCryptPasswordEncoder passwordEncoder,
-            JwtUtils jwtUtils) {
+            JwtUtils jwtUtils,
+            StatRepository statRepository,
+            UserStatRepository userStatRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
+        this.statRepository = statRepository;
+        this.userStatRepository = userStatRepository;
     }
 
     public User registerNewUser(UserRegistrationDTO dto) {
@@ -41,7 +52,18 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        List<Stat> allStats = statRepository.findAll();
+        for (Stat stat : allStats) {
+            UserStat userStat = new UserStat();
+            userStat.setUser(savedUser);
+            userStat.setStat(stat);
+            userStat.setCurrentValue(0);
+            userStatRepository.save(userStat);
+        }
+
+        return savedUser;
     }
 
     public java.util.Map<String, Object> authenticate(LoginRequest loginRequest) {

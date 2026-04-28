@@ -48,7 +48,7 @@ const StatsChart: FC<StatsChartProps> = ({ stats = {} }) => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', damping: 15 }}
             points={polygonPoints}
-            fill="rgba(var(--main-rgb), 0.3)"
+            fill="rgba(var(--main-color-rgb), 0.3)"
             stroke="var(--main-color)"
             strokeWidth="4"
             style={{ transformOrigin: 'center' }}
@@ -57,21 +57,36 @@ const StatsChart: FC<StatsChartProps> = ({ stats = {} }) => {
             <circle key={i} cx={p.x} cy={p.y} r="4" fill="white" />
           ))}
           {STATS_KEYS.map((key, i) => {
-            const p = getPoint(MAX_STAT + 25, i, STATS_KEYS.length);
+            const p = getPoint(MAX_STAT + 30, i, STATS_KEYS.length);
+            const val = stats[key] || 0;
             return (
-              <text
-                key={key}
-                x={p.x}
-                y={p.y}
-                fill="white"
-                fontSize="14"
-                fontWeight="900"
-                fontStyle="italic"
-                textAnchor="middle"
-                dominantBaseline="middle"
-              >
-                {key}
-              </text>
+              <g key={key}>
+                <text
+                  x={p.x}
+                  y={p.y - 8}
+                  fill="white"
+                  fontSize="12"
+                  fontWeight="900"
+                  fontStyle="italic"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  className="uppercase tracking-widest"
+                >
+                  {key}
+                </text>
+                <text
+                  x={p.x}
+                  y={p.y + 12}
+                  fill="var(--main-color)"
+                  fontSize="16"
+                  fontWeight="900"
+                  fontStyle="italic"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                >
+                  {val}
+                </text>
+              </g>
             );
           })}
         </svg>
