@@ -1,4 +1,4 @@
-import React, { useState, FC } from 'react';
+import React, { useState, FC, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp, ChevronDown, Trophy, Zap, Shield, Brain, Star, Wind } from 'lucide-react';
 import { PlayerProfile } from '../../types';
@@ -25,6 +25,18 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
     STR: 0, AGI: 0, VIT: 0, INT: 0, LUK: 0, SPD: 0
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Sync state when profile points change (e.g. if leveling up while modal is open)
+  useEffect(() => {
+    console.log('[DEBUG] LevelUpModal useEffect triggered. Prop StatPoints:', profile.statPoints);
+    setAvailablePoints(profile.statPoints || 0);
+    setPoints({ STR: 0, AGI: 0, VIT: 0, INT: 0, LUK: 0, SPD: 0 });
+    setIsSubmitting(false);
+  }, [profile.statPoints]);
+
+  useEffect(() => {
+    console.log('[DEBUG] LevelUpModal mounted with availablePoints:', availablePoints);
+  }, []);
 
   const handleIncrement = (stat: string) => {
     const currentValue = (profile.stats as any)?.[stat] || 0;
@@ -57,7 +69,7 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
   if (!profile.statPoints || profile.statPoints <= 0) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
       <motion.div
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}

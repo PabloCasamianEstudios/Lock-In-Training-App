@@ -263,8 +263,9 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
       </nav>
 
       {/* --- MODALS --- */}
-      {profile && profile.statPoints && profile.statPoints > 0 && distributeStats && (
+      {profile && (profile.statPoints ?? 0) > 0 && distributeStats && (
         <LevelUpModal
+          key={`levelup-${profile.level}-${profile.statPoints}`}
           profile={profile}
           onDistribute={(dist) => distributeStats(user?.id || 0, dist)}
         />

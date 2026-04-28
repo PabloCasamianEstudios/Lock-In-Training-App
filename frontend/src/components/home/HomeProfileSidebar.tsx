@@ -38,10 +38,21 @@ export default function HomeProfileSidebar({
           <div className="flex-1 space-y-1">
             <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter leading-none">{username}</h2>
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-black text-main uppercase italic">{t('common.level')}{level}</span>
+              <span className="text-[10px] font-black text-main uppercase italic">{t('common.level')} {level}</span>
               <span className="text-[10px] font-black text-white/40 uppercase tracking-widest italic">{t('common.rank')} {rank}</span>
             </div>
-            <ProgressBar progress={xp % 1000} max={1000} className="h-1.5 mt-2" />
+            {(() => {
+              const maxXP = Math.floor(1000 * Math.pow(1.5, level - 1));
+              return (
+                <div className="space-y-1">
+                  <ProgressBar progress={xp} max={maxXP} className="h-1.5 mt-2" />
+                  <div className="flex justify-between text-[8px] font-bold text-white/20 uppercase tracking-tighter">
+                    <span>{xp} XP</span>
+                    <span>{maxXP} XP</span>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
       </BrutalistCard>
