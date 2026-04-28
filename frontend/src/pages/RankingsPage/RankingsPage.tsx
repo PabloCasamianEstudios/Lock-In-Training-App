@@ -17,17 +17,7 @@ const RANK_COLORS: Record<string, string> = {
   E: 'text-white/40',
 };
 
-const RANK_GLOW: Record<string, string> = {
-  S: 'shadow-[0_0_20px_rgba(250,204,21,0.4)]',
-  A: 'shadow-[0_0_20px_rgba(239,68,68,0.4)]',
-  B: 'shadow-[0_0_20px_rgba(192,132,252,0.3)]',
-  C: 'shadow-[0_0_20px_rgba(96,165,250,0.3)]',
-  D: 'shadow-[0_0_20px_rgba(74,222,128,0.2)]',
-  E: '',
-};
-
 const rankColor = (rank?: string) => RANK_COLORS[rank ?? 'E'] ?? 'text-white/40';
-const rankGlow = (rank?: string) => RANK_GLOW[rank ?? 'E'] ?? '';
 
 const PODIUM_MEDAL = [
   { icon: Crown, color: 'text-yellow-400', size: 'w-7 h-7', label: '#1' },

@@ -1,0 +1,37 @@
+import { Activity as ActivityIcon } from 'lucide-react';
+import { useLanguage } from '../../LanguageContext';
+
+interface ActivityTabProps {
+  activity: any[];
+}
+
+export default function ActivityTab({ activity }: ActivityTabProps) {
+  const { t } = useLanguage();
+
+  return (
+    <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-4">
+      {activity.length > 0 ? (
+        activity.slice(0, 10).map((act, i) => (
+          <div key={i} className="bg-black/40 border-2 border-white/5 p-5 flex items-center justify-between group hover:border-main/40 transition-all hover:bg-black/60">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/5 rounded-sm group-hover:bg-main/10 transition-colors">
+                <ActivityIcon className="w-5 h-5 text-white/20 group-hover:text-main transition-colors" />
+              </div>
+              <div>
+                <p className="text-[11px] font-black text-white uppercase italic tracking-wider">{act.title ?? 'Quest'}</p>
+                <p className="text-[9px] text-white/30 uppercase tracking-[0.2em] mt-1">
+                  {act.completionTime ? new Date(act.completionTime).toLocaleDateString() : 'In progress'}
+                </p>
+              </div>
+            </div>
+            <span className="text-xs font-black text-main italic">+{act.xpReward ?? 0} XP</span>
+          </div>
+        ))
+      ) : (
+        <div className="col-span-full text-center py-20 text-white/20 italic font-black uppercase tracking-widest border-2 border-dashed border-white/5">
+          {t('home.no_activity')}
+        </div>
+      )}
+    </div>
+  );
+}
