@@ -1,7 +1,7 @@
 import { Lightbulb } from 'lucide-react';
 
 interface TipsTabProps {
-  tips: any[];
+  tips: { title: string, description: string }[];
 }
 
 export default function TipsTab({ tips }: TipsTabProps) {

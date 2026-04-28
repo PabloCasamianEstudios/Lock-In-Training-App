@@ -1,0 +1,48 @@
+import { useLanguage } from '../../LanguageContext';
+
+export type QuestTabType = 'ALL' | 'DAILY' | 'ACTIVE' | 'YOURS' | 'SYSTEM';
+
+interface QuestsTabsNavProps {
+  activeSubTab: QuestTabType;
+  setActiveSubTab: (tab: QuestTabType) => void;
+  counts: {
+    system: number;
+    daily: number;
+    active: number;
+    yours: number;
+  };
+}
+
+export default function QuestsTabsNav({ activeSubTab, setActiveSubTab, counts }: QuestsTabsNavProps) {
+  const { t } = useLanguage();
+
+  const TABS = [
+    { id: 'ALL', label: t('quests.tabs.all') },
+    { id: 'SYSTEM', label: `${t('quests.tabs.system')} (${counts.system})` },
+    { id: 'DAILY', label: `${t('quests.tabs.daily')} (${counts.daily})` },
+    { id: 'ACTIVE', label: `${t('quests.tabs.active')} (${counts.active})` },
+    { id: 'YOURS', label: `${t('quests.tabs.yours')} (${counts.yours})` },
+  ] as const;
+
+  return (
+    <aside className="md:col-span-3 lg:col-span-2 space-y-4 md:sticky md:top-4">
+      <h3 className="hidden md:block text-[10px] font-black uppercase tracking-[0.3em] text-white/40 italic mb-6 border-l-4 border-main pl-3">
+        {t('quests.protocols')}
+      </h3>
+      <nav className="flex md:flex-col items-center gap-2 overflow-x-auto no-scrollbar py-2 md:py-0 mb-4 md:mb-0">
+        {TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveSubTab(tab.id as QuestTabType)}
+            className={`w-full text-left px-5 py-3 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap
+              ${activeSubTab === tab.id
+                ? 'bg-main text-black border-main shadow-[4px_4px_0px_white]'
+                : 'bg-black text-white/40 border-white/20 hover:border-white/40'}`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </nav>
+    </aside>
+  );
+}
