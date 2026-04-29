@@ -211,6 +211,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
               <ActivePage 
                 user={user} 
                 profile={profile} 
+                onLogout={onLogout}
                 onNavigate={handleNavigate} 
                 fetchProfile={async (uid: number) => {
                   if (fetchProfile) await fetchProfile(uid);

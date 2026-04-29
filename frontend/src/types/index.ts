@@ -141,6 +141,7 @@ export interface PageProps {
   onNavigate?: (tab: string, params?: any) => void;
   onLogout?: () => void;
   targetId?: number;
+  fetchProfile?: (userId: number) => Promise<any>;
 }
 
 export interface DailyQuestDTO {

@@ -18,6 +18,8 @@ import com.lockin.model.dtos.RankingUserDTO;
 import com.lockin.repository.UserLeagueRepository;
 import com.lockin.repository.StatRepository;
 import com.lockin.service.UserSurveyService;
+import com.lockin.service.UserService;
+import com.lockin.model.dtos.UpdateCredentialsDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +47,7 @@ public class UserController {
     private final com.lockin.repository.AchievementRepository achievementRepository;
     private final com.lockin.repository.UserAchievementRepository userAchievementRepository;
     private final com.lockin.service.SystemQuestService systemQuestService;
+    private final UserService userService;
 
     public UserController(UserSurveyService userSurveyService,
             UserRepository userRepository,
@@ -57,7 +60,8 @@ public class UserController {
             StatRepository statRepository,
             com.lockin.repository.AchievementRepository achievementRepository,
             com.lockin.repository.UserAchievementRepository userAchievementRepository,
-            com.lockin.service.SystemQuestService systemQuestService) {
+            com.lockin.service.SystemQuestService systemQuestService,
+            UserService userService) {
         this.userSurveyService = userSurveyService;
         this.userRepository = userRepository;
         this.userQuestProgressRepository = userQuestProgressRepository;
@@ -70,6 +74,7 @@ public class UserController {
         this.achievementRepository = achievementRepository;
         this.userAchievementRepository = userAchievementRepository;
         this.systemQuestService = systemQuestService;
+        this.userService = userService;
     }
 
     @PostMapping("/survey")
@@ -78,9 +83,25 @@ public class UserController {
         return ResponseEntity.ok(updated);
     }
 
+    @PutMapping("/{id}/credentials")
+    public ResponseEntity<?> updateCredentials(@PathVariable Long id, @RequestBody UpdateCredentialsDTO dto) {
+        try {
+            User updated = userService.updateCredentials(id, dto);
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
 
-
-    @GetMapping("/{id}")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }    @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         return userRepository.findById(id)
                 .map(ResponseEntity::ok)

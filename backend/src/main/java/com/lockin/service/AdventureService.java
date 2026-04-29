@@ -268,4 +268,29 @@ public class AdventureService {
         session.setPendingQuestId(null);
         return sessionRepository.save(session);
     }
+
+    @Transactional
+    public AdventureSession purchasePotion(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        AdventureSession session = sessionRepository.findByUserAndIsActiveTrue(user)
+                .orElseThrow(() -> new RuntimeException("No active adventure found"));
+
+        if (user.getCoins() < 200) {
+            throw new RuntimeException("Monedas insuficientes. Necesitas 200 monedas.");
+        }
+
+        user.setCoins(user.getCoins() - 200);
+        userRepository.save(user);
+
+        int healAmount = 20;
+        int previousHp = session.getHp();
+        session.setHp(Math.min(session.getMaxHp(), session.getHp() + healAmount));
+        int actualHeal = session.getHp() - previousHp;
+        
+        session.setContextHistory(session.getContextHistory() + "\n- Acción: Comprar poción\n- Resultado: Has usado una poción curativa y recuperado " + actualHeal + " HP.");
+
+        return sessionRepository.save(session);
+    }
 }

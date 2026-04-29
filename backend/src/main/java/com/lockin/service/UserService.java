@@ -4,6 +4,7 @@ import com.lockin.model.dtos.LoginRequest;
 import com.lockin.model.dtos.UserRegistrationDTO;
 import com.lockin.config.JwtUtils;
 import com.lockin.model.User;
+import com.lockin.model.dtos.UpdateCredentialsDTO;
 import com.lockin.model.Stat;
 import com.lockin.model.UserStat;
 import com.lockin.repository.UserRepository;
@@ -99,5 +100,34 @@ public class UserService {
         } else {
             throw new RuntimeException("Contraseña incorrecta");
         }
+    }
+
+    public User updateCredentials(Long userId, UpdateCredentialsDTO dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (dto.getEmail() != null && !dto.getEmail().isEmpty() && !user.getEmail().equals(dto.getEmail())) {
+            if (userRepository.existsByEmail(dto.getEmail())) {
+                throw new RuntimeException("El email ya está en uso por otra cuenta.");
+            }
+            user.setEmail(dto.getEmail());
+        }
+
+        if (dto.getUsername() != null && !dto.getUsername().isEmpty() && !user.getUsername().equals(dto.getUsername())) {
+            if (userRepository.existsByUsername(dto.getUsername())) {
+                throw new RuntimeException("El nombre de usuario ya está ocupado.");
+            }
+            user.setUsername(dto.getUsername());
+        }
+
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
+        return userRepository.save(user);
+    }
+
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
     }
 }

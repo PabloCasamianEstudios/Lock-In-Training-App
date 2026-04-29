@@ -11,6 +11,8 @@ import PopupWindow from '../../components/common/PopupWindow';
 import { StatsChart } from '../../components/profile/StatsChart';
 import { AchievementsGrid, type Achievement } from '../../components/profile/AchievementsGrid';
 import { motion, AnimatePresence } from 'framer-motion';
+import EditCredentialsModal from '../../components/modals/EditCredentialsModal';
+import DeleteAccountModal from '../../components/modals/DeleteAccountModal';
 
 
 const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavigate }) => {
@@ -26,6 +28,8 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [titles, setTitles] = useState<any[]>([]);
   const [isTitlePickerOpen, setIsTitlePickerOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -431,6 +435,33 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
 
           <div className="space-y-4">
             <div className="flex items-center gap-3 text-main mb-2">
+              <UserIcon className="w-5 h-5" />
+              <h3 className="text-sm font-black uppercase italic tracking-widest">CUENTA</h3>
+            </div>
+            <button 
+              onClick={() => {
+                setIsSettingsOpen(false);
+                setIsEditModalOpen(true);
+              }}
+              className="w-full bg-zinc-900 border-4 border-white/10 p-5 text-white font-black italic uppercase hover:bg-white/5 hover:border-main transition-all flex items-center justify-center gap-3 group"
+            >
+              EDITAR DATOS
+            </button>
+            <button 
+              onClick={() => {
+                setIsSettingsOpen(false);
+                setIsDeleteModalOpen(true);
+              }}
+              className="w-full bg-red-600/20 border-4 border-red-600/50 p-5 text-red-500 font-black italic uppercase hover:bg-red-600 hover:text-white hover:border-red-600 transition-all flex items-center justify-center gap-3 group"
+            >
+              ELIMINAR CUENTA
+            </button>
+          </div>
+
+          <div className="h-1 bg-white/5 w-full my-4" />
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 text-main mb-2">
               <Download className="w-5 h-5" />
               <h3 className="text-sm font-black uppercase italic tracking-widest">BACKUP DATA</h3>
             </div>
@@ -454,6 +485,33 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
           </button>
         </div>
       </PopupWindow>
+
+      {user && (
+        <>
+          <EditCredentialsModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            userId={user.id}
+            currentUsername={user.username}
+            currentEmail={user.email || ''}
+            onSuccess={(newUsername) => {
+              if (targetProfile) {
+                setTargetProfile({ ...targetProfile, username: newUsername } as User);
+              }
+            }}
+          />
+
+          <DeleteAccountModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            userId={user.id}
+            onSuccess={() => {
+              setIsDeleteModalOpen(false);
+              if (onLogout) onLogout();
+            }}
+          />
+        </>
+      )}
     </PageLayout>
   );
 };

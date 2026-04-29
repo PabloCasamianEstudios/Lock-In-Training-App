@@ -92,4 +92,14 @@ public class AdventureController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @PostMapping("/purchase-potion/{userId}")
+    public ResponseEntity<?> purchasePotion(@PathVariable Long userId) {
+        try {
+            AdventureSession session = adventureService.purchasePotion(userId);
+            return ResponseEntity.ok(session);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

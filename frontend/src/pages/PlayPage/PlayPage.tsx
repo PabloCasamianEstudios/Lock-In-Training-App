@@ -1,6 +1,6 @@
 import { useState, useEffect, type FC, useRef } from 'react';
 import type { PageProps } from '../../types';
-import { Swords, Heart, Shield, Activity, Skull, BarChart2 } from 'lucide-react';
+import { Swords, Heart, Shield, Activity, Skull, BarChart2, Store } from 'lucide-react';
 import { motion } from 'framer-motion';
 import apiClient from '../../services/apiClient';
 import PageLayout from '../../components/common/PageLayout';
@@ -12,7 +12,8 @@ interface AdventureSession {
   id: number;
   hp: number;
   maxHp: number;
-  isActive: boolean;
+  isActive?: boolean;
+  active?: boolean;
   contextHistory: string;
   lastOptions: string;
   pendingQuestId: number | null;
@@ -22,11 +23,12 @@ interface AdventureSession {
   currentLeague: string | null;
 }
 
-const PlayPage: FC<PageProps> = ({ user, profile }) => {
+const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
   const { t } = useLanguage();
   const [session, setSession] = useState<AdventureSession | null>(null);
   const [userStats, setUserStats] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<boolean>(false);
+  const [buying, setBuying] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -107,6 +109,22 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
     setLoading(false);
   };
 
+  const handleBuyPotion = async () => {
+    if (!user?.id || (profile?.coins || 0) < 200 || !session) return;
+    setBuying(true);
+    setError(null);
+    try {
+      const data = await apiClient<AdventureSession>(`/api/adventure/purchase-potion/${user.id}`, { method: 'POST' });
+      setSession(data);
+      if (fetchProfile) {
+        await fetchProfile(user.id);
+      }
+    } catch (err: any) {
+      setError(err.message || 'No se pudo comprar la poción.');
+    }
+    setBuying(false);
+  };
+
   if (!user || user.isGuest) {
     return (
       <PageLayout title={t('adventure.title')} subtitle={t('adventure.restricted')} icon={Swords}>
@@ -152,10 +170,25 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
 
           <BrutalistCard padding="p-6" className="flex flex-col gap-4 shadow-[8px_8px_0px_rgba(255,255,255,0.05)] border-2 border-white/10" variant="accent">
             <h2 className="text-white font-black text-lg italic uppercase border-b border-white/10 pb-3 flex items-center gap-3 tracking-widest">
-              <Shield className="w-5 h-5 text-main"/> {t('adventure.arsenal')}
+              <Store className="w-5 h-5 text-main"/> TIENDA
             </h2>
-            <div className="text-[10px] text-white/20 leading-relaxed italic font-black uppercase tracking-[0.2em]">
-              {t('adventure.arsenal_empty')}
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between border-2 border-white/10 p-3 bg-black">
+                <div className="flex flex-col">
+                  <span className="text-white font-black italic uppercase text-sm">POCIÓN DE VIDA</span>
+                  <span className="text-main/80 text-[10px] font-black uppercase tracking-widest">+20 HP (AL INSTANTE)</span>
+                </div>
+                <button
+                  onClick={handleBuyPotion}
+                  disabled={buying || (profile?.coins || 0) < 200 || !session || (!session.isActive && !session.active)}
+                  className="bg-yellow-500 hover:bg-yellow-400 text-black font-black italic uppercase px-4 py-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xs flex items-center gap-2"
+                >
+                  {buying ? <Activity className="w-4 h-4 animate-spin" /> : '200 ORO'}
+                </button>
+              </div>
+              <div className="text-[10px] text-white/40 italic font-black uppercase tracking-widest text-right">
+                ORO DISPONIBLE: <span className="text-yellow-500">{profile?.coins || 0}</span>
+              </div>
             </div>
           </BrutalistCard>
 
@@ -256,7 +289,7 @@ const PlayPage: FC<PageProps> = ({ user, profile }) => {
 
             {/* CHOICES / CONTROLS */}
             <div className="p-8 bg-black/90 border-t-4 border-white mt-auto min-h-[140px]">
-              {!session || (!session.isActive && session.hp <= 0) ? (
+              {!session || (!(session.isActive || session.active) && session.hp <= 0) ? (
                 <button 
                     onClick={handleStart}
                     disabled={loading}
