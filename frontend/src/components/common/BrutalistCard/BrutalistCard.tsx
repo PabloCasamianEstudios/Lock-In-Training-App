@@ -23,11 +23,11 @@ const BrutalistCard: FC<BrutalistCardProps> = ({
         return 'border-4 border-neutral-white shadow-[10px_10px_0px_var(--main-color)]';
       case 'white': 
       default: 
-        return 'border-neutral-white shadow-[6px_6px_0px_var(--neutral-white)]';
+        return 'border-neutral-white shadow-[6px_6px_0px_var(--main-color)]';
     }
   };
 
-  const baseClasses = `bg-neutral-black border-2 relative transition-all ${getVariantClasses()} ${padding} ${className}`;
+  const baseClasses = `bg-surface border-2 text-text-main relative transition-all ${getVariantClasses()} ${padding} ${className}`;
   
   if (onClick) {
     return (

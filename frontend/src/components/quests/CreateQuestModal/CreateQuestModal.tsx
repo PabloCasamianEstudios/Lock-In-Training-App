@@ -146,7 +146,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
           <button 
             type="button"
             onClick={handleExport}
-            className="flex items-center gap-2 text-[9px] font-black uppercase italic bg-white/5 border border-white/10 px-3 py-1.5 hover:bg-white/10 transition-all text-white/60 hover:text-main"
+            className="flex items-center gap-2 text-[9px] font-black uppercase italic bg-surface border border-border px-3 py-1.5 hover:bg-neutral-white hover:text-neutral-black transition-all text-text-secondary"
           >
             <Download className="w-3 h-3" /> EXPORT JSON
           </button>
@@ -155,7 +155,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
             <button 
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 text-[9px] font-black uppercase italic bg-white/5 border border-white/10 px-3 py-1.5 hover:bg-white/10 transition-all text-white/60 hover:text-main"
+              className="flex items-center gap-2 text-[9px] font-black uppercase italic bg-surface border border-border px-3 py-1.5 hover:bg-neutral-white hover:text-neutral-black transition-all text-text-secondary"
             >
               <FileUp className="w-3 h-3" /> IMPORT JSON
             </button>
@@ -172,7 +172,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">{t('quest_modal.title')}</label>
+          <label className="text-[10px] font-black uppercase tracking-widest text-text-main opacity-40 italic">{t('quest_modal.title')}</label>
           <input 
             type="text"
             value={title}
@@ -185,11 +185,11 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 italic">{t('quest_modal.exercises')}</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-main opacity-40 italic">{t('quest_modal.exercises')}</label>
             <button 
               type="button"
               onClick={addExercise}
-              className="flex items-center gap-1 text-[10px] font-black uppercase text-main hover:text-white transition-colors underline underline-offset-4 decoration-2"
+              className="flex items-center gap-1 text-[10px] font-black uppercase text-main hover:text-text-main transition-colors underline underline-offset-4 decoration-2"
             >
               <Plus className="w-3 h-3" /> {t('quest_modal.add_new')}
             </button>
@@ -209,7 +209,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
                     <select 
                       value={ex.name}
                       onChange={(e) => updateExercise(index, 'name', e.target.value)}
-                      className="bg-black text-white font-black uppercase italic text-[10px] p-2 outline-none border border-white/20"
+                      className="bg-neutral-black text-text-main font-black uppercase italic text-[10px] p-2 outline-none border border-border"
                     >
                       {MOCKED_EXERCISES.map(opt => (
                         <option key={opt.id} value={opt.name}>{opt.name}</option>
@@ -220,9 +220,9 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
                         type="number"
                         value={ex.value}
                         onChange={(e) => updateExercise(index, 'value', e.target.value)}
-                        className="w-full bg-black text-white font-black uppercase italic text-[10px] p-2 outline-none border border-white/20 pr-10"
+                        className="w-full bg-neutral-black text-text-main font-black uppercase italic text-[10px] p-2 outline-none border border-border pr-10"
                       />
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[8px] font-black text-white/40 italic">
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[8px] font-black text-text-main opacity-40 italic">
                         {ex.type === 'REPS' ? 'REPS' : 'SEC'}
                       </span>
                     </div>
@@ -231,7 +231,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
                     <button 
                       type="button"
                       onClick={() => removeExercise(index)}
-                      className="p-2 text-white/20 hover:text-red-500 transition-colors"
+                      className="p-2 text-text-secondary opacity-20 hover:text-red-500 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -245,7 +245,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
         <div className="pt-6">
           <button 
             type="submit"
-            className="w-full bg-main text-black font-black py-4 uppercase italic tracking-widest text-sm hover:bg-white transition-all shadow-[6px_6px_0px_rgba(255,255,255,0.1)] hover:shadow-[6px_6px_0px_var(--main-color)]"
+            className="w-full bg-main text-black font-black py-4 uppercase italic tracking-widest text-sm hover:bg-neutral-white hover:text-neutral-black hover:border-neutral-black transition-all shadow-[6px_6px_0px_var(--border)] hover:shadow-[6px_6px_0px_var(--main-color)]"
           >
             {initialData ? t('quest_modal.update') : t('quest_modal.initialize')}
           </button>

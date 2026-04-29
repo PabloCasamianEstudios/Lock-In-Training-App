@@ -1,12 +1,16 @@
 import { useState, useEffect, type FC, useRef } from 'react';
 import type { PageProps } from '../../types';
-import { Swords, Heart, Shield, Activity, Skull, BarChart2, Store } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Swords } from 'lucide-react';
 import apiClient from '../../services/apiClient';
 import PageLayout from '../../components/common/PageLayout';
-import BrutalistCard from '../../components/common/BrutalistCard';
-import ProgressBar from '../../components/common/ProgressBar';
 import { useLanguage } from '../../LanguageContext';
+import {
+  AdventureStatus,
+  AdventureStore,
+  AdventureStats,
+  AdventureLog,
+  AdventureActions
+} from '../../components/adventure';
 
 interface AdventureSession {
   id: number;
@@ -135,6 +139,7 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
   }
 
   const optionsArray = session?.lastOptions ? session.lastOptions.split('|') : [];
+  const isActive = !!session && (session.isActive || session.active);
 
   return (
     <PageLayout
@@ -144,191 +149,47 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
     >
       <div className="lg:grid lg:grid-cols-12 lg:gap-12 items-start">
         <div className="lg:col-span-4 space-y-8 lg:sticky lg:top-4">
-          <BrutalistCard padding="p-6" className="flex flex-col gap-4 shadow-[8px_8px_0px_var(--neutral-white)] border-4 border-neutral-white">
-            <div className="flex items-center justify-between border-b-2 border-border pb-3">
-              <h2 className="text-text-main font-black text-2xl italic uppercase tracking-tighter">{t('adventure.status')}</h2>
-              <div className="flex flex-col items-end">
-                <div className="text-main font-black text-xl italic leading-none">LVL {profile?.level || 1}</div>
-                {session?.currentLeague && (
-                  <div className="text-[10px] text-text-secondary uppercase tracking-[0.2em] font-black mt-1 italic">{session.currentLeague} LEAGUE</div>
-                )}
-              </div>
-            </div>
+          <AdventureStatus
+            hp={session?.hp ?? 100}
+            maxHp={session?.maxHp ?? 100}
+            level={profile?.level ?? 1}
+            league={session?.currentLeague}
+          />
 
-            <div className="space-y-4">
-              <ProgressBar
-                progress={session ? session.hp : 100}
-                max={session ? session.maxHp : 100}
-                color={session && session.hp <= 25 ? 'bg-red-600' : 'bg-green-500'}
-                height="h-5"
-                label={<div className="flex items-center gap-2"><Heart className="w-4 h-4 text-red-500 fill-red-500" /> <span className="text-[10px] font-black uppercase italic tracking-widest text-text-secondary">{t('adventure.vitality')}</span></div>}
-                valueLabel={`${session ? session.hp : 100} / ${session ? session.maxHp : 100}`}
-              />
-            </div>
-          </BrutalistCard>
+          <AdventureStore
+            coins={profile?.coins ?? 0}
+            buying={buying}
+            onBuyPotion={handleBuyPotion}
+            canBuy={!!isActive && (profile?.coins ?? 0) >= 200}
+          />
 
-          <BrutalistCard padding="p-6" className="flex flex-col gap-4 shadow-[8px_8px_0px_var(--border)] border-2 border-border" variant="accent">
-            <h2 className="text-text-main font-black text-lg italic uppercase border-b border-border pb-3 flex items-center gap-3 tracking-widest">
-              <Store className="w-5 h-5 text-main" /> TIENDA
-            </h2>
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between border-2 border-border p-3 bg-neutral-black">
-                <div className="flex flex-col">
-                  <span className="text-text-main font-black italic uppercase text-sm">POCIÓN DE VIDA</span>
-                  <span className="text-main/80 text-[10px] font-black uppercase tracking-widest">+20 HP (AL INSTANTE)</span>
-                </div>
-                <button
-                  onClick={handleBuyPotion}
-                  disabled={buying || (profile?.coins || 0) < 200 || !session || (!session.isActive && !session.active)}
-                  className="bg-yellow-500 hover:bg-yellow-400 text-black font-black italic uppercase px-4 py-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-xs flex items-center gap-2"
-                >
-                  {buying ? <Activity className="w-4 h-4 animate-spin" /> : '200 ORO'}
-                </button>
-              </div>
-              <div className="text-[10px] text-text-secondary italic font-black uppercase tracking-widest text-right">
-                ORO DISPONIBLE: <span className="text-yellow-500">{profile?.coins || 0}</span>
-              </div>
-            </div>
-          </BrutalistCard>
-
-          <BrutalistCard padding="p-6" className="flex flex-col gap-4 shadow-[8px_8px_0px_var(--neutral-white)] border-4 border-neutral-white" variant="white">
-            <h2 className="text-text-main font-black text-lg italic uppercase border-b border-border pb-3 flex items-center gap-3 tracking-widest">
-              <BarChart2 className="w-5 h-5 text-orange-500" /> {t('adventure.attributes')}
-            </h2>
-            <div className="grid grid-cols-1 gap-3">
-              {Object.keys(userStats).length > 0 ? Object.entries(userStats).map(([k, v]) => {
-                const recommended = recStats[k] || recStats[k.toLowerCase()] || 0;
-                const isAdequate = v >= recommended;
-
-                return (
-                  <div key={k} className={`flex justify-between items-center p-4 bg-neutral-black border-2 transition-all group ${recommended > 0 ? (isAdequate ? 'border-green-500/30 hover:border-green-500' : 'border-red-600 animate-pulse') : 'border-border hover:border-main/50'
-                    } shadow-md`}>
-                    <div className="flex flex-col">
-                      <span className="text-text-secondary opacity-40 uppercase font-black italic text-[9px] tracking-[0.2em]">{k}</span>
-                      <span className="text-text-main font-black text-lg italic leading-none mt-1 group-hover:text-main transition-colors">{v}</span>
-                    </div>
-                    {recommended > 0 && (
-                      <div className="text-right">
-                        <div className="text-[8px] text-text-secondary opacity-20 uppercase font-black tracking-widest">REQ</div>
-                        <div className={`font-black text-lg italic ${isAdequate ? 'text-green-500' : 'text-red-600'}`}>{recommended}</div>
-                      </div>
-                    )}
-                  </div>
-                );
-              }) : (
-                <div className="col-span-2 py-8 text-center text-[10px] text-main/30 italic uppercase font-black tracking-[0.3em] animate-pulse">{t('adventure.streaming')}</div>
-              )}
-            </div>
-          </BrutalistCard>
+          <AdventureStats
+            stats={userStats}
+            recStats={recStats}
+          />
         </div>
 
         <div className="lg:col-span-8 flex flex-col mt-12 lg:mt-0">
-          <BrutalistCard padding="p-0" variant="heavy" className="w-full flex flex-col relative shadow-[16px_16px_0px_var(--neutral-white)] border-4 border-neutral-white overflow-hidden">
-            <div className="p-6 border-b-4 border-neutral-white flex justify-between items-center bg-neutral-black/40 backdrop-blur-md">
-              <h2 className="text-main font-black italic tracking-tighter text-3xl flex items-center gap-3 uppercase">
-                <Swords className="w-8 h-8" /> {t('adventure.game_master')}
-              </h2>
-              {session && (
-                <div className="flex gap-6 items-center">
-                  <div className="flex flex-col items-end">
-                    <span className="text-[9px] text-text-secondary opacity-40 uppercase font-black tracking-widest">{t('adventure.room')}</span>
-                    <span className="text-text-main font-black text-2xl tracking-tighter italic leading-none">{session.roomCount}</span>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[9px] text-text-secondary opacity-40 uppercase font-black tracking-widest">{t('adventure.type')}</span>
-                    <span className={`font-black text-2xl tracking-tighter italic leading-none ${session.currentRoomType === 'BOSS' ? 'text-red-600 animate-pulse' :
-                        session.currentRoomType === 'COMBATE' ? 'text-orange-500' :
-                          'text-main'
-                      }`}>
-                      {session.currentRoomType || 'UNKNOWN'}
-                    </span>
-                  </div>
-                </div>
-              )}
-              {loading && <Activity className="w-5 h-5 text-main animate-spin" />}
-            </div>
+          <AdventureLog
+            contextHistory={session?.contextHistory ?? ''}
+            hp={session?.hp ?? 0}
+            roomCount={session?.roomCount ?? 0}
+            currentRoomType={session?.currentRoomType ?? ''}
+            loading={loading}
+            error={error}
+            scrollRef={scrollRef}
+          />
 
-            {/* TEXT LOG */}
-            <div
-              ref={scrollRef}
-              className="flex-grow p-8 md:p-12 overflow-y-auto text-sm md:text-xl text-text-main/80 leading-relaxed uppercase whitespace-pre-wrap bg-neutral-black font-black tracking-wider no-scrollbar custom-scrollbar"
-              style={{ minHeight: '500px', maxHeight: '75vh' }}
-            >
-              {error && <div className="text-neutral-black mb-6 font-black italic text-xs uppercase tracking-[0.2em] border-4 border-red-600 p-4 bg-red-600 shadow-lg">{error}</div>}
-
-              {!session ? (
-                <div className="flex flex-col items-center justify-center py-20 gap-6 opacity-20">
-                  <Skull className="w-20 h-20 text-text-secondary" />
-                  <div className="text-text-main italic text-center font-black uppercase tracking-[0.4em] text-xs">
-                    {t('adventure.darkness_awaits')}
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  {session.contextHistory.split('\n').map((line, idx) => (
-                    <p key={idx} className={`${line.startsWith('User chose:') ? 'text-main font-black border-l-4 border-main pl-6 py-2 bg-main/5 text-sm uppercase my-10 tracking-[0.2em] italic' : 'text-text-main/70 drop-shadow-sm'}`}>
-                      {line}
-                    </p>
-                  ))}
-                  {session.hp <= 0 && (
-                    <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="text-red-600 font-black text-6xl text-center py-20 animate-pulse flex flex-col items-center gap-4 tracking-tighter italic"
-                    >
-                      <Skull className="w-24 h-24" />
-                      {t('adventure.you_died')}
-                    </motion.div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* CHOICES / CONTROLS */}
-            <div className="p-8 bg-neutral-black/90 border-t-4 border-neutral-white mt-auto min-h-[140px]">
-              {!session || (!(session.isActive || session.active) && session.hp <= 0) ? (
-                <button
-                  onClick={handleStart}
-                  disabled={loading}
-                  className="w-full py-6 bg-main hover:bg-neutral-white text-neutral-black font-black uppercase tracking-[0.3em] transition-all border-4 border-transparent hover:border-neutral-black shadow-[10px_10px_0px_var(--neutral-white)] hover:shadow-[12px_12px_0px_var(--main-color)] hover:-translate-y-2 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed group text-xl italic"
-                >
-                  <span className="inline-block group-hover:scale-110 transition-transform">{session && session.hp <= 0 ? t('adventure.start_new') : t('adventure.enter_dungeon')}</span>
-                </button>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {session.pendingQuestId ? (
-                    <div className="col-span-1 md:col-span-2 flex flex-col gap-4">
-                      <div className="text-center border-4 border-red-600 bg-red-600/10 p-6 text-red-600 text-xs font-black uppercase tracking-[0.3em] animate-pulse italic shadow-lg">
-                        {t('adventure.path_blocked')}
-                      </div>
-                      <button
-                        onClick={handleSkip}
-                        disabled={loading}
-                        className="py-4 bg-neutral-black hover:bg-main text-text-secondary hover:text-neutral-black font-black uppercase tracking-[0.2em] transition-all border-2 border-border hover:border-main text-[10px] italic"
-                      >
-                        {t('adventure.override_trial')}
-                      </button>
-                    </div>
-                  ) : optionsArray.length > 0 ? (
-                    optionsArray.map((opt, i) => (
-                      <button
-                        key={i}
-                        disabled={loading}
-                        onClick={() => handleAction(opt)}
-                        className="p-6 bg-neutral-black border-2 border-border text-text-main hover:bg-main hover:text-neutral-black hover:border-main shadow-[6px_6px_0px_var(--border)] hover:shadow-[6px_6px_0px_var(--main-color)] transition-all font-black uppercase italic tracking-widest text-left disabled:opacity-50 disabled:shadow-none hover:-translate-y-1 active:translate-y-1 active:shadow-none text-xs md:text-sm"
-                      >
-                        {opt.replace(/"/g, '')}
-                      </button>
-                    ))
-                  ) : (
-                    <div className="col-span-1 md:col-span-2 text-main/30 text-xs text-center italic font-black uppercase tracking-[0.4em] animate-pulse py-6">
-                      {t('adventure.waiting_gm')}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </BrutalistCard>
+          <AdventureActions
+            options={optionsArray}
+            pendingQuestId={session?.pendingQuestId ?? null}
+            hp={session?.hp ?? 0}
+            isActive={!!isActive}
+            loading={loading}
+            onStart={handleStart}
+            onAction={handleAction}
+            onSkip={handleSkip}
+          />
         </div>
       </div>
     </PageLayout>

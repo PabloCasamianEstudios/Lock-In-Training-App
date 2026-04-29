@@ -27,7 +27,7 @@ const AppHeader: FC<AppHeaderProps> = ({
         <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-main drop-shadow-[0_0_10px_var(--main-glow)] flex-shrink-0" />
       )}
       <div className="flex flex-col min-w-0">
-        <h1 className="text-2xl sm:text-4xl md:text-5xl font-black italic uppercase tracking-tighter leading-none truncate">
+        <h1 className="text-2xl sm:text-4xl md:text-5xl font-black italic uppercase tracking-tighter leading-none ">
           {mainTitle} <span className="text-main text-glow">{lastWord}</span>
         </h1>
         {subtitle && (

@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect, useRef, type FC } from 'react';
 import Webcam from 'react-webcam';
-import { RepCounter } from '../../services/exercise/RepCounter';
+import { RepCounter } from '../../services/exercise (futura update)/RepCounter';
 import { ArrowLeft, CheckCircle, Activity, Camera as CameraIcon } from 'lucide-react';
 import apiClient from '../../services/apiClient';
 import type { PageProps } from '../../types';

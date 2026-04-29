@@ -47,15 +47,15 @@ const PopupWindow: FC<PopupWindowProps> = ({
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className={`relative w-full ${maxWidth} bg-surface border-4 border-neutral-white shadow-[12px_12px_0px_var(--main-color)] overflow-hidden flex flex-col max-h-[90vh]`}
+            className={`relative z-20 w-full ${maxWidth} bg-surface border-4 border-neutral-white shadow-[12px_12px_0px_var(--main-color)] overflow-hidden flex flex-col max-h-[90vh]`}
           >
             <div className="bg-main p-4 flex justify-between items-center border-b-4 border-neutral-white transform origin-left">
-              <h2 className="text-xl font-black italic uppercase tracking-tighter text-neutral-black truncate">
+              <h2 className="text-xl font-black italic uppercase tracking-tighter text-black truncate">
                 {title || 'SYSTEM NOTIFICATION'}
               </h2>
               <button 
                 onClick={onClose}
-                className="p-1 hover:bg-neutral-black hover:text-neutral-white transition-all text-neutral-black"
+                className="p-1 hover:bg-black hover:text-white transition-all text-black"
               >
                 <X className="w-5 h-5 stroke-[3px]" />
               </button>

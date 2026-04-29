@@ -362,7 +362,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value as any)}
-                className="w-full bg-neutral-black border-4 border-border p-5 text-black font-black italic uppercase appearance-none focus:border-main outline-none transition-all cursor-pointer group-hover:border-text-secondary"
+                className="w-full bg-neutral-black border-4 border-border p-5 text-text-main font-black italic uppercase appearance-none focus:border-main outline-none transition-all cursor-pointer group-hover:border-text-secondary"
               >
                 <option value="es">{t('settings.spanish')}</option>
                 <option value="eng">{t('settings.english')}</option>
@@ -479,7 +479,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
 
           <button
             onClick={() => setIsSettingsOpen(false)}
-            className="w-full bg-main text-neutral-black font-black uppercase italic py-4 border-4 border-main shadow-[8px_8px_0px_var(--neutral-white)] hover:bg-neutral-white hover:text-neutral-black hover:border-neutral-white transition-all active:translate-x-1 active:translate-y-1 active:shadow-none"
+            className="w-full bg-main text-black font-black uppercase italic py-4 border-4 border-black transition-all active:translate-x-1 active:translate-y-1"
           >
             {t('settings.save')}
           </button>

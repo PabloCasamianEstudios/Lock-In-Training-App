@@ -1,9 +1,10 @@
 import { useState, FC, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
-import { User as UserIcon, Mail, Lock, LogIn, UserPlus, Globe } from 'lucide-react';
+import { User as UserIcon, Mail, Lock } from 'lucide-react';
 import { LoginResponse } from '../../types';
 import { useLanguage } from '../../LanguageContext';
+import { AuthHeader, AuthStatusMessage, AuthField, AuthActions } from '@/components/auth';
 
 interface AuthPageProps {
   onAuthComplete: (userData: LoginResponse) => void;
@@ -88,44 +89,10 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
         className="w-full max-w-lg z-10"
       >
         <div className="system-card border-white shadow-[12px_12px_0px_var(--main-color)] p-12">
-          <div className="mb-12 space-y-1">
-            <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase leading-none">
-              {isLogin ? t('auth.system') : t('auth.new')}
-              <span className="block text-main"> {isLogin ? t('auth.access') : t('auth.player')}</span>
-            </h2>
-            <div className="h-2 w-24 bg-main transform -skew-x-12" />
-          </div>
+          <AuthHeader isLogin={isLogin} />
 
           <form onSubmit={handleSubmit} className="space-y-8">
-            <AnimatePresence mode="wait">
-              {activeError ? (
-                <motion.div
-                  key="error"
-                  initial={{ opacity: 0, height: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, height: 'auto', scale: 1 }}
-                  exit={{ opacity: 0, height: 0, scale: 0.95 }}
-                  className="bg-red-600 border-l-4 border-red-500 p-4 mb-4 transform -skew-x-12 flex items-start gap-4"
-                >
-                  <div className="bg-red-500 text-white font-black text-[10px] px-2 py-0.5 rounded-sm">{t('auth.alert')}</div>
-                  <p className="text-red-500 font-bold italic text-xs uppercase tracking-tighter leading-tight">
-                    {activeError}
-                  </p>
-                </motion.div>
-              ) : successMessage ? (
-                <motion.div
-                  key="success"
-                  initial={{ opacity: 0, height: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, height: 'auto', scale: 1 }}
-                  exit={{ opacity: 0, height: 0, scale: 0.95 }}
-                  className="bg-green-500/10 border-l-4 border-green-500 p-4 mb-4 transform -skew-x-12 flex items-start gap-4"
-                >
-                  <div className="bg-green-500 text-black font-black text-[10px] px-2 py-0.5 rounded-sm">{t('auth.success')}</div>
-                  <p className="text-green-500 font-bold italic text-xs uppercase tracking-tighter leading-tight">
-                    {successMessage}
-                  </p>
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
+            <AuthStatusMessage error={activeError} successMessage={successMessage} />
 
             <AnimatePresence mode='wait'>
               {!isLogin && (
@@ -134,91 +101,43 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="space-y-2"
                 >
-                  <label className="text-xs text-white font-black uppercase italic tracking-widest">{t('auth.username')}</label>
-                  <div className="flex items-center bg-white transform -skew-x-12 px-4 focus-within:ring-4 focus-within:ring-main transition-all">
-                    <UserIcon className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />
-                    <input
-                      type="text"
-                      className="w-full bg-transparent border-none p-4 text-black font-black italic focus:outline-none transform skew-x-12"
-                      placeholder={t('auth.username_placeholder')}
-                      value={formData.username}
-                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                      required
-                    />
-                  </div>
+                  <AuthField
+                    label={t('auth.username')}
+                    type="text"
+                    placeholder={t('auth.username_placeholder')}
+                    value={formData.username}
+                    onChange={(val) => setFormData({ ...formData, username: val })}
+                    icon={<UserIcon className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />}
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
 
-            <div className="space-y-2">
-              <label className="text-xs text-white font-black uppercase italic tracking-widest">{t('auth.email')}</label>
-              <div className="flex items-center bg-white transform -skew-x-12 px-4 focus-within:ring-4 focus-within:ring-main transition-all">
-                <Mail className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />
-                <input
-                  type="email"
-                  className="w-full bg-transparent border-none p-4 text-black font-black italic focus:outline-none transform skew-x-12"
-                  placeholder="user@email.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                />
-              </div>
-            </div>
+            <AuthField
+              label={t('auth.email')}
+              type="email"
+              placeholder="user@email.com"
+              value={formData.email}
+              onChange={(val) => setFormData({ ...formData, email: val })}
+              icon={<Mail className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />}
+            />
 
-            <div className="space-y-2">
-              <label className="text-xs text-white font-black uppercase italic tracking-widest">{t('auth.password')}</label>
-              <div className="flex items-center bg-white transform -skew-x-12 px-4 focus-within:ring-4 focus-within:ring-main transition-all">
-                <Lock className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />
-                <input
-                  type="password"
-                  className="w-full bg-transparent border-none p-4 text-black font-black italic focus:outline-none transform skew-x-12"
-                  placeholder={t('auth.password_placeholder')}
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  required
-                />
-              </div>
-            </div>
+            <AuthField
+              label={t('auth.password')}
+              type="password"
+              placeholder={t('auth.password_placeholder')}
+              value={formData.password}
+              onChange={(val) => setFormData({ ...formData, password: val })}
+              icon={<Lock className="w-5 h-5 text-black transform skew-x-12 flex-shrink-0" />}
+            />
 
-            <div className="pt-4 flex flex-col gap-6">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                type="submit"
-                className="button-neon w-full flex items-center justify-center gap-4 text-2xl"
-                disabled={loading}
-              >
-                {loading ? (
-                  <div className="w-6 h-6 border-4 border-white border-t-transparent animate-spin" />
-                ) : (
-                  <>
-                    {isLogin ? <LogIn className="w-6 h-6 mb-1" /> : <UserPlus className="w-6 h-6 mb-1" />}
-                    <span>{isLogin ? t('auth.enter_stage') : t('auth.finalize_profile')}</span>
-                  </>
-                )}
-              </motion.button>
-
-              <div className="flex flex-col md:flex-row gap-4 justify-between items-center px-2">
-                <button
-                  type="button"
-                  onClick={toggleMode}
-                  className="text-[10px] text-white/50 uppercase hover:text-main transition-colors font-black tracking-[0.2em] italic"
-                >
-                  {isLogin ? t('auth.no_data') : t('auth.already_registered')}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={onGuestEntry}
-                  className="text-[10px] text-secondary-color uppercase hover:text-white transition-colors flex items-center gap-2 font-black tracking-widest italic"
-                >
-                  <Globe className="w-3 h-3" />
-                  {t('auth.guest_override')}
-                </button>
-              </div>
-            </div>
+            <AuthActions
+              isLogin={isLogin}
+              loading={loading}
+              onToggleMode={toggleMode}
+              onGuestEntry={onGuestEntry}
+            />
           </form>
         </div>
       </motion.div>

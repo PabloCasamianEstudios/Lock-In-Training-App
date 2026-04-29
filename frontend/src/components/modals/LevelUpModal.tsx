@@ -74,18 +74,18 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
       <motion.div
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        className="w-full max-w-md md:max-w-3xl bg-surface border-4 border-main shadow-[8px_8px_0px_var(--neutral-white)] flex flex-col font-rpg max-h-[90vh]"
+        className="relative z-20 w-full max-w-md md:max-w-3xl bg-surface border-4 border-neutral-white shadow-[12px_12px_0px_var(--main-color)] flex flex-col font-rpg max-h-[90vh] overflow-hidden"
       >
         {/* Header */}
         <div className="bg-main p-4 flex items-center gap-3">
-          <Trophy className="w-8 h-8 text-neutral-black animate-bounce" />
+          <Trophy className="w-8 h-8 text-black animate-bounce" />
           <div>
-            <h2 className="text-xl font-black text-neutral-black italic leading-none uppercase">{t('level_up.title')}</h2>
-            <p className="text-[10px] font-bold text-neutral-black opacity-60 uppercase tracking-widest mt-1">{t('level_up.assign_points')}</p>
+            <h2 className="text-xl font-black text-black italic leading-none uppercase">{t('level_up.title')}</h2>
+            <p className="text-[10px] font-bold text-black opacity-60 uppercase tracking-widest mt-1">{t('level_up.assign_points')}</p>
           </div>
         </div>
 
-        <div className="p-6 space-y-6 overflow-y-auto custom-scrollbar">
+        <div className="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-grow">
           {/* Points Counter */}
           <div className="flex items-center justify-between bg-neutral-black border-2 border-border p-4 rounded-sm">
             <span className="text-xs font-black text-text-main uppercase tracking-tighter">{t('level_up.available_points')}</span>
@@ -146,7 +146,7 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
                     <button
                       onClick={() => handleIncrement(key)}
                       disabled={availablePoints <= 0 || isMaxed}
-                      className="w-10 h-10 bg-neutral-white text-neutral-black flex items-center justify-center hover:bg-main hover:text-neutral-black disabled:opacity-30 disabled:hover:bg-neutral-white disabled:hover:text-neutral-black"
+                      className="w-10 h-10 bg-neutral-white text-black flex items-center justify-center hover:bg-main hover:text-black disabled:opacity-30 disabled:hover:bg-neutral-white disabled:hover:text-black"
                     >
                       <ChevronUp className="w-5 h-5" />
                     </button>
@@ -155,15 +155,16 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
               );
             })}
           </div>
+        </div>
 
-          {/* Confirm Button */}
+        <div className="p-6 bg-surface border-t-4 border-neutral-white mt-auto">
           <button
             onClick={handleConfirm}
             disabled={availablePoints > 0 || isSubmitting}
-            className={`w-full py-4 font-black uppercase italic tracking-widest transition-all
+            className={`w-full py-4 font-black uppercase italic tracking-widest transition-all border-4
               ${availablePoints === 0
-                ? 'bg-main text-neutral-black hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_0px_var(--neutral-white)]'
-                : 'bg-surface text-text-secondary opacity-20 cursor-not-allowed border-2 border-border'}`}
+                ? 'bg-main text-black border-black hover:scale-[1.02] active:scale-[0.98]'
+                : 'bg-main/20 text-main border-main/30 opacity-50 cursor-not-allowed'}`}
           >
             {isSubmitting ? t('level_up.awakening') : availablePoints > 0 ? t('level_up.assign_more').replace('{{n}}', String(availablePoints)) : t('level_up.confirm')}
           </button>
