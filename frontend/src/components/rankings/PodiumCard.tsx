@@ -25,9 +25,15 @@ interface PodiumCardProps {
   player: RankingUserDTO;
   position: 0 | 1 | 2;
   isCurrentUser?: boolean;
+  showSeasonPoints?: boolean;
 }
 
-export default function PodiumCard({ player, position, isCurrentUser }: PodiumCardProps) {
+export default function PodiumCard({ 
+  player, 
+  position, 
+  isCurrentUser,
+  showSeasonPoints = false 
+}: PodiumCardProps) {
   const { t } = useLanguage();
   const medal = PODIUM_MEDAL[position];
   const MedalIcon = medal.icon;
@@ -58,10 +64,16 @@ export default function PodiumCard({ player, position, isCurrentUser }: PodiumCa
         <p className={`text-xs font-black uppercase italic leading-none ${isCenter ? 'text-white' : 'text-white/80'}`}>
           {player.username}
         </p>
-        <p className="text-[9px] italic text-white/40 mt-0.5">"{player.title ?? t('common.hunter').toLowerCase()}"</p>
-        <p className={`text-[10px] font-black uppercase mt-1 ${rankColor(player.rank)}`}>
-          {t('common.rank')} {player.rank} · {t('common.level')}{player.level}
-        </p>
+        <p className="text-[9px] italic text-white/40 mt-0.5">"{player.title || 'Sin título'}"</p>
+        <div className="flex flex-col items-center gap-0.5 mt-1">
+          <div className="flex gap-1.5">
+            <span className="text-[8px] font-black text-white/40">TP: {player.totalPoints}</span>
+            {showSeasonPoints && <span className="text-[8px] font-black text-main">SP: {player.seasonPoints}</span>}
+          </div>
+          <p className={`text-[9px] font-black uppercase ${rankColor(player.rank)}`}>
+            {t('common.rank')} {player.rank} · {t('common.level')}{player.level}
+          </p>
+        </div>
       </div>
     </motion.div>
   );

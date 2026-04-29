@@ -19,9 +19,18 @@ interface RankRowProps {
   position: number;
   isCurrentUser?: boolean;
   onClick?: () => void;
+  showTotalPoints?: boolean;
+  showSeasonPoints?: boolean;
 }
 
-export default function RankRow({ player, position, isCurrentUser, onClick }: RankRowProps) {
+export default function RankRow({ 
+  player, 
+  position, 
+  isCurrentUser, 
+  onClick,
+  showTotalPoints = true,
+  showSeasonPoints = false
+}: RankRowProps) {
   const { t } = useLanguage();
   if (!player) {
     return (
@@ -50,13 +59,25 @@ export default function RankRow({ player, position, isCurrentUser, onClick }: Ra
       <Avatar src={player.profilePic} username={player.username} size="w-10 h-10" />
       <div className="flex-1 min-w-0">
         <p className="text-xs font-black text-white uppercase italic truncate">{player.username}</p>
-        <p className="text-[9px] italic text-white/30 truncate">"{player.title ?? t('common.hunter').toLowerCase()}"</p>
+        <p className="text-[9px] italic text-white/30 truncate">"{player.title || 'Sin título'}"</p>
       </div>
-      <div className="text-right flex-shrink-0">
-        <p className={`text-xs font-black uppercase ${rankColor(player.rank)}`}>
+      <div className="text-right flex-shrink-0 flex flex-col items-end gap-0.5">
+        <div className="flex items-center gap-2">
+          {showTotalPoints && (
+            <span className="text-[9px] font-black text-white/40 bg-white/5 px-1.5 py-0.5 border border-white/10">
+              TP: {player.totalPoints}
+            </span>
+          )}
+          {showSeasonPoints && (
+            <span className="text-[9px] font-black text-main bg-main/5 px-1.5 py-0.5 border border-main/20">
+              SP: {player.seasonPoints}
+            </span>
+          )}
+        </div>
+        <p className={`text-[10px] font-black uppercase leading-none mt-1 ${rankColor(player.rank)}`}>
           {t('common.rank')} {player.rank}
         </p>
-        <p className="text-[10px] text-white/30">{t('common.level')}{player.level}</p>
+        <p className="text-[9px] text-white/20 font-bold">{t('common.level')}{player.level}</p>
       </div>
     </motion.div>
   );

@@ -14,6 +14,7 @@ interface LeaderboardViewProps {
   titleMain: string;
   emptyMessage: string;
   maxRows?: number;
+  showSeasonPoints?: boolean;
 }
 
 export default function LeaderboardView({
@@ -23,7 +24,8 @@ export default function LeaderboardView({
   titlePrefix,
   titleMain,
   emptyMessage,
-  maxRows = 10
+  maxRows = 10,
+  showSeasonPoints = false
 }: LeaderboardViewProps) {
   const { t } = useLanguage();
 
@@ -50,6 +52,7 @@ export default function LeaderboardView({
                 player={podium[idx]}
                 position={idx as 0 | 1 | 2}
                 isCurrentUser={podium[idx].id === currentUserId}
+                showSeasonPoints={showSeasonPoints}
               />
             );
           })}
@@ -74,6 +77,7 @@ export default function LeaderboardView({
               player={player}
               position={i + 1}
               isCurrentUser={player?.id === currentUserId}
+              showSeasonPoints={showSeasonPoints}
               onClick={() => {
                 if (player && onNavigate) {
                   onNavigate('profile', { targetId: player.id });

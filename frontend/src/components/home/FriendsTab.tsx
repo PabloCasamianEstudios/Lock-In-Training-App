@@ -15,6 +15,7 @@ interface FriendsTabProps {
   onAddFriend: (id: number) => void;
   onAcceptRequest: (id: number) => void;
   onRejectRequest: (id: number) => void;
+  onNavigate?: (tab: string, params?: any) => void;
 }
 
 export default function FriendsTab({
@@ -29,7 +30,8 @@ export default function FriendsTab({
   onSearch,
   onAddFriend,
   onAcceptRequest,
-  onRejectRequest
+  onRejectRequest,
+  onNavigate
 }: FriendsTabProps) {
   const { t } = useLanguage();
 
@@ -63,7 +65,8 @@ export default function FriendsTab({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="bg-black border-4 border-white p-6 shadow-[8px_8px_0px_var(--main-color)] flex items-center justify-between group"
+              onClick={() => onNavigate?.('profile', { targetId: searchResult.id })}
+              className="bg-black border-4 border-white p-6 shadow-[8px_8px_0px_var(--main-color)] flex items-center justify-between group cursor-pointer hover:bg-white/5 transition-all"
             >
               <div className="flex items-center gap-5">
                 <div className="w-16 h-16 bg-zinc-900 border-2 border-white/20 flex items-center justify-center text-xl font-black text-white/20 group-hover:text-main group-hover:border-main/50 transition-all overflow-hidden">
@@ -144,7 +147,11 @@ export default function FriendsTab({
         {friends.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {friends.map((friend, i) => (
-              <div key={i} className="bg-black/40 border-2 border-white/5 p-4 flex items-center justify-between hover:bg-white/5 hover:border-main/40 transition-all cursor-pointer group rounded-sm shadow-md">
+              <div 
+                key={i} 
+                onClick={() => onNavigate?.('profile', { targetId: friend.id })}
+                className="bg-black/40 border-2 border-white/5 p-4 flex items-center justify-between hover:bg-white/5 hover:border-main/40 transition-all cursor-pointer group rounded-sm shadow-md"
+              >
                 <div className="flex items-center gap-4">
                   <div className="w-11 h-11 rounded-sm border border-white/10 bg-zinc-900 flex items-center justify-center text-xs font-black text-white/30 group-hover:text-main group-hover:border-main/40 transition-all">
                     {(friend.username ?? '?').charAt(0).toUpperCase()}

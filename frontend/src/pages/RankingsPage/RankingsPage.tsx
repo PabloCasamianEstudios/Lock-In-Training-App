@@ -72,6 +72,7 @@ const RankingsPage: FC<PageProps> = ({ user, profile, onNavigate }) => {
               titlePrefix={t('rankings.top_hunters').split(' ')[0]}
               titleMain={t('rankings.top_hunters').split(' ')[1]}
               emptyMessage={t('rankings.no_hunters')}
+              showSeasonPoints={true}
             />
           </motion.div>
         )}
@@ -92,6 +93,7 @@ const RankingsPage: FC<PageProps> = ({ user, profile, onNavigate }) => {
               titlePrefix={t('rankings.tabs.friends')}
               titleMain="RANK"
               emptyMessage={t('rankings.summon_allies')}
+              showSeasonPoints={true}
             />
           </motion.div>
         )}

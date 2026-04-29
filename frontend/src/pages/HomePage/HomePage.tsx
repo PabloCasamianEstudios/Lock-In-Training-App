@@ -14,7 +14,7 @@ import TipsTab from '../../components/home/TipsTab';
 import FriendsTab from '../../components/home/FriendsTab';
 import { useFriendActions } from '../../hooks/useFriendActions';
 
-const HomePage: FC<PageProps> = ({ user }) => {
+const HomePage: FC<PageProps> = ({ user, onNavigate }) => {
   const { t } = useLanguage();
   const { 
     username,
@@ -108,6 +108,7 @@ const HomePage: FC<PageProps> = ({ user }) => {
                     onAddFriend={handleAddFriend}
                     onAcceptRequest={handleAcceptRequest}
                     onRejectRequest={handleRejectRequest}
+                    onNavigate={onNavigate}
                   />
                 )}
               </motion.div>
