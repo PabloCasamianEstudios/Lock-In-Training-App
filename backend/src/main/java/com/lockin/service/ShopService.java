@@ -66,7 +66,6 @@ public class ShopService {
         user.setCoins(user.getCoins() - title.getPrice());
         userRepository.save(user);
 
-        // Add to user titles
         UserTitle userTitle = new UserTitle();
         userTitle.setUser(user);
         userTitle.setTitle(title);

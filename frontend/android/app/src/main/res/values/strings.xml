@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Solo Leveling Lock-In</string>
+    <string name="title_activity_main">Solo Leveling Lock-In</string>
+    <string name="package_name">com.lockin.app</string>
+    <string name="custom_url_scheme">com.lockin.app</string>
+</resources>

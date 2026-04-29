@@ -36,7 +36,6 @@ public class LeagueGenerationService {
     public Map<String, Object> generateLeaguesByRank(int maxUsersPerLeague) {
         int safeMaxUsersPerLeague = Math.max(1, maxUsersPerLeague);
 
-        // Regeneración completa: limpiamos ligas/asignaciones previas.
         userLeagueRepository.deleteAllInBatch();
         leagueRepository.deleteAllInBatch();
 

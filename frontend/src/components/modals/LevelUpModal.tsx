@@ -26,7 +26,7 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Sync state when profile points change (e.g. if leveling up while modal is open)
+  // Sync state when profile points change
   useEffect(() => {
     console.log('[DEBUG] LevelUpModal useEffect triggered. Prop StatPoints:', profile.statPoints);
     setAvailablePoints(profile.statPoints || 0);

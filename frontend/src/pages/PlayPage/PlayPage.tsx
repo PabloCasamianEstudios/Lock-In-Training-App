@@ -52,7 +52,6 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
       const data = await apiClient<AdventureSession>(`/api/adventure/current/${user!.id}`);
       setSession(data);
     } catch (err: any) {
-      // 404 is expected if no active session exists
       if (err.status !== 404) {
         console.error("Error fetching session", err);
       }
@@ -138,9 +137,9 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
   const optionsArray = session?.lastOptions ? session.lastOptions.split('|') : [];
 
   return (
-    <PageLayout 
-      title={t('adventure.title')} 
-      subtitle={t('adventure.gm_protocol')} 
+    <PageLayout
+      title={t('adventure.title')}
+      subtitle={t('adventure.gm_protocol')}
       icon={Swords}
     >
       <div className="lg:grid lg:grid-cols-12 lg:gap-12 items-start">
@@ -155,14 +154,14 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
                 )}
               </div>
             </div>
-            
+
             <div className="space-y-4">
-              <ProgressBar 
-                progress={session ? session.hp : 100} 
+              <ProgressBar
+                progress={session ? session.hp : 100}
                 max={session ? session.maxHp : 100}
                 color={session && session.hp <= 25 ? 'bg-red-600' : 'bg-green-500'}
                 height="h-5"
-                label={<div className="flex items-center gap-2"><Heart className="w-4 h-4 text-red-500 fill-red-500"/> <span className="text-[10px] font-black uppercase italic tracking-widest text-white/50">{t('adventure.vitality')}</span></div>}
+                label={<div className="flex items-center gap-2"><Heart className="w-4 h-4 text-red-500 fill-red-500" /> <span className="text-[10px] font-black uppercase italic tracking-widest text-white/50">{t('adventure.vitality')}</span></div>}
                 valueLabel={`${session ? session.hp : 100} / ${session ? session.maxHp : 100}`}
               />
             </div>
@@ -170,7 +169,7 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
 
           <BrutalistCard padding="p-6" className="flex flex-col gap-4 shadow-[8px_8px_0px_rgba(255,255,255,0.05)] border-2 border-white/10" variant="accent">
             <h2 className="text-white font-black text-lg italic uppercase border-b border-white/10 pb-3 flex items-center gap-3 tracking-widest">
-              <Store className="w-5 h-5 text-main"/> TIENDA
+              <Store className="w-5 h-5 text-main" /> TIENDA
             </h2>
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between border-2 border-white/10 p-3 bg-black">
@@ -194,17 +193,16 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
 
           <BrutalistCard padding="p-6" className="flex flex-col gap-4 shadow-[8px_8px_0px_white] border-4 border-white" variant="white">
             <h2 className="text-white font-black text-lg italic uppercase border-b border-white/10 pb-3 flex items-center gap-3 tracking-widest">
-              <BarChart2 className="w-5 h-5 text-orange-500"/> {t('adventure.attributes')}
+              <BarChart2 className="w-5 h-5 text-orange-500" /> {t('adventure.attributes')}
             </h2>
             <div className="grid grid-cols-1 gap-3">
               {Object.keys(userStats).length > 0 ? Object.entries(userStats).map(([k, v]) => {
                 const recommended = recStats[k] || recStats[k.toLowerCase()] || 0;
                 const isAdequate = v >= recommended;
-                
+
                 return (
-                  <div key={k} className={`flex justify-between items-center p-4 bg-black border-2 transition-all group ${
-                    recommended > 0 ? (isAdequate ? 'border-green-500/30 hover:border-green-500' : 'border-red-600 animate-pulse') : 'border-white/5 hover:border-main/50'
-                  } shadow-md`}>
+                  <div key={k} className={`flex justify-between items-center p-4 bg-black border-2 transition-all group ${recommended > 0 ? (isAdequate ? 'border-green-500/30 hover:border-green-500' : 'border-red-600 animate-pulse') : 'border-white/5 hover:border-main/50'
+                    } shadow-md`}>
                     <div className="flex flex-col">
                       <span className="text-white/30 uppercase font-black italic text-[9px] tracking-[0.2em]">{k}</span>
                       <span className="text-white font-black text-lg italic leading-none mt-1 group-hover:text-main transition-colors">{v}</span>
@@ -228,7 +226,7 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
           <BrutalistCard padding="p-0" variant="heavy" className="w-full flex flex-col relative shadow-[16px_16px_0px_white] border-4 border-white overflow-hidden">
             <div className="p-6 border-b-4 border-white flex justify-between items-center bg-black/40 backdrop-blur-md">
               <h2 className="text-main font-black italic tracking-tighter text-3xl flex items-center gap-3 uppercase">
-                <Swords className="w-8 h-8"/> {t('adventure.game_master')}
+                <Swords className="w-8 h-8" /> {t('adventure.game_master')}
               </h2>
               {session && (
                 <div className="flex gap-6 items-center">
@@ -238,30 +236,29 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
                   </div>
                   <div className="flex flex-col items-end">
                     <span className="text-[9px] text-white/30 uppercase font-black tracking-widest">{t('adventure.type')}</span>
-                    <span className={`font-black text-2xl tracking-tighter italic leading-none ${
-                      session.currentRoomType === 'BOSS' ? 'text-red-600 animate-pulse' : 
-                      session.currentRoomType === 'COMBATE' ? 'text-orange-500' : 
-                      'text-main'
-                    }`}>
+                    <span className={`font-black text-2xl tracking-tighter italic leading-none ${session.currentRoomType === 'BOSS' ? 'text-red-600 animate-pulse' :
+                        session.currentRoomType === 'COMBATE' ? 'text-orange-500' :
+                          'text-main'
+                      }`}>
                       {session.currentRoomType || 'UNKNOWN'}
                     </span>
                   </div>
                 </div>
               )}
-              {loading && <Activity className="w-5 h-5 text-main animate-spin"/>}
+              {loading && <Activity className="w-5 h-5 text-main animate-spin" />}
             </div>
 
             {/* TEXT LOG */}
-            <div 
+            <div
               ref={scrollRef}
               className="flex-grow p-8 md:p-12 overflow-y-auto text-sm md:text-xl text-white/80 leading-relaxed uppercase whitespace-pre-wrap bg-black/60 font-black tracking-wider no-scrollbar custom-scrollbar"
               style={{ minHeight: '500px', maxHeight: '75vh' }}
             >
               {error && <div className="text-red-600 mb-6 font-black italic text-xs uppercase tracking-[0.2em] border-4 border-red-600 p-4 bg-red-600/10 shadow-lg">{error}</div>}
-              
+
               {!session ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-6 opacity-20">
-                   <Skull className="w-20 h-20"/>
+                  <Skull className="w-20 h-20" />
                   <div className="text-white italic text-center font-black uppercase tracking-[0.4em] text-xs">
                     {t('adventure.darkness_awaits')}
                   </div>
@@ -274,12 +271,12 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
                     </p>
                   ))}
                   {session.hp <= 0 && (
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       className="text-red-600 font-black text-6xl text-center py-20 animate-pulse flex flex-col items-center gap-4 tracking-tighter italic"
                     >
-                      <Skull className="w-24 h-24"/>
+                      <Skull className="w-24 h-24" />
                       {t('adventure.you_died')}
                     </motion.div>
                   )}
@@ -290,11 +287,11 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
             {/* CHOICES / CONTROLS */}
             <div className="p-8 bg-black/90 border-t-4 border-white mt-auto min-h-[140px]">
               {!session || (!(session.isActive || session.active) && session.hp <= 0) ? (
-                <button 
-                    onClick={handleStart}
-                    disabled={loading}
-                    className="w-full py-6 bg-main hover:bg-white text-black font-black uppercase tracking-[0.3em] transition-all border-4 border-transparent hover:border-black shadow-[10px_10px_0px_white] hover:shadow-[12px_12px_0px_var(--main-color)] hover:-translate-y-2 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed group text-xl italic"
-                  >
+                <button
+                  onClick={handleStart}
+                  disabled={loading}
+                  className="w-full py-6 bg-main hover:bg-white text-black font-black uppercase tracking-[0.3em] transition-all border-4 border-transparent hover:border-black shadow-[10px_10px_0px_white] hover:shadow-[12px_12px_0px_var(--main-color)] hover:-translate-y-2 active:translate-y-1 active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed group text-xl italic"
+                >
                   <span className="inline-block group-hover:scale-110 transition-transform">{session && session.hp <= 0 ? t('adventure.start_new') : t('adventure.enter_dungeon')}</span>
                 </button>
               ) : (
@@ -304,7 +301,7 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
                       <div className="text-center border-4 border-red-600 bg-red-600/10 p-6 text-red-600 text-xs font-black uppercase tracking-[0.3em] animate-pulse italic shadow-lg">
                         {t('adventure.path_blocked')}
                       </div>
-                      <button 
+                      <button
                         onClick={handleSkip}
                         disabled={loading}
                         className="py-4 bg-black hover:bg-main text-white/30 hover:text-black font-black uppercase tracking-[0.2em] transition-all border-2 border-white/10 hover:border-main text-[10px] italic"
@@ -314,7 +311,7 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
                     </div>
                   ) : optionsArray.length > 0 ? (
                     optionsArray.map((opt, i) => (
-                      <button 
+                      <button
                         key={i}
                         disabled={loading}
                         onClick={() => handleAction(opt)}

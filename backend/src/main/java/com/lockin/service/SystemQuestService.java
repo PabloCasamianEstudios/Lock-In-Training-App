@@ -53,7 +53,7 @@ public class SystemQuestService {
 
                 int rankVal = RANKS.indexOf(rank) + 1;
 
-                // 1. Número de ejercicios escala con el rango
+                // Número de ejercicios escala con el rango
                 int numSteps;
                 if (rankVal <= 2)
                     numSteps = 1 + rand.nextInt(2); // E, D: 1-2
@@ -62,7 +62,6 @@ public class SystemQuestService {
                 else
                     numSteps = 3 + rand.nextInt(2); // S: 3-4
 
-                // 2. Multiplicadores de repeticiones mucho más agresivos
                 // E: 1x, D: 2x, C: 5x, B: 12x, A: 25x, S: 50x
                 double[] repMultipliers = { 1.0, 2.0, 4.0, 6.0, 8.0, 10.0 };
                 double repMult = repMultipliers[rankVal - 1];
@@ -244,11 +243,12 @@ public class SystemQuestService {
         List<Quest> pool = questRepository.findByType(Quest.QuestType.SYSTEM).stream()
                 .filter(q -> rank.equals(q.getRankDifficulty()))
                 .toList();
-        
-        if (pool.isEmpty()) return null;
+
+        if (pool.isEmpty())
+            return null;
 
         Quest base = pool.get(new Random().nextInt(pool.size()));
-        
+
         Quest daily = new Quest();
         daily.setTitle("DIARIA: " + base.getTitle());
         daily.setType(Quest.QuestType.DAILY);
@@ -256,26 +256,26 @@ public class SystemQuestService {
         daily.setXpReward(base.getXpReward() * 3);
         daily.setGoldReward(base.getGoldReward() * 3);
         daily.setCreatorId(user.getId());
-        
+
         if (base.getSteps() != null) {
             for (QuestStep bs : base.getSteps()) {
                 QuestStep ds = new QuestStep();
                 ds.setExercise(bs.getExercise());
                 ds.setSeries(bs.getSeries());
-                ds.setRepetitions((int)(bs.getRepetitions() * 1.5));
+                ds.setRepetitions((int) (bs.getRepetitions() * 1.5));
                 daily.addStep(ds);
             }
         }
-        
+
         // Generar descripción basada en los nuevos steps
         String desc = daily.getSteps().stream()
                 .map(s -> s.getSeries() + "x" + s.getRepetitions() + " " + s.getExercise().getName())
                 .collect(Collectors.joining(", "));
         daily.setDescription(desc);
-        
+
         daily = questRepository.save(daily);
         questRepository.flush();
-        
+
         UserQuestProgress progress = new UserQuestProgress();
         progress.setUser(user);
         progress.setQuest(daily);
@@ -284,7 +284,7 @@ public class SystemQuestService {
         progress.setStartTime(LocalDateTime.now());
         progress.setAppliedGoldReward(daily.getGoldReward());
         progress.setAppliedXpReward(daily.getXpReward());
-        
+
         return userQuestProgressRepository.save(progress);
     }
 

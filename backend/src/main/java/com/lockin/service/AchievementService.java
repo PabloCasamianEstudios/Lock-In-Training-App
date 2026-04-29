@@ -57,7 +57,6 @@ public class AchievementService {
                     userAchievementRepository.save(ua);
                     unlockedThisTime.add(a);
 
-                    // Assign Title reward if present
                     if (a.getTitleReward() != null) {
                         if (userTitleRepository.findByUserIdAndTitleId(user.getId(), a.getTitleReward().getId())
                                 .isEmpty()) {

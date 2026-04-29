@@ -226,7 +226,6 @@ public class UserQuestController {
             }
             quest.getSteps().addAll(steps);
 
-            // Re-calculate rewards and rank
             String rank = "E";
             if (totalVolume >= 1000)
                 rank = "S";

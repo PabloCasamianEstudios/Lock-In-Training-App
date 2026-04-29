@@ -20,12 +20,11 @@ const AchievementToast = () => {
     return () => window.removeEventListener('achievement_unlocked', handleAchievement);
   }, []);
 
-  // Remove the oldest achievement after 5 seconds
   useEffect(() => {
     if (achievements.length > 0) {
       const timer = setTimeout(() => {
         setAchievements(prev => prev.slice(1));
-      }, 5000); 
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [achievements]);
@@ -44,7 +43,7 @@ const AchievementToast = () => {
         >
           <div className="flex gap-4 items-center">
             <div className="w-14 h-14 flex-shrink-0 bg-main/20 flex items-center justify-center border-2 border-main transform -skew-x-12 relative overflow-hidden">
-               <div className="absolute inset-0 bg-main opacity-20 animate-pulse" />
+              <div className="absolute inset-0 bg-main opacity-20 animate-pulse" />
               <Trophy className="text-main w-8 h-8" />
             </div>
             <div className="flex-1">

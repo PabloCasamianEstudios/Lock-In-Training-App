@@ -18,9 +18,9 @@ public class Exercise {
 
     private String type;
     private String difficulty;
-    
+
     private int baseReps;
-    private int baseDuration; // seconds
+    private int baseDuration;
     private double baseWeight;
 
     @ManyToOne

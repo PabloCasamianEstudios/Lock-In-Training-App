@@ -101,7 +101,9 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
-    }    @GetMapping("/{id}")
+    }
+
+    @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         return userRepository.findById(id)
                 .map(ResponseEntity::ok)
@@ -184,8 +186,8 @@ public class UserController {
         // 1. Verificar si ya existe la diaria obligatoria de hoy
         List<UserQuestProgress> allProgress = userQuestProgressRepository.findByUserId(id);
         UserQuestProgress mandatoryProgress = allProgress.stream()
-                .filter(p -> p.isMandatoryDaily() 
-                        && p.getStartTime() != null 
+                .filter(p -> p.isMandatoryDaily()
+                        && p.getStartTime() != null
                         && p.getStartTime().toLocalDate().equals(today))
                 .findFirst()
                 .orElse(null);
@@ -194,34 +196,35 @@ public class UserController {
             // Generar nueva misión diaria obligatoria
             User user = userRepository.findById(id).orElse(null);
             String rank = (user != null && user.getSeasonRank() != null) ? user.getSeasonRank() : "E";
-            
-            List<com.lockin.model.Quest> pool = questRepository.findByType(com.lockin.model.Quest.QuestType.SYSTEM).stream()
+
+            List<com.lockin.model.Quest> pool = questRepository.findByType(com.lockin.model.Quest.QuestType.SYSTEM)
+                    .stream()
                     .filter(q -> rank.equals(q.getRankDifficulty()))
                     .toList();
-            
+
             if (!pool.isEmpty()) {
-            mandatoryProgress = systemQuestService.generateMandatoryDaily(user);
+                mandatoryProgress = systemQuestService.generateMandatoryDaily(user);
             }
         }
 
         List<Map<String, Object>> response = new ArrayList<>();
-        
+
         // Añadir la obligatoria si existe
         if (mandatoryProgress != null) {
             response.add(mapProgressToMap(mandatoryProgress, today));
         }
 
-        // Muestras: otras quests diarias (opcional, el usuario pidió que se le asigne UNA, 
-        // pero mantendré las otras 2 del pool para no romper la UI si espera 3)
-        List<com.lockin.model.Quest> dailyPool = questRepository.findByType(com.lockin.model.Quest.QuestType.DAILY).stream()
+        List<com.lockin.model.Quest> dailyPool = questRepository.findByType(com.lockin.model.Quest.QuestType.DAILY)
+                .stream()
                 .filter(q -> q.getCreatorId() != null && q.getCreatorId() == 0L) // Solo globales
                 .collect(Collectors.toList());
-                
+
         java.util.Collections.shuffle(dailyPool, new java.util.Random(LocalDate.now().toEpochDay()));
-        
+
         for (com.lockin.model.Quest quest : dailyPool) {
-            if (response.size() >= 3) break;
-            
+            if (response.size() >= 3)
+                break;
+
             UserQuestProgress latest = userQuestProgressRepository.findByUserIdAndQuestId(id, quest.getId()).stream()
                     .filter(p -> p.getStartTime() != null && p.getStartTime().toLocalDate().equals(today))
                     .findFirst()
@@ -245,16 +248,14 @@ public class UserController {
     public ResponseEntity<Boolean> isDailyCompleted(@PathVariable Long id) {
         LocalDate today = LocalDate.now();
         List<UserQuestProgress> progressList = userQuestProgressRepository.findByUserId(id);
-        
+
         boolean completed = progressList.stream()
-                .anyMatch(p -> p.isMandatoryDaily() 
-                            && p.getStatus() == UserQuestProgress.QuestStatus.COMPLETED
-                            && (
-                                p.getCompletionTime() == null || // Flexibilidad para Workbench
+                .anyMatch(p -> p.isMandatoryDaily()
+                        && p.getStatus() == UserQuestProgress.QuestStatus.COMPLETED
+                        && (p.getCompletionTime() == null || // Flexibilidad para Workbench
                                 p.getCompletionTime().toLocalDate().equals(today) ||
-                                (p.getStartTime() != null && p.getStartTime().toLocalDate().equals(today))
-                            ));
-        
+                                (p.getStartTime() != null && p.getStartTime().toLocalDate().equals(today))));
+
         return ResponseEntity.ok(completed);
     }
 
@@ -271,22 +272,22 @@ public class UserController {
             for (QuestStep step : quest.getSteps()) {
                 int stepTotalReps = step.getSeries() * step.getRepetitions();
                 totalRepetitions += stepTotalReps;
- 
+
                 Map<String, Object> stepData = new HashMap<>();
                 Map<String, Object> exerciseInfo = new HashMap<>();
-                
+
                 if (step.getExercise() != null) {
                     exerciseInfo.put("id", step.getExercise().getId());
                     exerciseInfo.put("name", step.getExercise().getName());
                     exerciseInfo.put("type", step.getExercise().getType());
                 }
-                
+
                 stepData.put("exercise", exerciseInfo);
                 stepData.put("series", step.getSeries());
                 stepData.put("repetitions", step.getRepetitions());
                 stepData.put("totalRepetitions", stepTotalReps);
                 stepData.put("completedRepetitions", completedToday ? stepTotalReps : 0);
-                
+
                 exercises.add(stepData);
             }
         }
@@ -382,7 +383,7 @@ public class UserController {
 
         List<com.lockin.model.Achievement> allAchievements = achievementRepository.findAll();
         List<com.lockin.model.UserAchievement> userAchievements = userAchievementRepository.findByUser(user);
-        
+
         List<Long> unlockedIds = userAchievements.stream()
                 .map(ua -> ua.getAchievement().getId())
                 .toList();
@@ -519,8 +520,9 @@ public class UserController {
     @PutMapping("/{id}/profile-picture")
     public ResponseEntity<User> updateProfilePicture(@PathVariable Long id, @RequestBody Map<String, String> payload) {
         User user = userRepository.findById(id).orElse(null);
-        if (user == null) return ResponseEntity.notFound().build();
-        
+        if (user == null)
+            return ResponseEntity.notFound().build();
+
         user.setProfilePic(payload.get("profilePic"));
         User updated = userRepository.save(user);
         return ResponseEntity.ok(updated);
