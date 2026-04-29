@@ -50,34 +50,36 @@ export default function RankRow({
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: position * 0.05 }}
       onClick={onClick}
-      className={`flex items-center gap-3 p-3 border-b border-border last:border-0 transition-colors cursor-pointer
+      className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border-b border-border last:border-0 transition-colors cursor-pointer
         ${isCurrentUser ? 'bg-main/10 border-l-2 border-l-main' : 'hover:bg-surface'}`}
     >
-      <span className={`text-sm font-black italic w-6 text-right flex-shrink-0 ${isCurrentUser ? 'text-main' : 'text-text-secondary'}`}>
+      <span className={`text-xs sm:text-sm font-black italic w-5 sm:w-6 text-right flex-shrink-0 ${isCurrentUser ? 'text-main' : 'text-text-secondary'}`}>
         {position}
       </span>
-      <Avatar src={player.profilePic} username={player.username} size="w-10 h-10" />
+      <div className="flex-shrink-0">
+        <Avatar src={player.profilePic} username={player.username} size="w-8 h-8 sm:w-10 sm:h-10" />
+      </div>
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-black text-text-main uppercase italic truncate">{player.username}</p>
-        <p className="text-[9px] italic text-text-secondary truncate">"{player.title || 'Sin título'}"</p>
+        <p className="text-[10px] sm:text-xs font-black text-text-main uppercase italic truncate leading-tight">{player.username}</p>
+        <p className="text-[8px] sm:text-[9px] italic text-text-secondary truncate opacity-60">"{player.title || 'Sin título'}"</p>
       </div>
       <div className="text-right flex-shrink-0 flex flex-col items-end gap-0.5">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           {showTotalPoints && (
-            <span className="text-[9px] font-black text-text-secondary bg-surface px-1.5 py-0.5 border border-border">
-              TP: {player.totalPoints}
+            <span className="text-[8px] sm:text-[9px] font-black text-text-secondary bg-surface px-1 sm:px-1.5 py-0.5 border border-border">
+              {player.totalPoints}
             </span>
           )}
           {showSeasonPoints && (
-            <span className="text-[9px] font-black text-main bg-main/5 px-1.5 py-0.5 border border-main/20">
-              SP: {player.seasonPoints}
+            <span className="text-[8px] sm:text-[9px] font-black text-main bg-main/5 px-1 sm:px-1.5 py-0.5 border border-main/20">
+              {player.seasonPoints}
             </span>
           )}
         </div>
-        <p className={`text-[10px] font-black uppercase leading-none mt-1 ${rankColor(player.rank)}`}>
-          {t('common.rank')} {player.rank}
+        <p className={`text-[8px] sm:text-[10px] font-black uppercase leading-none mt-0.5 ${rankColor(player.rank)}`}>
+          {player.rank}
         </p>
-        <p className="text-[9px] text-text-secondary font-bold">{t('common.level')}{player.level}</p>
+        <p className="text-[8px] sm:text-[9px] text-text-secondary font-bold opacity-40">L{player.level}</p>
       </div>
     </motion.div>
   );

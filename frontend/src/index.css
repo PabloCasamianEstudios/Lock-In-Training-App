@@ -186,8 +186,8 @@ body,
   margin-left: auto;
   margin-right: auto;
   max-width: 100%;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -243,7 +243,7 @@ body,
 }
 
 .hub-logo {
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   font-weight: 900;
   font-style: italic;
   color: var(--neutral-white);
@@ -254,6 +254,12 @@ body,
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .hub-logo {
+    font-size: 1.5rem;
+  }
 }
 
 .hub-nav-links {

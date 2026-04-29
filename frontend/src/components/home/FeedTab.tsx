@@ -38,7 +38,7 @@ export default function FeedTab({ dailyQuests }: FeedTabProps) {
       {pendingQuests.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 gap-4 border-4 border-dashed border-border rounded-sm">
           <Check className="w-12 h-12 text-main opacity-20" />
-          <p className="text-xs font-black text-text-secondary opacity-20 uppercase tracking-[0.3em] italic">{t('home.no_pending')}</p>
+          <p className="text-xs font-black text-text-secondary opacity-20 uppercase tracking-[0.3em] italic text-center">{t('home.no_pending')}</p>
         </div>
       )}
     </div>

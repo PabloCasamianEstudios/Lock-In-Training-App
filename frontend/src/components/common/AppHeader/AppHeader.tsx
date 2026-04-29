@@ -22,16 +22,16 @@ const AppHeader: FC<AppHeaderProps> = ({
   const lastWord = parts[parts.length - 1];
 
   return (
-    <header className={`flex items-center gap-4 border-b-4 border-neutral-white pb-6 ${className}`}>
+    <header className={`flex items-center gap-3 sm:gap-4 border-b-4 border-neutral-white pb-4 sm:pb-6 ${className.includes('mb-10') ? 'mb-6 sm:mb-10' : className}`}>
       {Icon && (
-        <Icon className="w-10 h-10 text-main drop-shadow-[0_0_10px_var(--main-glow)]" />
+        <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-main drop-shadow-[0_0_10px_var(--main-glow)] flex-shrink-0" />
       )}
-      <div className="flex flex-col">
-        <h1 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter leading-none">
+      <div className="flex flex-col min-w-0">
+        <h1 className="text-2xl sm:text-4xl md:text-5xl font-black italic uppercase tracking-tighter leading-none truncate">
           {mainTitle} <span className="text-main text-glow">{lastWord}</span>
         </h1>
         {subtitle && (
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-secondary italic mt-1">
+          <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] text-text-secondary italic mt-1 truncate">
             {subtitle}
           </span>
         )}

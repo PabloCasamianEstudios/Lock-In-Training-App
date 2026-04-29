@@ -66,34 +66,37 @@ export default function FriendsTab({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               onClick={() => onNavigate?.('profile', { targetId: searchResult.id })}
-              className="bg-neutral-black border-4 border-neutral-white p-6 shadow-[8px_8px_0px_var(--main-color)] flex items-center justify-between group cursor-pointer hover:bg-surface transition-all"
+              className="bg-neutral-black border-4 border-neutral-white p-4 sm:p-6 shadow-[8px_8px_0px_var(--main-color)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 group cursor-pointer hover:bg-surface transition-all"
             >
-              <div className="flex items-center gap-5">
-                <div className="w-16 h-16 bg-neutral-black border-2 border-border flex items-center justify-center text-xl font-black text-text-secondary group-hover:text-main group-hover:border-main/50 transition-all overflow-hidden">
+              <div className="flex items-center gap-4 sm:gap-5 w-full sm:w-auto">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 bg-neutral-black border-2 border-border flex items-center justify-center text-lg font-black text-text-secondary group-hover:text-main group-hover:border-main/50 transition-all overflow-hidden">
                   {searchResult.profilePic ? (
                     <img src={searchResult.profilePic} alt="Avatar" className="w-full h-full object-cover" />
                   ) : (
                     searchResult.username?.charAt(0).toUpperCase()
                   )}
                 </div>
-                <div>
-                  <h4 className="text-xl font-black italic uppercase text-text-main group-hover:text-main transition-colors">{searchResult.username}</h4>
+                <div className="min-w-0">
+                  <h4 className="text-lg sm:text-xl font-black italic uppercase text-text-main group-hover:text-main transition-colors truncate">{searchResult.username}</h4>
                   <p className="text-[10px] text-text-secondary font-black uppercase tracking-[0.2em]">{t('common.rank')} {searchResult.rank || 'E'}</p>
                 </div>
               </div>
 
-              <div>
+              <div className="w-full sm:w-auto flex justify-end">
                 {searchStatus === 'SELF' ? (
-                  <span className="text-[10px] font-black italic uppercase text-text-secondary bg-surface px-4 py-2 border-2 border-border">{t('profile.it_is_you') || 'SYSTEM: SELF'}</span>
+                  <span className="text-[10px] font-black italic uppercase text-text-secondary bg-surface px-4 py-2 border-2 border-border whitespace-nowrap">{t('profile.it_is_you') || 'SYSTEM: SELF'}</span>
                 ) : searchStatus === 'ACCEPTED' ? (
-                  <span className="text-[10px] font-black italic uppercase text-main bg-main/10 px-4 py-2 border-2 border-main/50">{t('profile.already_friends')}</span>
+                  <span className="text-[10px] font-black italic uppercase text-main bg-main/10 px-4 py-2 border-2 border-main/50 whitespace-nowrap">{t('profile.already_friends')}</span>
                 ) : searchStatus === 'PENDING' ? (
-                  <span className="text-[10px] font-black italic uppercase text-text-secondary bg-surface px-4 py-2 border-2 border-border">{t('profile.request_sent')}</span>
+                  <span className="text-[10px] font-black italic uppercase text-text-secondary bg-surface px-4 py-2 border-2 border-border whitespace-nowrap">{t('profile.request_sent')}</span>
                 ) : (
                   <button 
-                    onClick={() => onAddFriend(searchResult.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onAddFriend(searchResult.id);
+                    }}
                     disabled={isAdding}
-                    className="bg-main text-neutral-black px-6 py-3 font-black italic uppercase text-xs hover:bg-neutral-white hover:text-neutral-black transition-all shadow-[4px_4px_0px_var(--neutral-white)] active:shadow-none active:translate-x-1 active:translate-y-1"
+                    className="w-full sm:w-auto bg-main text-neutral-black px-6 py-3 font-black italic uppercase text-xs hover:bg-neutral-white hover:text-neutral-black transition-all shadow-[4px_4px_0px_var(--neutral-white)] active:shadow-none active:translate-x-1 active:translate-y-1 whitespace-nowrap"
                   >
                     {isAdding ? t('profile.processing') : t('profile.add_friend')}
                   </button>
