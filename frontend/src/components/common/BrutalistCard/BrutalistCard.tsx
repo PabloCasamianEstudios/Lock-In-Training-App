@@ -1,4 +1,4 @@
-﻿import { type FC, type ReactNode } from 'react';
+import { type FC, type ReactNode } from 'react';
 
 interface BrutalistCardProps {
   children: ReactNode;
@@ -18,16 +18,16 @@ const BrutalistCard: FC<BrutalistCardProps> = ({
   const getVariantClasses = () => {
     switch (variant) {
       case 'accent': 
-        return 'border-white shadow-[6px_6px_0px_var(--main-color)]';
+        return 'border-neutral-white shadow-[6px_6px_0px_var(--main-color)]';
       case 'heavy': 
-        return 'border-4 border-white shadow-[10px_10px_0px_var(--main-color)]';
+        return 'border-4 border-neutral-white shadow-[10px_10px_0px_var(--main-color)]';
       case 'white': 
       default: 
-        return 'border-white shadow-[6px_6px_0px_white]';
+        return 'border-neutral-white shadow-[6px_6px_0px_var(--neutral-white)]';
     }
   };
 
-  const baseClasses = `bg-black border-2 relative transition-all ${getVariantClasses()} ${padding} ${className}`;
+  const baseClasses = `bg-neutral-black border-2 relative transition-all ${getVariantClasses()} ${padding} ${className}`;
   
   if (onClick) {
     return (

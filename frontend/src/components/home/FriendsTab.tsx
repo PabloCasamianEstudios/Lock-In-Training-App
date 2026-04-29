@@ -38,7 +38,7 @@ export default function FriendsTab({
   return (
     <div className="space-y-10">
       <div className="space-y-4">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 italic border-l-4 border-white/20 pl-4">{t('home.search_hunter')}</h3>
+        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-secondary italic border-l-4 border-border pl-4">{t('home.search_hunter')}</h3>
         <div className="flex gap-4">
           <div className="flex-1">
             <input 
@@ -47,13 +47,13 @@ export default function FriendsTab({
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && onSearch()}
               placeholder={t('home.enter_username')}
-              className="w-full bg-zinc-900 border-4 border-white/10 p-4 text-white font-black italic uppercase focus:border-main outline-none transition-all"
+              className="w-full bg-neutral-black border-4 border-border p-4 text-text-main font-black italic uppercase focus:border-main outline-none transition-all"
             />
           </div>
           <button 
             onClick={onSearch}
             disabled={isSearching}
-            className="bg-main text-black px-8 font-black italic uppercase text-xs hover:bg-white transition-all shadow-[4px_4px_0px_white] disabled:opacity-50"
+            className="bg-main text-neutral-black px-8 font-black italic uppercase text-xs hover:bg-neutral-white hover:text-neutral-black transition-all shadow-[4px_4px_0px_var(--neutral-white)] disabled:opacity-50"
           >
             {isSearching ? '...' : t('home.scan')}
           </button>
@@ -66,10 +66,10 @@ export default function FriendsTab({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               onClick={() => onNavigate?.('profile', { targetId: searchResult.id })}
-              className="bg-black border-4 border-white p-6 shadow-[8px_8px_0px_var(--main-color)] flex items-center justify-between group cursor-pointer hover:bg-white/5 transition-all"
+              className="bg-neutral-black border-4 border-neutral-white p-6 shadow-[8px_8px_0px_var(--main-color)] flex items-center justify-between group cursor-pointer hover:bg-surface transition-all"
             >
               <div className="flex items-center gap-5">
-                <div className="w-16 h-16 bg-zinc-900 border-2 border-white/20 flex items-center justify-center text-xl font-black text-white/20 group-hover:text-main group-hover:border-main/50 transition-all overflow-hidden">
+                <div className="w-16 h-16 bg-neutral-black border-2 border-border flex items-center justify-center text-xl font-black text-text-secondary group-hover:text-main group-hover:border-main/50 transition-all overflow-hidden">
                   {searchResult.profilePic ? (
                     <img src={searchResult.profilePic} alt="Avatar" className="w-full h-full object-cover" />
                   ) : (
@@ -77,23 +77,23 @@ export default function FriendsTab({
                   )}
                 </div>
                 <div>
-                  <h4 className="text-xl font-black italic uppercase text-white group-hover:text-main transition-colors">{searchResult.username}</h4>
-                  <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em]">{t('common.rank')} {searchResult.rank || 'E'}</p>
+                  <h4 className="text-xl font-black italic uppercase text-text-main group-hover:text-main transition-colors">{searchResult.username}</h4>
+                  <p className="text-[10px] text-text-secondary font-black uppercase tracking-[0.2em]">{t('common.rank')} {searchResult.rank || 'E'}</p>
                 </div>
               </div>
 
               <div>
                 {searchStatus === 'SELF' ? (
-                  <span className="text-[10px] font-black italic uppercase text-white/20 bg-white/5 px-4 py-2 border-2 border-white/10">{t('profile.it_is_you') || 'SYSTEM: SELF'}</span>
+                  <span className="text-[10px] font-black italic uppercase text-text-secondary bg-surface px-4 py-2 border-2 border-border">{t('profile.it_is_you') || 'SYSTEM: SELF'}</span>
                 ) : searchStatus === 'ACCEPTED' ? (
                   <span className="text-[10px] font-black italic uppercase text-main bg-main/10 px-4 py-2 border-2 border-main/50">{t('profile.already_friends')}</span>
                 ) : searchStatus === 'PENDING' ? (
-                  <span className="text-[10px] font-black italic uppercase text-white/40 bg-white/5 px-4 py-2 border-2 border-white/20">{t('profile.request_sent')}</span>
+                  <span className="text-[10px] font-black italic uppercase text-text-secondary bg-surface px-4 py-2 border-2 border-border">{t('profile.request_sent')}</span>
                 ) : (
                   <button 
                     onClick={() => onAddFriend(searchResult.id)}
                     disabled={isAdding}
-                    className="bg-main text-black px-6 py-3 font-black italic uppercase text-xs hover:bg-white transition-all shadow-[4px_4px_0px_white] active:shadow-none active:translate-x-1 active:translate-y-1"
+                    className="bg-main text-neutral-black px-6 py-3 font-black italic uppercase text-xs hover:bg-neutral-white hover:text-neutral-black transition-all shadow-[4px_4px_0px_var(--neutral-white)] active:shadow-none active:translate-x-1 active:translate-y-1"
                   >
                     {isAdding ? t('profile.processing') : t('profile.add_friend')}
                   </button>
@@ -124,8 +124,8 @@ export default function FriendsTab({
                     {(req.sender?.username ?? '?').charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-xs font-black text-white italic uppercase">{req.sender?.username ?? t('common.hunter')}</p>
-                    <p className="text-[9px] text-white/40 uppercase tracking-widest font-bold">{t('home.requesting_access')}</p>
+                    <p className="text-xs font-black text-text-main italic uppercase">{req.sender?.username ?? t('common.hunter')}</p>
+                    <p className="text-[9px] text-text-secondary uppercase tracking-widest font-bold">{t('home.requesting_access')}</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -143,34 +143,34 @@ export default function FriendsTab({
       )}
 
       <div className="space-y-4">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 italic border-l-4 border-white/20 pl-4">{t('home.verified_hunters')}</h3>
+        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-secondary italic border-l-4 border-border pl-4">{t('home.verified_hunters')}</h3>
         {friends.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {friends.map((friend, i) => (
               <div 
                 key={i} 
                 onClick={() => onNavigate?.('profile', { targetId: friend.id })}
-                className="bg-black/40 border-2 border-white/5 p-4 flex items-center justify-between hover:bg-white/5 hover:border-main/40 transition-all cursor-pointer group rounded-sm shadow-md"
+                className="bg-neutral-black border-2 border-border p-4 flex items-center justify-between hover:bg-surface hover:border-main/40 transition-all cursor-pointer group rounded-sm shadow-md"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-sm border border-white/10 bg-zinc-900 flex items-center justify-center text-xs font-black text-white/30 group-hover:text-main group-hover:border-main/40 transition-all">
+                  <div className="w-11 h-11 rounded-sm border border-border bg-neutral-black flex items-center justify-center text-xs font-black text-text-secondary group-hover:text-main group-hover:border-main/40 transition-all">
                     {(friend.username ?? '?').charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-xs font-black text-white italic uppercase group-hover:text-main transition-colors">{friend.username ?? t('common.hunter')}</p>
-                    <p className="text-[9px] text-white/20 uppercase tracking-widest font-black">{t('common.rank')} {friend.rank || 'E'}</p>
+                    <p className="text-xs font-black text-text-main italic uppercase group-hover:text-main transition-colors">{friend.username ?? t('common.hunter')}</p>
+                    <p className="text-[9px] text-text-secondary uppercase tracking-widest font-black">{t('common.rank')} {friend.rank || 'E'}</p>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-white/10 group-hover:text-main transition-all transform group-hover:translate-x-1" />
+                <ChevronRight className="w-5 h-5 text-border group-hover:text-main transition-all transform group-hover:translate-x-1" />
               </div>
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-20 gap-6 border-2 border-dashed border-white/5 rounded-sm">
-            <Users className="w-16 h-16 text-white/5" />
+          <div className="flex flex-col items-center justify-center py-20 gap-6 border-2 border-dashed border-border rounded-sm">
+            <Users className="w-16 h-16 text-text-secondary opacity-20" />
             <div className="text-center">
-              <p className="text-xs font-black text-white/20 uppercase tracking-[0.4em] italic mb-4">{t('home.alone')}</p>
-              <button className="text-[10px] font-black text-main border-b-2 border-main/20 pb-1 hover:text-white hover:border-white transition-all uppercase italic tracking-widest">
+              <p className="text-xs font-black text-text-secondary uppercase tracking-[0.4em] italic mb-4">{t('home.alone')}</p>
+              <button className="text-[10px] font-black text-main border-b-2 border-main/20 pb-1 hover:text-text-main hover:border-text-main transition-all uppercase italic tracking-widest">
                 {t('home.find_hunters')}
               </button>
             </div>

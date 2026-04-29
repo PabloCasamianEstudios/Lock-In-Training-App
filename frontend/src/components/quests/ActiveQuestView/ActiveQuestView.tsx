@@ -103,11 +103,11 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-xl border-[6px] border-white bg-black p-8 shadow-[20px_20px_0px_white] relative"
+        className="w-full max-w-xl border-[6px] border-neutral-white bg-neutral-black p-8 shadow-[20px_20px_0px_var(--neutral-white)] relative"
       >
         <button 
           onClick={() => clearStorageAndAction(onCancel)}
-          className="absolute top-4 right-4 p-2 bg-red-500/10 text-red-500 border-2 border-red-500/20 hover:bg-red-500 hover:text-white transition-all z-10"
+          className="absolute top-4 right-4 p-2 bg-red-600 text-neutral-black border-2 border-red-500 hover:bg-red-500 hover:text-neutral-black transition-all z-10"
           title={t('quest_view.abort')}
         >
           <X className="w-6 h-6" />
@@ -115,9 +115,9 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
 
         <div className="flex items-center gap-4 mb-2">
           <div className="bg-main p-2 transform -skew-x-12">
-            <CheckCircle2 className="w-8 h-8 text-black" />
+            <CheckCircle2 className="w-8 h-8 text-neutral-black" />
           </div>
-          <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">{t('quest_view.protocol')}</h1>
+          <h1 className="text-4xl font-black italic uppercase tracking-tighter text-text-main">{t('quest_view.protocol')}</h1>
         </div>
         <p className="text-main font-black italic uppercase tracking-widest text-xs mb-8 border-b-2 border-main pb-2 inline-block">
           {t('quest_view.system_workout')}
@@ -127,21 +127,21 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
           {!hasStarted ? (
             <div className="py-12 flex flex-col items-center justify-center space-y-8">
                <div className="text-center space-y-2">
-                 <h2 className="text-2xl font-black italic text-white uppercase tracking-widest">{t('quest_view.awaiting_init')}</h2>
-                 <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em]">{t('quest_view.prepare')}</p>
+                 <h2 className="text-2xl font-black italic text-text-main uppercase tracking-widest">{t('quest_view.awaiting_init')}</h2>
+                 <p className="text-text-secondary opacity-40 text-[10px] font-bold uppercase tracking-[0.2em]">{t('quest_view.prepare')}</p>
                </div>
 
                <button 
                 onClick={handleStart}
                 className="group relative px-12 py-6 bg-main title-hover transition-all"
                >
-                 <span className="relative z-10 text-3xl font-black italic text-black uppercase tracking-tighter">{t('quest_view.start')}</span>
-                 <div className="absolute inset-0 border-4 border-white translate-x-3 translate-y-3 group-hover:translate-x-1 group-hover:translate-y-1 transition-transform" />
+                 <span className="relative z-10 text-3xl font-black italic text-neutral-black uppercase tracking-tighter">{t('quest_view.start')}</span>
+                 <div className="absolute inset-0 border-4 border-neutral-white translate-x-3 translate-y-3 group-hover:translate-x-1 group-hover:translate-y-1 transition-transform" />
                </button>
 
                <div className="grid grid-cols-2 gap-4 w-full opacity-40 grayscale">
                  {steps.map((s: any, i: number) => (
-                   <div key={i} className="border-2 border-white/20 p-3 text-[8px] font-black uppercase italic">
+                   <div key={i} className="border-2 border-border p-3 text-[8px] font-black uppercase italic text-text-main">
                      {s.exercise?.name || 'Exercise'} - {getTarget(s)} UNITS
                    </div>
                  ))}
@@ -154,23 +154,23 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
               const isCompleted = progress >= target;
 
               return (
-                <div key={idx} className={`flex flex-col gap-3 group p-4 border-2 transition-colors ${isCompleted ? 'border-main bg-main/5' : 'border-white/10 hover:border-main/50'}`}>
-                  <div className="flex justify-between items-center border-b-2 border-white/10 pb-2">
+                <div key={idx} className={`flex flex-col gap-3 group p-4 border-2 transition-colors ${isCompleted ? 'border-main bg-surface' : 'border-border hover:border-main'}`}>
+                  <div className={`flex justify-between items-center border-b-2 pb-2 ${isCompleted ? 'border-neutral-black/20' : 'border-border'}`}>
                     <div className="flex items-center gap-3">
                       {isCompleted ? (
-                        <CheckSquare className="w-8 h-8 text-main" />
+                        <CheckSquare className="w-8 h-8 text-neutral-black" />
                       ) : (
-                        <Square className="w-8 h-8 text-white/40" />
+                        <Square className="w-8 h-8 text-text-secondary opacity-40" />
                       )}
-                      <span className={`text-2xl sm:text-3xl font-black italic uppercase tracking-tighter ${isCompleted ? 'text-main' : 'text-white'}`}>
+                      <span className={`text-2xl sm:text-3xl font-black italic uppercase tracking-tighter ${isCompleted ? 'text-neutral-black' : 'text-text-main'}`}>
                         {step.exercise?.name ?? step.exerciseName ?? 'Exercise'}
                       </span>
                     </div>
                     
                     <div className="flex flex-col items-end">
-                      <span className="text-[10px] font-bold text-white/40 uppercase">{t('quest_view.progress')}</span>
-                      <span className={`text-2xl sm:text-3xl font-black italic ${isCompleted ? 'text-main' : 'text-white'}`}>
-                        {progress} <span className="text-lg text-white/50">/ {target}</span>
+                      <span className={`text-[10px] font-bold uppercase ${isCompleted ? 'text-neutral-black/60' : 'text-text-secondary opacity-40'}`}>{t('quest_view.progress')}</span>
+                      <span className={`text-2xl sm:text-3xl font-black italic ${isCompleted ? 'text-neutral-black' : 'text-text-main'}`}>
+                        {progress} <span className={`text-lg ${isCompleted ? 'text-neutral-black/40' : 'text-text-secondary opacity-50'}`}>/ {target}</span>
                       </span>
                     </div>
                   </div>
@@ -179,21 +179,30 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
                     <button 
                       onClick={() => handleDecrement(idx)}
                       disabled={isCompleted && progress === target ? false : progress === 0}
-                      className="w-12 bg-white/5 border-2 border-white/20 hover:border-red-500 hover:bg-red-500/10 p-3 text-xl font-black italic transition-all text-white/80 hover:text-red-500 shadow-[2px_2px_0px_transparent] hover:shadow-[2px_2px_0px_var(--red-500)]"
+                      className={`w-12 border-2 p-3 text-xl font-black italic transition-all shadow-[2px_2px_0px_transparent]
+                        ${isCompleted 
+                          ? 'bg-neutral-black/10 border-neutral-black/20 text-neutral-black hover:bg-red-600 hover:text-white hover:border-red-500' 
+                          : 'bg-surface border-border text-text-secondary hover:border-red-500 hover:bg-red-600 hover:text-white'}`}
                     >
                       -
                     </button>
                     <button 
                       onClick={() => handleIncrement(idx, step, 1)}
                       disabled={isCompleted}
-                      className="flex-1 bg-white/5 border-2 border-white/20 hover:border-main hover:bg-main/10 p-3 text-base font-black italic transition-all text-white/80 hover:text-main shadow-[4px_4px_0px_transparent] hover:shadow-[4px_4px_0px_var(--main-color)]"
+                      className={`flex-1 border-2 p-3 text-base font-black italic transition-all shadow-[4px_4px_0px_transparent]
+                        ${isCompleted
+                          ? 'bg-neutral-black/10 border-neutral-black/20 text-neutral-black'
+                          : 'bg-surface border-border text-text-secondary hover:border-main hover:bg-main hover:text-neutral-black'}`}
                     >
                       +1
                     </button>
                     <button 
                       onClick={() => handleIncrement(idx, step, 5)}
                       disabled={isCompleted}
-                      className="flex-1 bg-white/5 border-2 border-white/20 hover:border-main hover:bg-main/10 p-3 text-base font-black italic transition-all text-white/80 hover:text-main shadow-[4px_4px_0px_transparent] hover:shadow-[4px_4px_0px_var(--main-color)]"
+                      className={`flex-1 border-2 p-3 text-base font-black italic transition-all shadow-[4px_4px_0px_transparent]
+                        ${isCompleted
+                          ? 'bg-neutral-black/10 border-neutral-black/20 text-neutral-black'
+                          : 'bg-surface border-border text-text-secondary hover:border-main hover:bg-main hover:text-neutral-black'}`}
                     >
                       +5
                     </button>
@@ -206,12 +215,12 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
 
         {hasStarted && (
           <div className="text-center space-y-6">
-            <div className="bg-white/5 p-4 border-2 border-dashed border-white/20">
-              <div className="flex items-center justify-center gap-4 text-5xl font-black italic text-white tracking-widest">
+            <div className="bg-surface p-4 border-2 border-dashed border-border shadow-inner">
+              <div className="flex items-center justify-center gap-4 text-5xl font-black italic text-text-main tracking-widest">
                 <Timer className="w-10 h-10 text-main animate-pulse" />
                 {formatTime(seconds)}
               </div>
-              <p className="text-[10px] text-white/30 uppercase font-black italic mt-2 tracking-widest">
+              <p className="text-[10px] text-text-secondary opacity-30 uppercase font-black italic mt-2 tracking-widest">
                 {t('quest_view.elapsed')}
               </p>
             </div>
@@ -221,8 +230,8 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
               disabled={!allCompleted}
               className={`w-full font-black py-5 text-xl uppercase italic tracking-[0.3em] transition-all transform flex items-center justify-center gap-3
                 ${allCompleted 
-                  ? 'bg-main text-black hover:bg-white hover:scale-[1.02] active:scale-[0.98] shadow-[8px_8px_0px_white] hover:shadow-[8px_8px_0px_var(--main-color)] cursor-pointer' 
-                  : 'bg-white/10 text-white/30 border-2 border-white/20 cursor-not-allowed'
+                  ? 'bg-main text-neutral-black hover:bg-neutral-white hover:scale-[1.02] active:scale-[0.98] shadow-[8px_8px_0px_var(--neutral-white)] hover:shadow-[8px_8px_0px_var(--main-color)] cursor-pointer' 
+                  : 'bg-surface text-text-secondary opacity-30 border-2 border-border cursor-not-allowed'
                 }
               `}
             >

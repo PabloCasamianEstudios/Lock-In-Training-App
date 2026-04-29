@@ -39,7 +39,7 @@ export default function LeaderboardView({
   return (
     <>
       <div className="md:col-span-5 lg:col-span-4 mb-12 md:mb-0 md:sticky md:top-4">
-        <h2 className="text-center text-4xl font-black italic tracking-tighter text-white mb-12 uppercase border-b-2 border-white/5 pb-4">
+        <h2 className="text-center text-4xl font-black italic tracking-tighter text-text-main mb-12 uppercase border-b-2 border-border pb-4">
           {titlePrefix} <span className="text-main">{titleMain}</span>
         </h2>
 
@@ -64,13 +64,13 @@ export default function LeaderboardView({
               <Star className="w-5 h-5 fill-main" />
               {t('rankings.live_status')}
             </div>
-            <p className="text-[9px] text-white/40 mt-2 font-bold uppercase">{t('rankings.performance_tracked')}</p>
+            <p className="text-[9px] text-text-secondary mt-2 font-bold uppercase">{t('rankings.performance_tracked')}</p>
           </div>
         )}
       </div>
 
       <div className="md:col-span-7 lg:col-span-8">
-        <BrutalistCard padding="p-0" className="shadow-[12px_12px_0px_white] border-4 border-white">
+        <BrutalistCard padding="p-0" className="shadow-[12px_12px_0px_var(--neutral-white)] border-4 border-neutral-white">
           {rows.map((player, i) => (
             <RankRow
               key={player ? player.id : `empty_rank_${i}`}

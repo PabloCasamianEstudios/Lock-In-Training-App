@@ -58,7 +58,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
   const [activeTab, setActiveTab] = useState<string>('home');
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
   const [navParams, setNavParams] = useState<any>({});
-  const [isDailyDone, setIsDailyDone] = useState<boolean>(true); 
+  const [isDailyDone, setIsDailyDone] = useState<boolean>(true);
 
   const refreshDailyStatus = () => {
     if (user?.id && !user.isGuest) {
@@ -101,7 +101,6 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
 
   return (
     <div className="hub-root">
-      <div className="absolute inset-0 bg-grid opacity-5 pointer-events-none" />
 
       {/* --- DESKTOP TOP NAVBAR --- */}
       <nav className="hub-navbar">
@@ -132,12 +131,12 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
               onClick={() => handleNavigate('play')}
               disabled={isGuest}
               className={`ml-4 px-4 py-1.5 font-black italic tracking-widest text-sm transform -skew-x-12 border-2 transition-all flex items-center gap-2
-                ${activeTab === 'play' 
-                  ? 'bg-main text-black border-main shadow-[4px_4px_0_white]' 
-                  : 'bg-black text-main border-main hover:bg-main hover:text-black hover:-translate-y-1 shadow-[4px_4px_0_var(--main-color)]'
+                ${activeTab === 'play'
+                  ? 'bg-main text-black border-main shadow-[4px_4px_0_white]'
+                  : 'bg-(--main-color) text-main border-main hover:bg-main hover:text-black hover:-translate-y-1 shadow-[4px_4px_0_var(--main-color)]'
                 }
                 ${isGuest || (!isDailyDone && activeTab !== 'play') ? 'grayscale opacity-50' : ''}
-                ${!isDailyDone && !isGuest ? 'border-red-500 text-red-500 shadow-[4px_4px_0_rgba(239,68,68,0.5)]' : ''}
+                ${!isDailyDone && !isGuest ? 'border-red-500 text-red-500 shadow-[4px_4px_0_#ef4444]' : ''}
               `}
             >
               <Swords className="w-4 h-4" />
@@ -201,18 +200,18 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
             {isRestrictedByGuest ? (
               <RestrictedAccess onLogout={onLogout} />
             ) : isRestrictedByDaily ? (
-              <RestrictedAccess 
-                onLogout={refreshDailyStatus} 
+              <RestrictedAccess
+                onLogout={refreshDailyStatus}
                 title={t('adventure.daily_pending')}
                 message={t('adventure.daily_lock_msg')}
                 buttonText={t('adventure.verify_status')}
               />
             ) : (
-              <ActivePage 
-                user={user} 
-                profile={profile} 
+              <ActivePage
+                user={user}
+                profile={profile}
                 onLogout={onLogout}
-                onNavigate={handleNavigate} 
+                onNavigate={handleNavigate}
                 fetchProfile={async (uid: number) => {
                   if (fetchProfile) await fetchProfile(uid);
                   window.dispatchEvent(new CustomEvent('quest_completed'));

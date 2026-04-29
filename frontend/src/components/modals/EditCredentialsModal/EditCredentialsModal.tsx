@@ -72,15 +72,16 @@ const EditCredentialsModal: FC<EditCredentialsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-md bg-zinc-900 border-4 border-white shadow-[8px_8px_0px_white]">
-        <div className="p-4 border-b-4 border-white flex justify-between items-center bg-black">
-          <h2 className="text-white font-black italic uppercase tracking-widest text-xl">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="modal-overlay" onClick={onClose} />
+      <div className="w-full max-w-md bg-surface border-4 border-neutral-white shadow-[8px_8px_0px_var(--neutral-white)]">
+        <div className="p-4 border-b-4 border-neutral-white flex justify-between items-center bg-neutral-black">
+          <h2 className="text-text-main font-black italic uppercase tracking-widest text-xl">
             EDITAR DATOS
           </h2>
           <button
             onClick={onClose}
-            className="text-white/50 hover:text-white hover:scale-110 transition-all"
+            className="text-text-secondary opacity-50 hover:opacity-100 hover:text-text-main hover:scale-110 transition-all"
           >
             <X className="w-6 h-6" />
           </button>
@@ -88,7 +89,7 @@ const EditCredentialsModal: FC<EditCredentialsModalProps> = ({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
-            <div className="bg-red-500/10 border-2 border-red-500 text-red-500 p-3 font-black text-xs uppercase tracking-widest italic">
+            <div className="bg-red-600 border-2 border-red-500 text-neutral-black p-3 font-black text-xs uppercase tracking-widest italic">
               {error}
             </div>
           )}
@@ -101,7 +102,7 @@ const EditCredentialsModal: FC<EditCredentialsModalProps> = ({
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full bg-black border-2 border-white/20 p-3 text-white font-black uppercase italic focus:border-main outline-none transition-colors"
+              className="w-full bg-neutral-black border-2 border-border p-3 text-text-main font-black uppercase italic focus:border-main outline-none transition-colors"
             />
           </div>
 
@@ -113,7 +114,7 @@ const EditCredentialsModal: FC<EditCredentialsModalProps> = ({
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-black border-2 border-white/20 p-3 text-white font-black uppercase italic focus:border-main outline-none transition-colors"
+              className="w-full bg-neutral-black border-2 border-border p-3 text-text-main font-black uppercase italic focus:border-main outline-none transition-colors"
             />
           </div>
 
@@ -126,14 +127,14 @@ const EditCredentialsModal: FC<EditCredentialsModalProps> = ({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="DEJAR EN BLANCO PARA NO CAMBIAR"
-              className="w-full bg-black border-2 border-white/20 p-3 text-white font-black uppercase italic focus:border-main outline-none transition-colors placeholder:text-white/20"
+              className="w-full bg-neutral-black border-2 border-border p-3 text-text-main font-black uppercase italic focus:border-main outline-none transition-colors placeholder:text-text-secondary"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-main hover:bg-white text-black font-black italic uppercase py-4 border-2 border-transparent hover:border-black transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="w-full bg-main hover:bg-neutral-white text-neutral-black font-black italic uppercase py-4 border-2 border-transparent hover:border-neutral-black transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group shadow-[4px_4px_0px_var(--border)]"
           >
             {loading ? <Activity className="w-5 h-5 animate-spin" /> : 'GUARDAR CAMBIOS'}
           </button>

@@ -16,10 +16,10 @@ const RANK_COLORS: Record<string, string> = {
   B: 'text-purple-400',
   C: 'text-blue-400',
   D: 'text-green-400',
-  E: 'text-white/40',
+  E: 'text-text-secondary',
 };
 
-const rankColor = (rank?: string) => RANK_COLORS[rank ?? 'E'] ?? 'text-white/40';
+const rankColor = (rank?: string) => RANK_COLORS[rank ?? 'E'] ?? 'text-text-secondary';
 
 interface PodiumCardProps {
   player: RankingUserDTO;
@@ -52,7 +52,7 @@ export default function PodiumCard({
           src={player.profilePic}
           username={player.username}
           size={isCenter ? 'w-20 h-20' : 'w-14 h-14'}
-          className={`border-2 ${isCurrentUser ? 'border-main' : 'border-white/60'}`}
+          className={`border-2 ${isCurrentUser ? 'border-main' : 'border-border'}`}
         />
         {isCurrentUser && (
           <span className="absolute -top-2 -right-2 w-5 h-5 bg-main flex items-center justify-center text-black text-[8px] font-black border border-black">
@@ -61,13 +61,13 @@ export default function PodiumCard({
         )}
       </div>
       <div className="text-center leading-tight">
-        <p className={`text-xs font-black uppercase italic leading-none ${isCenter ? 'text-white' : 'text-white/80'}`}>
+        <p className={`text-xs font-black uppercase italic leading-none ${isCenter ? 'text-text-main' : 'text-text-main/80'}`}>
           {player.username}
         </p>
-        <p className="text-[9px] italic text-white/40 mt-0.5">"{player.title || 'Sin título'}"</p>
+        <p className="text-[9px] italic text-text-secondary mt-0.5">"{player.title || 'Sin título'}"</p>
         <div className="flex flex-col items-center gap-0.5 mt-1">
           <div className="flex gap-1.5">
-            <span className="text-[8px] font-black text-white/40">TP: {player.totalPoints}</span>
+            <span className="text-[8px] font-black text-text-secondary">TP: {player.totalPoints}</span>
             {showSeasonPoints && <span className="text-[8px] font-black text-main">SP: {player.seasonPoints}</span>}
           </div>
           <p className={`text-[9px] font-black uppercase ${rankColor(player.rank)}`}>

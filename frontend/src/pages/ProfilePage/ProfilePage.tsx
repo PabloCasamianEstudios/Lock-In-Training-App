@@ -38,7 +38,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
       setLoading(true);
       const isTargetingSelf = !targetId || targetId === user?.id;
 
-      const fetchFriendStatus = (!isTargetingSelf && user?.id) 
+      const fetchFriendStatus = (!isTargetingSelf && user?.id)
         ? socialService.getFriendshipStatus(user.id, targetId!)
         : Promise.resolve({ status: 'ACCEPTED' as const });
 
@@ -93,11 +93,11 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
 
   const handleExportData = () => {
     if (!displayProfile) return;
-    
+
     const dataStr = JSON.stringify(displayProfile, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = `lockin_data_${displayUser?.username || 'user'}_${new Date().toISOString().split('T')[0]}.json`;
@@ -135,8 +135,8 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
 
   if (loading) {
     return (
-      <PageLayout 
-        title={t('profile.title')} 
+      <PageLayout
+        title={t('profile.title')}
         subtitle={t('profile.subtitle_syncing')}
         icon={UserCircle}
       >
@@ -151,24 +151,24 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
   const pageTitle = `${displayUser?.username || t('common.hunter')}'s profile`;
 
   return (
-    <PageLayout 
-      title={pageTitle} 
+    <PageLayout
+      title={pageTitle}
       subtitle={isOwnProfile ? t('profile.terminal') : t('profile.dossier')}
       icon={UserCircle}
     >
       <div className="space-y-12 max-w-6xl mx-auto">
-        <div className="flex flex-col items-center gap-8 border-b-4 border-white/10 pb-12 relative">
+        <div className="flex flex-col items-center gap-8 border-b-4 border-border pb-12 relative">
           <div className="relative group">
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              className="hidden" 
-              accept="image/*" 
-              onChange={handleFileChange} 
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={handleFileChange}
             />
-            <div 
+            <div
               onClick={handleProfilePicClick}
-              className={`w-32 h-32 md:w-48 md:h-48 bg-main rounded-sm transform -rotate-3 overflow-hidden border-4 border-white shadow-[12px_12px_0px_var(--secondary-color)] transition-all duration-500 
+              className={`w-32 h-32 md:w-48 md:h-48 bg-main rounded-sm transform -rotate-3 overflow-hidden border-4 border-neutral-white shadow-[12px_12px_0px_var(--secondary-color)] transition-all duration-500 
                 ${isOwnProfile ? 'cursor-pointer hover:scale-105 hover:rotate-0 hover:border-main' : ''} group`}
             >
               {displayProfile?.profilePic ? (
@@ -177,18 +177,18 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
                 <UserIcon className="w-full h-full text-black p-8 transform rotate-3 group-hover:rotate-0 transition-all duration-500" />
               )}
               {isOwnProfile && (
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Edit2 className="w-8 h-8 text-white" />
+                <div className="absolute inset-0 bg-neutral-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Edit2 className="w-8 h-8 text-neutral-white" />
                 </div>
               )}
             </div>
-            <div className="absolute -bottom-3 -right-3 bg-black border-4 border-white px-5 py-2 font-black text-sm md:text-lg text-main transform -skew-x-12 z-10 shadow-xl">
+            <div className="absolute -bottom-3 -right-3 bg-main border-4 border-neutral-white px-5 py-2 font-black text-sm md:text-lg text-neutral-black transform -skew-x-12 z-10 shadow-xl">
               {t('profile.level')} {displayProfile?.level || 1}
             </div>
           </div>
-          
+
           <div className="space-y-4 text-center">
-            <h2 className="text-4xl md:text-7xl font-black italic uppercase text-white tracking-tighter leading-none">
+            <h2 className="text-4xl md:text-7xl font-black italic uppercase text-text-main tracking-tighter leading-none">
               {displayUser?.username || 'HUNTER_X'}
             </h2>
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -196,19 +196,19 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
                 "{equippedTitle}"
               </span>
               {isOwnProfile && (
-                <button 
+                <button
                   onClick={() => setIsTitlePickerOpen(true)}
-                  className="p-1 hover:bg-white/10 text-white/40 hover:text-main transition-all rounded-sm"
+                  className="p-1 hover:bg-surface text-text-secondary hover:text-main transition-all rounded-sm"
                 >
                   <Edit2 className="w-4 h-4" />
                 </button>
               )}
             </div>
             <div className="flex flex-wrap gap-6 justify-center items-center">
-              <span className="text-[10px] md:text-xs bg-white text-black px-4 py-1 font-black uppercase tracking-widest italic transform -skew-x-12">
+              <span className="text-[10px] md:text-xs bg-neutral-white text-neutral-black px-4 py-1 font-black uppercase tracking-widest italic transform -skew-x-12">
                 {displayUser?.email || 'OFFLINE_PROTOCOL'}
               </span>
-              <span className="text-[10px] md:text-xs bg-main text-black px-4 py-1 font-black uppercase tracking-widest italic transform -skew-x-12 shadow-[4px_4px_0px_white]">
+              <span className="text-[10px] md:text-xs bg-main text-neutral-black px-4 py-1 font-black uppercase tracking-widest italic transform -skew-x-12 shadow-[4px_4px_0px_var(--neutral-white)]">
                 {t('common.rank')} {displayProfile?.rank || 'E'}
               </span>
             </div>
@@ -216,15 +216,15 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
             {!isOwnProfile && displayUser && (
               <div className="mt-8">
                 {friendStatus === 'NONE' || friendStatus === 'REJECTED' ? (
-                  <button 
+                  <button
                     onClick={handleAddFriend}
                     disabled={actionLoading}
-                    className="bg-main text-black border-4 border-main px-10 py-4 font-black italic uppercase tracking-widest text-sm hover:bg-white hover:border-white transition-all disabled:opacity-50 shadow-[8px_8px_0px_white] active:shadow-none active:translate-x-1 active:translate-y-1"
+                    className="bg-main text-neutral-black border-4 border-main px-10 py-4 font-black italic uppercase tracking-widest text-sm hover:bg-neutral-white hover:border-neutral-white transition-all disabled:opacity-50 shadow-[8px_8px_0px_var(--neutral-white)] active:shadow-none active:translate-x-1 active:translate-y-1"
                   >
                     {actionLoading ? t('profile.processing') : t('profile.add_friend')}
                   </button>
                 ) : friendStatus === 'PENDING' ? (
-                  <button disabled className="bg-white/10 text-white/40 border-4 border-white/20 px-10 py-4 font-black italic uppercase tracking-widest text-sm transform -skew-x-12">
+                  <button disabled className="bg-surface text-text-secondary border-4 border-border px-10 py-4 font-black italic uppercase tracking-widest text-sm transform -skew-x-12">
                     {t('profile.request_sent')}
                   </button>
                 ) : (
@@ -238,13 +238,13 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
         </div>
 
         <div className="space-y-8">
-          <nav className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-8 border-b border-white/10">
+          <nav className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-8 border-b border-border">
             <button
               onClick={() => setActiveTab('STATS')}
               className={`px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap
                 ${activeTab === 'STATS'
-                  ? 'bg-main text-black border-main shadow-[4px_4px_0px_white]'
-                  : 'bg-black text-white/40 border-white/20 hover:border-white/40'}`}
+                  ? 'bg-main text-neutral-black border-main shadow-[4px_4px_0px_var(--neutral-white)]'
+                  : 'bg-neutral-black text-text-secondary border-border hover:border-text-secondary'}`}
             >
               STATS
             </button>
@@ -252,8 +252,8 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
               onClick={() => setActiveTab('ACHIEVEMENTS')}
               className={`px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap
                 ${activeTab === 'ACHIEVEMENTS'
-                  ? 'bg-main text-black border-main shadow-[4px_4px_0px_white]'
-                  : 'bg-black text-white/40 border-white/20 hover:border-white/40'}`}
+                  ? 'bg-main text-neutral-black border-main shadow-[4px_4px_0px_var(--neutral-white)]'
+                  : 'bg-neutral-black text-text-secondary border-border hover:border-text-secondary'}`}
             >
               {t('profile.achievements')}
             </button>
@@ -261,13 +261,13 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
               <>
                 <button
                   onClick={() => setIsSettingsOpen(true)}
-                  className="px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap bg-black text-white/40 border-white/20 hover:border-white/40"
+                  className="px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap bg-neutral-black text-text-secondary border-border hover:border-text-secondary"
                 >
                   {t('profile.system_settings')}
                 </button>
                 <button
                   onClick={onLogout}
-                  className="px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap bg-black text-red-500/80 border-red-500/50 hover:bg-red-500/10 hover:border-red-500"
+                  className="px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap bg-neutral-black text-red-500/80 border-red-500/50 hover:bg-red-500/10 hover:border-red-500"
                 >
                   {t('profile.emergency_logout')}
                 </button>
@@ -320,24 +320,24 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
                 onClick={() => handleEquipTitle(t.titleId)}
                 disabled={actionLoading || t.isEquipped}
                 className={`w-full p-6 border-4 text-left transition-all group flex items-center gap-4
-                  ${t.isEquipped 
-                    ? 'bg-main border-main text-black cursor-default' 
-                    : 'bg-black border-white/10 text-white hover:border-main active:translate-x-1 active:translate-y-1'
+                  ${t.isEquipped
+                    ? 'bg-main border-main text-neutral-black cursor-default'
+                    : 'bg-neutral-black border-border text-text-main hover:border-main active:translate-x-1 active:translate-y-1'
                   }
                   ${actionLoading ? 'opacity-50 pointer-events-none' : ''}
                 `}
               >
-                <div className={`p-3 border-2 ${t.isEquipped ? 'border-black' : 'border-white/20 group-hover:border-main'}`}>
+                <div className={`p-3 border-2 ${t.isEquipped ? 'border-neutral-black' : 'border-border group-hover:border-main'}`}>
                   <Trophy className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
                   <p className="font-black italic uppercase tracking-tighter text-lg leading-none">{t.name}</p>
-                  <p className={`text-[10px] font-bold uppercase mt-1 ${t.isEquipped ? 'text-black/60' : 'text-white/40'}`}>
+                  <p className={`text-[10px] font-bold uppercase mt-1 ${t.isEquipped ? 'text-neutral-black opacity-60' : 'text-text-secondary'}`}>
                     {t.description}
                   </p>
                 </div>
                 {t.isEquipped && (
-                  <span className="text-[10px] font-black italic uppercase bg-black text-main px-2 py-1">EQUIPADO</span>
+                  <span className="text-[10px] font-black italic uppercase bg-neutral-black text-main px-2 py-1">EQUIPADO</span>
                 )}
               </button>
             ))
@@ -357,12 +357,12 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
               <Globe className="w-5 h-5" />
               <h3 className="text-sm font-black uppercase italic tracking-widest">{t('settings.language')}</h3>
             </div>
-            
+
             <div className="relative group">
-              <select 
+              <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value as any)}
-                className="w-full bg-zinc-900 border-4 border-white/10 p-5 text-white font-black italic uppercase appearance-none focus:border-main outline-none transition-all cursor-pointer group-hover:border-white/20"
+                className="w-full bg-neutral-black border-4 border-border p-5 text-black font-black italic uppercase appearance-none focus:border-main outline-none transition-all cursor-pointer group-hover:border-text-secondary"
               >
                 <option value="es">{t('settings.spanish')}</option>
                 <option value="eng">{t('settings.english')}</option>
@@ -371,7 +371,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
                 ▼
               </div>
             </div>
-            <p className="text-[10px] text-white/20 font-black uppercase italic tracking-[0.2em]">
+            <p className="text-[10px] text-text-secondary opacity-40 font-black uppercase italic tracking-[0.2em]">
               {t('settings.select_language')}
             </p>
           </div>
@@ -381,19 +381,19 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
               {theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
               <h3 className="text-sm font-black uppercase italic tracking-widest">{t('settings.theme')}</h3>
             </div>
-            
-            <div 
+
+            <div
               onClick={toggleTheme}
-              className="w-full bg-zinc-900 border-4 border-white/10 p-4 flex items-center justify-between cursor-pointer hover:border-main transition-all group"
+              className="w-full bg-neutral-black border-4 border-border p-4 flex items-center justify-between cursor-pointer hover:border-main transition-all group"
             >
-              <span className="text-white font-black italic uppercase">
+              <span className="text-text-main font-black italic uppercase">
                 {theme === 'dark' ? t('settings.dark') : t('settings.light')}
               </span>
-              <div className={`w-14 h-7 border-2 border-white/20 relative transition-all ${theme === 'light' ? 'bg-main border-main' : 'bg-black'}`}>
-                <div className={`absolute top-0.5 bottom-0.5 w-5 transition-all ${theme === 'light' ? 'right-0.5 bg-black' : 'left-0.5 bg-main'}`} />
+              <div className={`w-14 h-7 border-2 border-border relative transition-all ${theme === 'light' ? 'bg-main border-main' : 'bg-neutral-black'}`}>
+                <div className={`absolute top-0.5 bottom-0.5 w-5 transition-all ${theme === 'light' ? 'right-0.5 bg-neutral-black' : 'left-0.5 bg-main'}`} />
               </div>
             </div>
-            <p className="text-[10px] text-white/20 font-black uppercase italic tracking-[0.2em]">
+            <p className="text-[10px] text-text-secondary opacity-40 font-black uppercase italic tracking-[0.2em]">
               {theme === 'dark' ? 'PROTOCOL: NIGHT_VISION_ENABLED' : 'PROTOCOL: DAYLIGHT_OVERRIDE'}
             </p>
           </div>
@@ -404,12 +404,12 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
                 <ShieldCheck className="w-5 h-5" />
                 <h3 className="text-sm font-black uppercase italic tracking-widest">{t('settings.privacy_policy')}</h3>
               </div>
-              <button 
+              <button
                 onClick={() => {
                   setIsSettingsOpen(false);
                   onNavigate?.('privacy');
                 }}
-                className="w-full bg-zinc-900 border-4 border-white/10 p-5 text-white font-black italic uppercase hover:bg-white/5 hover:border-main transition-all flex items-center justify-center gap-3 group"
+                className="w-full bg-neutral-black border-4 border-border p-5 text-text-main font-black italic uppercase hover:bg-surface hover:border-main transition-all flex items-center justify-center gap-3 group"
               >
                 VIEW PROTOCOL
               </button>
@@ -420,34 +420,34 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
                 <Download className="w-5 h-5" />
                 <h3 className="text-sm font-black uppercase italic tracking-widest">{t('settings.user_manual')}</h3>
               </div>
-              <a 
-                href="/manual.pdf" 
+              <a
+                href="/manual.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full bg-zinc-900 border-4 border-white/10 p-5 text-white font-black italic uppercase hover:bg-white/5 hover:border-main transition-all flex items-center justify-center gap-3 group text-center no-underline"
+                className="w-full bg-neutral-black border-4 border-border p-5 text-text-main font-black italic uppercase hover:bg-surface hover:border-main transition-all flex items-center justify-center gap-3 group text-center no-underline"
               >
                 DOWNLOAD PDF
               </a>
             </div>
           </div>
 
-          <div className="h-1 bg-white/5 w-full my-4" />
+          <div className="h-1 bg-border/20 w-full my-4" />
 
           <div className="space-y-4">
             <div className="flex items-center gap-3 text-main mb-2">
               <UserIcon className="w-5 h-5" />
               <h3 className="text-sm font-black uppercase italic tracking-widest">CUENTA</h3>
             </div>
-            <button 
+            <button
               onClick={() => {
                 setIsSettingsOpen(false);
                 setIsEditModalOpen(true);
               }}
-              className="w-full bg-zinc-900 border-4 border-white/10 p-5 text-white font-black italic uppercase hover:bg-white/5 hover:border-main transition-all flex items-center justify-center gap-3 group"
+              className="w-full bg-neutral-black border-4 border-border p-5 text-text-main font-black italic uppercase hover:bg-surface hover:border-main transition-all flex items-center justify-center gap-3 group"
             >
               EDITAR DATOS
             </button>
-            <button 
+            <button
               onClick={() => {
                 setIsSettingsOpen(false);
                 setIsDeleteModalOpen(true);
@@ -458,28 +458,28 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
             </button>
           </div>
 
-          <div className="h-1 bg-white/5 w-full my-4" />
+          <div className="h-1 bg-border/20 w-full my-4" />
 
           <div className="space-y-4">
             <div className="flex items-center gap-3 text-main mb-2">
               <Download className="w-5 h-5" />
               <h3 className="text-sm font-black uppercase italic tracking-widest">BACKUP DATA</h3>
             </div>
-            <button 
+            <button
               onClick={handleExportData}
-              className="w-full bg-zinc-900 border-4 border-white/10 p-5 text-white font-black italic uppercase hover:bg-white/5 hover:border-main transition-all flex items-center justify-center gap-3 group"
+              className="w-full bg-neutral-black border-4 border-border p-5 text-text-main font-black italic uppercase hover:bg-surface hover:border-main transition-all flex items-center justify-center gap-3 group"
             >
               EXPORT TO JSON
               <Download className="w-4 h-4 text-main group-hover:scale-120 transition-transform" />
             </button>
-            <p className="text-[9px] text-white/20 font-black uppercase italic tracking-[0.1em] text-center">
+            <p className="text-[9px] text-text-secondary opacity-40 font-black uppercase italic tracking-[0.1em] text-center">
               DESCARGA TU EXPEDIENTE DE CAZADOR COMPLETO
             </p>
           </div>
 
-          <button 
+          <button
             onClick={() => setIsSettingsOpen(false)}
-            className="w-full bg-main text-black font-black uppercase italic py-4 border-4 border-main shadow-[8px_8px_0px_white] hover:bg-white hover:border-white transition-all active:translate-x-1 active:translate-y-1 active:shadow-none"
+            className="w-full bg-main text-neutral-black font-black uppercase italic py-4 border-4 border-main shadow-[8px_8px_0px_var(--neutral-white)] hover:bg-neutral-white hover:text-neutral-black hover:border-neutral-white transition-all active:translate-x-1 active:translate-y-1 active:shadow-none"
           >
             {t('settings.save')}
           </button>

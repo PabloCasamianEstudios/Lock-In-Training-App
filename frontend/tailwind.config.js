@@ -6,18 +6,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        main: '#F58027',
-        'neon-blue': '#00f2ff',
-        'neon-purple': '#bc13fe',
+        main: 'var(--main-color)',
+        'main-rgb': 'var(--main-color-rgb)',
         secondary: 'var(--secondary-color)',
-        back: 'var(--background)',
-        'back-secondary': 'var(--secondary-back)',
+        'secondary-rgb': 'var(--secondary-color-rgb)',
         'text-main': 'var(--text)',
         'text-secondary': 'var(--secondary-text)',
+        surface: 'var(--surface)',
+        'neutral-black': 'var(--neutral-black)',
+        'neutral-white': 'var(--neutral-white)',
+        border: 'var(--border)',
         alert: 'var(--alert-txt)',
         error: 'var(--error-text)',
         good: 'var(--good)',
         bad: 'var(--bad)',
+        'overlay-bg': 'var(--overlay-bg)',
       },
       fontFamily: {
         console: ['"JetBrains Mono"', 'monospace'],

@@ -69,25 +69,26 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
   if (!profile.statPoints || profile.statPoints <= 0) return null;
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
+      <div className="modal-overlay" />
       <motion.div
         initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        className="w-full max-w-md md:max-w-3xl bg-zinc-900 border-4 border-main shadow-[8px_8px_0px_rgba(var(--main-rgb),0.3)] flex flex-col font-rpg max-h-[90vh]"
+        className="w-full max-w-md md:max-w-3xl bg-surface border-4 border-main shadow-[8px_8px_0px_var(--neutral-white)] flex flex-col font-rpg max-h-[90vh]"
       >
         {/* Header */}
         <div className="bg-main p-4 flex items-center gap-3">
-          <Trophy className="w-8 h-8 text-black animate-bounce" />
+          <Trophy className="w-8 h-8 text-neutral-black animate-bounce" />
           <div>
-            <h2 className="text-xl font-black text-black italic leading-none uppercase">{t('level_up.title')}</h2>
-            <p className="text-[10px] font-bold text-black/60 uppercase tracking-widest mt-1">{t('level_up.assign_points')}</p>
+            <h2 className="text-xl font-black text-neutral-black italic leading-none uppercase">{t('level_up.title')}</h2>
+            <p className="text-[10px] font-bold text-neutral-black opacity-60 uppercase tracking-widest mt-1">{t('level_up.assign_points')}</p>
           </div>
         </div>
 
         <div className="p-6 space-y-6 overflow-y-auto custom-scrollbar">
           {/* Points Counter */}
-          <div className="flex items-center justify-between bg-black/40 border-2 border-white/10 p-4 rounded-sm">
-            <span className="text-xs font-black text-white/40 uppercase tracking-tighter">{t('level_up.available_points')}</span>
+          <div className="flex items-center justify-between bg-neutral-black border-2 border-border p-4 rounded-sm">
+            <span className="text-xs font-black text-text-main uppercase tracking-tighter">{t('level_up.available_points')}</span>
             <span className="text-4xl font-black text-main italic pr-2">{availablePoints}</span>
           </div>
 
@@ -105,32 +106,32 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
                 <motion.div
                   key={key}
                   layout
-                  className={`relative bg-black border-4 ${isMaxed ? 'border-main' : 'border-white/10'} p-4 shadow-[6px_6px_0px_rgba(0,0,0,0.5)]`}
+                  className={`relative bg-neutral-black border-4 ${isMaxed ? 'border-main' : 'border-border'} p-4 shadow-[6px_6px_0px_var(--border)]`}
                 >
                   <div className="flex justify-between items-center mb-3">
                     <div className="flex items-center gap-3">
-                      <Icon className={`w-5 h-5 ${isMaxed ? 'text-main' : 'text-white'}`} />
-                      <span className={`font-black italic uppercase text-xs ${isMaxed ? 'text-main' : 'text-white/60'}`}>{label}</span>
+                      <Icon className={`w-5 h-5 ${isMaxed ? 'text-main' : 'text-text-main'}`} />
+                      <span className={`font-black italic uppercase text-xs ${isMaxed ? 'text-main' : 'text-text-main'}`}>{label}</span>
                     </div>
-                    <span className="text-xl font-black italic text-white tracking-widest">
+                    <span className="text-xl font-black italic text-text-main tracking-widest">
                       {currentValue}
                       {addedValue > 0 && <span className="text-main ml-2">+{addedValue}</span>}
-                      <span className="text-[10px] text-white/20 ml-1">/ 100</span>
+                      <span className="text-[10px] text-text-secondary opacity-20 ml-1">/ 100</span>
                     </span>
                   </div>
 
                   {/* Bar Container */}
-                  <div className="h-4 bg-white/5 border-2 border-white/10 relative overflow-hidden">
+                  <div className="h-4 bg-surface border-2 border-border relative overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${currentValue}%` }}
-                      className="absolute inset-y-0 left-0 bg-white/20"
+                      className="absolute inset-y-0 left-0 bg-text-main opacity-20"
                     />
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${addedValue}%` }}
                       style={{ left: `${currentValue}%` }}
-                      className="absolute inset-y-0 bg-main shadow-[0_0_15px_rgba(var(--main-rgb),0.5)]"
+                      className="absolute inset-y-0 bg-main"
                     />
                   </div>
 
@@ -138,14 +139,14 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
                     <button
                       onClick={() => handleDecrement(key)}
                       disabled={!points[key]}
-                      className="w-10 h-10 border-2 border-white/20 flex items-center justify-center text-white/40 hover:bg-white/10 disabled:opacity-30"
+                      className="w-10 h-10 border-2 border-border flex items-center justify-center text-text-secondary opacity-40 hover:bg-surface disabled:opacity-30"
                     >
                       <ChevronDown className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => handleIncrement(key)}
                       disabled={availablePoints <= 0 || isMaxed}
-                      className="w-10 h-10 bg-white text-black flex items-center justify-center hover:bg-main hover:text-white disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-black"
+                      className="w-10 h-10 bg-neutral-white text-neutral-black flex items-center justify-center hover:bg-main hover:text-neutral-black disabled:opacity-30 disabled:hover:bg-neutral-white disabled:hover:text-neutral-black"
                     >
                       <ChevronUp className="w-5 h-5" />
                     </button>
@@ -161,8 +162,8 @@ export const LevelUpModal: FC<LevelUpModalProps> = ({ profile, onDistribute }) =
             disabled={availablePoints > 0 || isSubmitting}
             className={`w-full py-4 font-black uppercase italic tracking-widest transition-all
               ${availablePoints === 0
-                ? 'bg-main text-black hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_0px_#000]'
-                : 'bg-zinc-800 text-white/20 cursor-not-allowed'}`}
+                ? 'bg-main text-neutral-black hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_0px_var(--neutral-white)]'
+                : 'bg-surface text-text-secondary opacity-20 cursor-not-allowed border-2 border-border'}`}
           >
             {isSubmitting ? t('level_up.awakening') : availablePoints > 0 ? t('level_up.assign_more').replace('{{n}}', String(availablePoints)) : t('level_up.confirm')}
           </button>

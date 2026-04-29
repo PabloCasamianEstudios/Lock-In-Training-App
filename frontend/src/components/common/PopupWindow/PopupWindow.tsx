@@ -1,4 +1,4 @@
-﻿import { type FC, type ReactNode, useEffect } from 'react';
+import { type FC, type ReactNode, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -40,22 +40,22 @@ const PopupWindow: FC<PopupWindowProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/90 backdrop-blur-md"
+            className="modal-overlay"
           />
 
           <motion.div 
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className={`relative w-full ${maxWidth} bg-black border-4 border-white shadow-[12px_12px_0px_var(--main-color)] overflow-hidden flex flex-col max-h-[90vh]`}
+            className={`relative w-full ${maxWidth} bg-surface border-4 border-neutral-white shadow-[12px_12px_0px_var(--main-color)] overflow-hidden flex flex-col max-h-[90vh]`}
           >
-            <div className="bg-main p-4 flex justify-between items-center border-b-4 border-white transform origin-left">
-              <h2 className="text-xl font-black italic uppercase tracking-tighter text-black truncate">
+            <div className="bg-main p-4 flex justify-between items-center border-b-4 border-neutral-white transform origin-left">
+              <h2 className="text-xl font-black italic uppercase tracking-tighter text-neutral-black truncate">
                 {title || 'SYSTEM NOTIFICATION'}
               </h2>
               <button 
                 onClick={onClose}
-                className="p-1 hover:bg-black hover:text-white transition-all text-black"
+                className="p-1 hover:bg-neutral-black hover:text-neutral-white transition-all text-neutral-black"
               >
                 <X className="w-5 h-5 stroke-[3px]" />
               </button>
@@ -66,7 +66,7 @@ const PopupWindow: FC<PopupWindowProps> = ({
             </div>
 
             {footer && (
-              <div className="p-4 bg-white/5 border-t-2 border-white/10">
+              <div className="p-4 bg-surface border-t-2 border-border">
                 {footer}
               </div>
             )}

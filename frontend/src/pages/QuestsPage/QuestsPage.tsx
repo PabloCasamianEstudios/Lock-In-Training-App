@@ -81,7 +81,7 @@ const QuestsPage: FC<QuestsPageProps> = ({ user, profile, onNavigate, fetchProfi
   if (error) {
     return (
       <PageLayout title={t('quests.title')} subtitle={t('quests.error')} icon={ScrollText}>
-        <div className="p-10 text-red-500 uppercase font-black text-center mt-20 border-4 border-red-500 bg-red-500/10">Error: {error}</div>
+        <div className="p-10 text-neutral-black uppercase font-black text-center mt-20 border-4 border-red-500 bg-red-600">Error: {error}</div>
       </PageLayout>
     );
   }

@@ -268,7 +268,7 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
         onClick={() => setIsExpanded(!isExpanded)}
         className={`px-4 py-2 flex items-center gap-4 cursor-pointer ${bgClass}`}
       >
-        <span className={`px-2 py-0.5 text-[10px] font-black rounded-sm text-white min-w-[60px] text-center ${colorClass}`}>
+        <span className={`px-2 py-0.5 text-[10px] font-black rounded-sm text-neutral-white min-w-[60px] text-center ${colorClass}`}>
           {method.toUpperCase()}
         </span>
         <span className="text-xs font-bold font-mono">
@@ -298,13 +298,13 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
       </div>
 
       {isExpanded && (
-        <div className="p-4 bg-black/40 font-mono text-[11px]">
-          <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+        <div className="p-4 bg-neutral-black/40 font-mono text-[11px]">
+          <div className="flex justify-between items-center mb-4 border-b border-border pb-2">
             <span className="opacity-70 uppercase tracking-widest text-[9px]">Parameters & Payload</span>
             <button
               onClick={execute}
               disabled={loading}
-              className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded text-[9px] font-black italic text-orange-500 transition-all border border-white/10"
+              className="px-3 py-1 bg-surface/10 hover:bg-surface/20 rounded text-[9px] font-black italic text-orange-500 transition-all border border-border"
             >
               {loading ? <RefreshCw className="w-3 h-3 animate-spin" /> : "EXECUTE"}
             </button>
@@ -324,7 +324,7 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
                             'Record / User / Request ID (Required)'}
                   </label>
                   <input
-                    className="bg-white/5 border border-white/10 p-2 text-white w-full outline-none focus:border-orange-500/50 font-mono text-xs"
+                    className="bg-surface/5 border border-border p-2 text-text-main w-full outline-none focus:border-orange-500/50 font-mono text-xs"
                     placeholder={type === 'custom-league-generate' ? "e.g. 5" : "e.g. 1"}
                     value={testId}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setTestId(e.target.value)}
@@ -336,7 +336,7 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
                 <div className="flex flex-col gap-1">
                   <label className="text-[8px] opacity-40 uppercase font-black">Request Body (JSON)</label>
                   <textarea
-                    className="bg-white/5 border border-white/10 p-2 text-white w-full h-32 outline-none focus:border-orange-500/50 font-mono text-xs resize-none"
+                    className="bg-surface/5 border border-border p-2 text-text-main w-full h-32 outline-none focus:border-orange-500/50 font-mono text-xs resize-none"
                     placeholder='{ "name": "New Entity", ... }'
                     value={requestBody}
                     onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setRequestBody(e.target.value)}
@@ -346,7 +346,7 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
             </div>
 
             {/* Response section */}
-            <div className="mt-2 border-t border-white/5 pt-4">
+            <div className="mt-2 border-t border-border pt-4">
               <div className="flex items-center justify-between mb-2">
                 <label className="text-[8px] opacity-40 uppercase font-black block">Response</label>
                 {data && type === 'custom-top10' && (
@@ -371,9 +371,9 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
               )}
 
               {data && type === 'custom-top10' && !showRaw && (
-                <div className="mt-4 border border-white/10 rounded overflow-hidden animate-in zoom-in-95 duration-300">
+                <div className="mt-4 border border-border rounded overflow-hidden animate-in zoom-in-95 duration-300">
                   <table className="w-full text-left text-[10px]">
-                    <thead className="bg-white/10 italic text-white/50">
+                    <thead className="bg-surface italic text-text-secondary opacity-50">
                       <tr>
                         <th className="p-2">#</th>
                         <th className="p-2">User</th>
@@ -382,18 +382,18 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
                         <th className="p-2 text-right">Season Points</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-border">
                       {data.map((u: any, idx: number) => (
-                        <tr key={u.id} className="hover:bg-white/5">
+                        <tr key={u.id} className="hover:bg-surface">
                           <td className="p-2 font-black text-orange-500">{idx + 1}</td>
                           <td className="p-2">
-                            <div className="font-bold text-white">{u.username}</div>
-                            <div className="opacity-40 text-[8px] uppercase">{u.title || 'Warrior'}</div>
+                            <div className="font-bold text-text-main">{u.username}</div>
+                            <div className="opacity-40 text-[8px] uppercase text-text-secondary">{u.title || 'Warrior'}</div>
                           </td>
-                          <td className="p-2 opacity-50">Lvl {u.level}</td>
+                          <td className="p-2 opacity-50 text-text-secondary">Lvl {u.level}</td>
                           <td className="p-2 text-right">
-                            <span className={`px-2 py-0.5 rounded-sm font-black ${u.rank === 'S' ? 'bg-yellow-500 text-black shadow-[0_0_5px_yellow]' :
-                                u.rank === 'A' ? 'bg-purple-500 text-white' : 'bg-white/10 text-white'
+                            <span className={`px-2 py-0.5 rounded-sm font-black ${u.rank === 'S' ? 'bg-yellow-500 text-neutral-black shadow-[0_0_5px_yellow]' :
+                                u.rank === 'A' ? 'bg-purple-500 text-neutral-white' : 'bg-surface border border-border text-text-main'
                               }`}>
                               {u.rank || 'E'}
                             </span>
@@ -407,7 +407,7 @@ const SwaggerBlock: FC<SwaggerBlockProps> = ({ method, title, colorClass, border
               )}
 
               {data && (type !== 'custom-top10' || showRaw) && (
-                <pre className="max-h-80 overflow-y-auto custom-scrollbar bg-black/30 p-3 rounded border border-white/5 animate-in fade-in text-green-400/90 text-[10px]">
+                <pre className="max-h-80 overflow-y-auto custom-scrollbar bg-neutral-black/30 p-3 rounded border border-border animate-in fade-in text-green-500/90 text-[10px]">
                   {JSON.stringify(data, null, 2)}
                 </pre>
               )}
@@ -508,14 +508,14 @@ const AdminPage: FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 mt-8">
         {/* SIDEBAR */}
         <div className="lg:col-span-1 flex flex-col gap-3">
-          <label className="text-[10px] font-black uppercase opacity-30 mb-2 tracking-[0.3em] italic border-l-4 border-orange-500 pl-4">Repositories</label>
+          <label className="text-[10px] font-black uppercase text-text-secondary opacity-30 mb-2 tracking-[0.3em] italic border-l-4 border-orange-500 pl-4">Repositories</label>
           {entities.map(e => (
             <button
               key={e.id}
               onClick={() => { setSelectedEntity(e.id); setGlobalData([]); }}
               className={`p-4 text-left text-[11px] font-black uppercase tracking-[0.2em] transition-all skew-x-[-15deg] border-2 group relative overflow-hidden ${selectedEntity === e.id
-                ? 'bg-orange-500 border-orange-500 text-black shadow-[6px_6px_0_white]'
-                : 'border-white/10 text-white/40 hover:border-white/30 hover:text-white bg-white/5'
+                ? 'bg-orange-500 border-orange-500 text-neutral-black shadow-[6px_6px_0_var(--neutral-white)]'
+                : 'border-border text-text-secondary opacity-40 hover:opacity-100 hover:border-text-secondary hover:text-text-main bg-surface'
                 }`}
             >
               <span className="relative z-10 skew-x-[15deg] inline-block">{e.name}</span>
@@ -527,10 +527,10 @@ const AdminPage: FC = () => {
         </div>
 
         <div className="lg:col-span-3">
-          <div className="flex flex-col mb-10 gap-2 border-b-2 border-white/10 pb-6">
-            <h2 className="text-5xl font-black uppercase tracking-tighter italic leading-none text-white">{selectedEntity}</h2>
+          <div className="flex flex-col mb-10 gap-2 border-b-2 border-border pb-6">
+            <h2 className="text-5xl font-black uppercase tracking-tighter italic leading-none text-text-main">{selectedEntity}</h2>
             <div className="flex items-center gap-3 text-[10px] opacity-100 font-mono italic mt-2">
-              <span className="bg-white/5 px-2 py-0.5 rounded-sm text-white/40">ENDPOINT BASE</span>
+              <span className="bg-surface px-2 py-0.5 rounded-sm text-text-secondary opacity-40">ENDPOINT BASE</span>
               <span className="text-orange-500 font-bold">/api/admin/{selectedEntity}</span>
             </div>
           </div>
@@ -741,36 +741,36 @@ const AdminPage: FC = () => {
             />
           </div>
 
-          <div className="mt-16 group border-4 border-white/5 rounded-sm overflow-hidden bg-black/40 shadow-2xl">
-            <div className="bg-white/5 p-5 flex items-center justify-between border-b-2 border-white/10 leading-none">
-              <span className="font-black text-[11px] uppercase tracking-[0.4em] flex items-center gap-3 text-white/60">
+          <div className="mt-16 group border-4 border-border rounded-sm overflow-hidden bg-neutral-black/40 shadow-2xl">
+            <div className="bg-surface p-5 flex items-center justify-between border-b-2 border-border leading-none">
+              <span className="font-black text-[11px] uppercase tracking-[0.4em] flex items-center gap-3 text-text-secondary opacity-60">
                 <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse shadow-[0_0_8px_var(--main-color)]" />
                 Quick View: {selectedEntity}
               </span>
-              <span className="text-[9px] opacity-30 font-mono italic">Results from 'LIST ALL' execution</span>
+              <span className="text-[9px] opacity-30 font-mono italic text-text-secondary">Results from 'LIST ALL' execution</span>
             </div>
-            <div className="max-h-[500px] overflow-y-auto custom-scrollbar bg-black/20">
+            <div className="max-h-[500px] overflow-y-auto custom-scrollbar bg-neutral-black/20">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-white/5 border-b-2 border-white/10 sticky top-0 z-10 backdrop-blur-xl">
+                <thead className="bg-surface border-b-2 border-border sticky top-0 z-10 backdrop-blur-xl">
                   <tr>
-                    <th className="p-5 text-[10px] font-black uppercase tracking-widest text-white/30">ID</th>
-                    <th className="p-5 text-[10px] font-black uppercase tracking-widest text-white/30">Preview Data</th>
-                    <th className="p-5 text-[10px] font-black uppercase tracking-widest text-white/30 text-right">Actions</th>
+                    <th className="p-5 text-[10px] font-black uppercase tracking-widest text-text-secondary opacity-30">ID</th>
+                    <th className="p-5 text-[10px] font-black uppercase tracking-widest text-text-secondary opacity-30">Preview Data</th>
+                    <th className="p-5 text-[10px] font-black uppercase tracking-widest text-text-secondary opacity-30 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y-2 divide-white/5">
+                <tbody className="divide-y-2 divide-border">
                   {(globalData || []).map((item: any) => (
-                    <tr key={item.id} className="hover:bg-white/[0.04] transition-all group/row">
+                    <tr key={item.id} className="hover:bg-surface transition-all group/row">
                       <td className="p-5 font-mono text-[12px] text-orange-500/80 font-black italic">#{item.id}</td>
                       <td className="p-5">
-                        <div className="text-[10px] text-white/40 font-mono truncate max-w-lg italic group-hover/row:text-white transition-colors">
+                        <div className="text-[10px] text-text-secondary opacity-40 font-mono truncate max-w-lg italic group-hover/row:text-text-main transition-colors">
                           {JSON.stringify(item).substring(0, 100)}...
                         </div>
                       </td>
                       <td className="p-5 text-right">
                         <button
                           onClick={() => handleDeleteQuick(item.id)}
-                          className="bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-black px-4 py-2 rounded-sm transition-all duration-300 opacity-0 group-hover/row:opacity-100 border-2 border-red-600/30 transform -skew-x-12"
+                          className="bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-neutral-black px-4 py-2 rounded-sm transition-all duration-300 opacity-0 group-hover/row:opacity-100 border-2 border-red-600/30 transform -skew-x-12"
                           title="Quick Delete"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -779,10 +779,10 @@ const AdminPage: FC = () => {
                     </tr>
                   ))}
                   {(globalData && globalData.length === 0) && (
-                    <tr><td colSpan={3} className="p-20 text-center text-white/10 italic text-[11px] tracking-[0.4em] uppercase font-black">Select an operation above and click EXECUTE to browse data</td></tr>
+                    <tr><td colSpan={3} className="p-20 text-center text-text-secondary opacity-10 italic text-[11px] tracking-[0.4em] uppercase font-black">Select an operation above and click EXECUTE to browse data</td></tr>
                   )}
                   {globalData === null && (
-                    <tr><td colSpan={3} className="p-20 text-center text-white/5 italic text-[11px] tracking-[0.4em] uppercase font-black animate-pulse">System ready. Establish connection with API...</td></tr>
+                    <tr><td colSpan={3} className="p-20 text-center text-text-secondary opacity-5 italic text-[11px] tracking-[0.4em] uppercase font-black animate-pulse">System ready. Establish connection with API...</td></tr>
                   )}
                 </tbody>
               </table>
@@ -798,9 +798,9 @@ const AdminPage: FC = () => {
         maxWidth="max-w-sm"
       >
         <div className="flex flex-col items-center text-center space-y-8 pt-4">
-          <div className={`p-6 rounded-sm transform rotate-45 border-4 shadow-xl ${systemPopup?.type === 'DANGER' ? 'border-red-600 bg-red-600/10' : 'border-main bg-main/10'}`}>
+          <div className={`p-6 rounded-sm transform rotate-45 border-4 shadow-xl ${systemPopup?.type === 'DANGER' ? 'border-red-600 bg-red-600' : 'border-main bg-main'}`}>
             <div className="-rotate-45">
-              {systemPopup?.type === 'DANGER' ? <AlertTriangle className="w-16 h-16 text-red-600" /> : <CheckCircle className="w-16 h-16 text-main" />}
+              {systemPopup?.type === 'DANGER' ? <AlertTriangle className="w-16 h-16 text-neutral-black" /> : <CheckCircle className="w-16 h-16 text-neutral-black" />}
             </div>
           </div>
           <p className="text-[11px] font-black uppercase italic tracking-[0.2em] text-white leading-relaxed font-mono px-4">

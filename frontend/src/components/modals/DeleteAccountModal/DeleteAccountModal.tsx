@@ -35,16 +35,17 @@ const DeleteAccountModal: FC<DeleteAccountModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-      <div className="w-full max-w-md bg-zinc-900 border-4 border-red-600 shadow-[8px_8px_0px_#dc2626]">
-        <div className="p-4 border-b-4 border-red-600 flex justify-between items-center bg-black">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="modal-overlay" onClick={onClose} />
+      <div className="w-full max-w-md bg-surface border-4 border-red-600 shadow-[8px_8px_0px_#dc2626]">
+        <div className="p-4 border-b-4 border-red-600 flex justify-between items-center bg-neutral-black">
           <h2 className="text-red-600 font-black italic uppercase tracking-widest text-xl flex items-center gap-2">
             <AlertTriangle className="w-6 h-6" /> ADVERTENCIA
           </h2>
           <button
             onClick={onClose}
             disabled={loading}
-            className="text-white/50 hover:text-white hover:scale-110 transition-all"
+            className="text-text-secondary opacity-50 hover:opacity-100 hover:text-text-main hover:scale-110 transition-all"
           >
             <X className="w-6 h-6" />
           </button>
@@ -53,15 +54,15 @@ const DeleteAccountModal: FC<DeleteAccountModalProps> = ({
         <div className="p-6 space-y-6 text-center">
           <AlertTriangle className="w-16 h-16 text-red-600 mx-auto animate-pulse" />
 
-          <div className="space-y-2 text-white">
+          <div className="space-y-2 text-text-main">
             <p className="font-black italic uppercase text-xl">¿ESTÁS SEGURO?</p>
-            <p className="text-white/60 text-sm italic font-black uppercase tracking-widest">
+            <p className="text-text-secondary opacity-60 text-sm italic font-black uppercase tracking-widest">
               ESTA ACCIÓN ELIMINARÁ TU CUENTA Y TODOS TUS PROGRESOS, ESTADÍSTICAS Y MISIONES DE FORMA PERMANENTE.
             </p>
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border-2 border-red-500 text-red-500 p-3 font-black text-xs uppercase tracking-widest italic">
+            <div className="bg-red-600 border-2 border-red-500 text-neutral-black p-3 font-black text-xs uppercase tracking-widest italic">
               {error}
             </div>
           )}
@@ -77,7 +78,7 @@ const DeleteAccountModal: FC<DeleteAccountModalProps> = ({
             <button
               onClick={onClose}
               disabled={loading}
-              className="w-full bg-transparent hover:bg-white/10 text-white/50 hover:text-white font-black italic uppercase py-4 border-2 border-white/20 hover:border-white/50 transition-all"
+              className="w-full bg-surface hover:bg-neutral-black text-text-main font-black italic uppercase py-4 border-2 border-border hover:border-text-secondary transition-all"
             >
               CANCELAR
             </button>

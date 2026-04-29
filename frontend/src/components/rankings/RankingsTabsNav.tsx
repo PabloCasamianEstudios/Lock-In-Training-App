@@ -17,15 +17,15 @@ export default function RankingsTabsNav({ activeTab, setActiveTab }: RankingsTab
   ];
 
   return (
-    <nav className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-8 border-b border-white/10 mb-10">
+    <nav className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-8 border-b border-border mb-10">
       {SUB_TABS.map(tab => (
         <button
           key={tab.id}
           onClick={() => setActiveTab(tab.id)}
           className={`px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap
             ${activeTab === tab.id
-              ? 'bg-main text-black border-main shadow-[4px_4px_0px_white]'
-              : 'bg-black text-white/40 border-white/20 hover:border-white/40'}`}
+              ? 'bg-main text-neutral-black border-main shadow-[4px_4px_0px_var(--neutral-white)]'
+              : 'bg-neutral-black text-text-secondary border-border hover:border-text-secondary'}`}
         >
           {tab.label}
         </button>

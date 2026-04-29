@@ -35,12 +35,12 @@ const StatsChart: FC<StatsChartProps> = ({ stats = {} }) => {
       <div className="relative">
         <svg width={size} height={size} className="overflow-visible">
           {gridPoints.map((pts, i) => (
-            <polygon key={i} points={pts} fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
+            <polygon key={i} points={pts} fill="none" stroke="var(--border)" strokeWidth="2" />
           ))}
           {STATS_KEYS.map((_, i) => {
             const edge = getPoint(MAX_STAT, i, STATS_KEYS.length);
             return (
-              <line key={i} x1={center} y1={center} x2={edge.x} y2={edge.y} stroke="rgba(255,255,255,0.1)" strokeWidth="2" />
+              <line key={i} x1={center} y1={center} x2={edge.x} y2={edge.y} stroke="var(--border)" strokeWidth="2" />
             );
           })}
           <motion.polygon
@@ -54,7 +54,7 @@ const StatsChart: FC<StatsChartProps> = ({ stats = {} }) => {
             style={{ transformOrigin: 'center' }}
           />
           {points.map((p, i) => (
-            <circle key={i} cx={p.x} cy={p.y} r="4" fill="white" />
+            <circle key={i} cx={p.x} cy={p.y} r="4" fill="var(--neutral-white)" />
           ))}
           {STATS_KEYS.map((key, i) => {
             const p = getPoint(MAX_STAT + 30, i, STATS_KEYS.length);
@@ -64,7 +64,7 @@ const StatsChart: FC<StatsChartProps> = ({ stats = {} }) => {
                 <text
                   x={p.x}
                   y={p.y - 8}
-                  fill="white"
+                  fill="var(--text)"
                   fontSize="12"
                   fontWeight="900"
                   fontStyle="italic"

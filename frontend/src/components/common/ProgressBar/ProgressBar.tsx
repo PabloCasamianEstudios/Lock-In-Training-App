@@ -1,4 +1,4 @@
-﻿import { type FC } from 'react';
+import { type FC } from 'react';
 import { motion } from 'framer-motion';
 
 interface ProgressBarProps {
@@ -26,12 +26,12 @@ const ProgressBar: FC<ProgressBarProps> = ({
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
       {(label || valueLabel) && (
-        <div className="flex justify-between text-[10px] font-black uppercase text-white/70">
+        <div className="flex justify-between text-[10px] font-black uppercase text-text-main opacity-70">
           <span className="flex items-center gap-1">{label}</span>
           <span>{valueLabel}</span>
         </div>
       )}
-      <div className={`${height} w-full bg-white/10 border border-white/20 relative overflow-hidden`}>
+      <div className={`${height} w-full bg-surface border border-border relative overflow-hidden`}>
         <motion.div 
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
