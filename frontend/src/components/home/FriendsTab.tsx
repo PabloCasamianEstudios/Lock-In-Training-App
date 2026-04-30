@@ -41,8 +41,8 @@ export default function FriendsTab({
         <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-secondary italic border-l-4 border-border pl-4">{t('home.search_hunter')}</h3>
         <div className="flex gap-4">
           <div className="flex-1">
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && onSearch()}
@@ -50,7 +50,7 @@ export default function FriendsTab({
               className="w-full bg-neutral-black border-4 border-border p-4 text-text-main font-black italic uppercase focus:border-main outline-none transition-all"
             />
           </div>
-          <button 
+          <button
             onClick={onSearch}
             disabled={isSearching}
             className="bg-main text-neutral-black px-8 font-black italic uppercase text-xs hover:bg-neutral-white hover:text-neutral-black transition-all shadow-[4px_4px_0px_var(--neutral-white)] disabled:opacity-50"
@@ -61,7 +61,7 @@ export default function FriendsTab({
 
         <AnimatePresence>
           {searchResult && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -90,7 +90,7 @@ export default function FriendsTab({
                 ) : searchStatus === 'PENDING' ? (
                   <span className="text-[10px] font-black italic uppercase text-text-secondary bg-surface px-4 py-2 border-2 border-border whitespace-nowrap">{t('profile.request_sent')}</span>
                 ) : (
-                  <button 
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       onAddFriend(searchResult.id);
@@ -105,7 +105,7 @@ export default function FriendsTab({
             </motion.div>
           )}
           {!searchResult && searchStatus === 'NOT_FOUND' && !isSearching && (
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-[10px] font-black text-red-500 uppercase italic tracking-[0.3em] bg-red-500/5 p-4 border-l-4 border-red-500"
@@ -146,12 +146,12 @@ export default function FriendsTab({
       )}
 
       <div className="space-y-4">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-secondary italic border-l-4 border-border pl-4">{t('home.verified_hunters')}</h3>
+        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-text-secondary italic border-l-4 border-border pl-4">{t('rankings.tabs.friends')}</h3>
         {friends.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {friends.map((friend, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 onClick={() => onNavigate?.('profile', { targetId: friend.id })}
                 className="bg-neutral-black border-2 border-border p-4 flex items-center justify-between hover:bg-surface hover:border-main/40 transition-all cursor-pointer group rounded-sm shadow-md"
               >

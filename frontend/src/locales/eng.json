@@ -8,7 +8,7 @@
     "level": "Lvl",
     "rank": "Rank",
     "add_friend": "ADD FRIEND",
-    "processing": "PROCESS...",
+    "processing": "PROCESSING...",
     "request_sent": "REQUEST SENT",
     "already_friends": "ALREADY FRIENDS",
     "it_is_you": "IT IS YOU",
@@ -18,17 +18,23 @@
     "notifications": "NOTIFICATIONS",
     "unlocked": "UNLOCKED",
     "sessions": "SESSIONS",
-    "guest_override": "GUEST OVERRIDE",
+    "guest_override": "GUEST ACCESS",
     "verified_protocol": "VERIFIED PROTOCOL",
     "new_debts": "NEW DEBTS",
     "control_panel": "Hunter Control Panel",
     "system_settings": "System Settings",
-    "modify_interface": "Modify interface & protocols",
-    "emergency_logout": "Emergency Logout",
-    "terminate_session": "Terminate current session"
+    "modify_interface": "Modify interface and protocols",
+    "logout": "Logout",
+    "terminate_session": "Terminate current session",
+    "profile_navBar": "PROFILE",
+    "no_titles": "You have no unlocked titles",
+    "equipped_title": "EQUIPPED",
+    "view_page": "VIEW PAGE",
+    "download_pdf": "DOWNLOAD PDF",
+    "download_progression": "DOWNLOAD PROGRESS"
   },
   "home": {
-    "title": "HOME TERMINAL",
+    "title": "MAIN TERMINAL",
     "subtitle_establishing": "ESTABLISHING CORE LINK...",
     "subtitle_active": "SYSTEM PROTOCOLS ACTIVE",
     "loading": "Loading System Data...",
@@ -40,7 +46,7 @@
       "tips": "TIPS",
       "friends": "FRIENDS"
     },
-    "no_pending": "No pending daily protocol",
+    "no_pending": "No pending daily protocols",
     "no_activity": "No activity recorded",
     "incoming_protocols": "INCOMING PROTOCOLS",
     "requesting_access": "Requesting Access",
@@ -50,11 +56,12 @@
     "search_hunter": "SEARCH HUNTER",
     "enter_username": "ENTER USERNAME...",
     "scan": "SCAN",
-    "hunter_not_found": "HUNTER NOT FOUND IN DATABASE"
+    "hunter_not_found": "HUNTER NOT FOUND IN DATABASE",
+    "progression": "PROGRESSION"
   },
   "rankings": {
     "title": "GLOBAL RANKINGS",
-    "subtitle_fetching": "FETCHING HUNTER STANDINGS...",
+    "subtitle_fetching": "FETCHING RANKINGS...",
     "subtitle_hierarchy": "ELITE HUNTER HIERARCHY",
     "tabs": {
       "all": "ALL",
@@ -62,20 +69,20 @@
       "league": "YOUR LEAGUE"
     },
     "top_hunters": "Top Hunters",
-    "live_status": "Live Status: Global Competitive",
+    "live_status": "Status: Global Competitive",
     "performance_tracked": "Your performance is being tracked in the global coliseum.",
     "no_hunters": "No hunters ranked yet",
-    "summon_allies": "Summon your allies to see them here",
+    "summon_allies": "Add friends to see them here!",
     "combat_circle": "Combat Circle (Division A)",
     "season_active": "SEASON ACTIVE",
     "syncing_group": "SYNCING GROUP DATA...",
-    "league_protocol": "LEAGUE DIVISION PROTOCOL"
+    "league_protocol": "LEAGUE"
   },
   "quests": {
-    "title": "QUEST PROTOCOLS",
+    "title": "MISSIONS",
     "subtitle_decrypting": "DECRYPTING MISSION DATA...",
     "subtitle_assignments": "AVAILABLE COMBAT ASSIGNMENTS",
-    "initializing": "INITIALIZING QUEST PROTOCOL...",
+    "initializing": "STARTING MISSION...",
     "error": "SYSTEM ERROR DETECTED",
     "protocols": "Protocols",
     "tabs": {
@@ -83,34 +90,44 @@
       "system": "SYSTEM",
       "daily": "DAILY",
       "active": "ACTIVE",
-      "yours": "YOURS"
+      "yours": "YOUR_MISSIONS"
     },
-    "no_active": "No active quests in progress",
-    "abort_protocol": "ABORT PROTOCOL",
-    "terminate_mission": "ARE YOU SURE YOU WANT TO TERMINATE THIS MISSION? ALL CURRENT EXPERIMENT DATA WILL BE PURGED.",
-    "protocol_failed": "PROTOCOL FAILED",
-    "initialize": "INITIALIZE",
-    "system_overload": "ONLY ONE ACTIVE QUEST IS PERMITTED. COMPLETE OR FAIL THE CURRENT PROTOCOL FIRST.",
-    "purge_protocol": "PURGE PROTOCOL",
-    "delete_warning": "YOU ARE ABOUT TO DELETE THIS QUEST. THIS ACTION CANNOT BE UNDONE. PROCEED?",
-    "protocol_success": "PROTOCOL SUCCESSFUL",
+    "no_active": "No active missions in progress",
+    "abort_protocol": "ABANDON MISSION",
+    "terminate_mission": "ARE YOU SURE YOU WANT TO ABANDON THIS MISSION? ALL PROGRESSION WILL BE DELETED.",
+    "protocol_failed": "MISSION FAILED",
+    "initialize": "START MISSION",
+    "confirm_initialize": "ARE YOU SURE YOU WANT TO START THIS MISSION? YOU WON'T BE ABLE TO DO ANOTHER MISSION UNTIL YOU FINISH OR ABANDON THIS ONE",
+    "system_overload": "ONLY ONE ACTIVE MISSION IS PERMITTED. COMPLETE OR ABANDON THE CURRENT MISSION FIRST.",
+    "purge_protocol": "DELETE MISSION",
+    "delete_warning": "ARE YOU SURE YOU WANT TO DELETE THIS MISSION? THIS ACTION CANNOT BE UNDONE. PROCEED?",
+    "protocol_success": "MISSION SUCCESSFUL",
     "rewards": {
       "xp": "XP GAINED",
       "gold": "GOLD ACQUIRED",
-      "collect": "COLLECT & CONTINUE"
-    }
+      "collect": "COLLECT AND CONTINUE"
+    },
+    "gold": "GOLD",
+    "more_tasks": "MORE EXERCISES"
   },
   "common": {
     "system_online": "System Online",
     "hunter": "HUNTER",
     "you": "YOU",
     "rank": "RANK",
-    "level": "lv."
+    "level": "lvl.",
+    "export": "EXPORT",
+    "import": "IMPORT",
+    "mandatory": "MANDATORY",
+    "analyzing": "ANALYZING",
+    "light_mode": "Light Mode",
+    "dark_mode": "Dark Mode",
+    "account": "ACCOUNT"
   },
   "settings": {
     "title": "SYSTEM CONFIGURATION",
     "language": "INTERFACE LANGUAGE",
-    "select_language": "Select Protocol Language",
+    "select_language": "Select Language",
     "spanish": "Spanish",
     "english": "English",
     "theme": "INTERFACE THEME",
@@ -118,30 +135,37 @@
     "light": "LIGHT",
     "privacy_policy": "PRIVACY POLICY",
     "user_manual": "USER MANUAL",
-    "save": "SAVE CHANGES"
+    "save": "SAVE CHANGES",
+    "advert": "WARNING",
+    "delete_account": "DELETE ACCOUNT",
+    "delete_account_warning": "ARE YOU SURE YOU WANT TO PERMANENTLY DELETE YOUR ACCOUNT AND ALL YOUR PROGRESS, STATS, AND MISSIONS?",
+    "delete_account_success": "ACCOUNT DELETED SUCCESSFULLY",
+    "delete_account_error": "ERROR DELETING ACCOUNT",
+    "new password": "NEW PASSWORD",
+    "edit_data": "EDIT DATA"
   },
   "auth": {
     "system": "SYSTEM",
     "new": "NEW",
     "access": "ACCESS",
     "player": "PLAYER",
-    "username": "Username Profile",
+    "username": "Username",
     "username_placeholder": "e.g. SUNG_JIN_WOO",
-    "email": "Email Protocol",
-    "password": "Secure Key",
-    "password_placeholder": "your password",
+    "email": "Email",
+    "password": "Password",
+    "password_placeholder": "Your password",
     "enter_stage": "ENTER STAGE",
     "finalize_profile": "FINALIZE PROFILE",
-    "no_data": "No data? Create initialization protocol",
+    "no_data": "No account? Register here",
     "already_registered": "Already registered? Access system",
-    "guest_override": "GUEST OVERRIDE",
+    "guest_override": "GUEST ACCESS",
     "alert": "ALERT",
     "success": "SYSTEM",
     "errors": {
-      "missing_credentials": "Protocol failure: Missing required credentials",
-      "username_mandatory": "Identity failure: Username is mandatory",
-      "invalid_email": "Data corruption: Invalid email protocol format",
-      "password_short": "Security alert: Key must be at least 6 characters"
+      "missing_credentials": "Error: Missing required credentials",
+      "username_mandatory": "Error: Username is mandatory",
+      "invalid_email": "Error: Invalid email format",
+      "password_short": "Error: Password must be at least 6 characters"
     },
     "messages": {
       "register_success": "Profile alignment complete. Initializing neural link...",
@@ -153,10 +177,10 @@
     "subtitle": "CENTRAL CORE OVERRIDE",
     "repositories": "Repositories",
     "endpoint_base": "ENDPOINT BASE",
-    "parameters_payload": "Parameters & Payload",
+    "parameters_payload": "Parameters and Payload",
     "execute": "EXECUTE",
     "response": "Response",
-    "awaiting_server": "Awaiting Server Response...",
+    "awaiting_server": "Awaiting server response...",
     "no_execution": "No execution performed yet for this endpoint.",
     "view_leaderboard": "VIEW LEADERBOARD",
     "view_raw": "VIEW RAW JSON",
@@ -179,40 +203,43 @@
       "tips": "Tips",
       "titles": "Titles",
       "social": "Social",
-      "quest-progress": "Quest Progression",
+      "quest-progress": "Quest Progress",
       "competitive": "Competitive Automation",
-      "moderation": "Security & Moderation",
-      "shop": "Shop & Inventory"
+      "moderation": "Security and Moderation",
+      "shop": "Shop"
     }
   },
   "adventure": {
     "title": "ADVENTURE",
     "restricted": "RESTRICTED ACCESS",
-    "guest_denied": "GUEST OVERRIDE DETECTED. ACCESS DENIED.",
+    "guest_denied": "GUEST ACCESS DETECTED. ACCESS DENIED.",
     "gm_protocol": "GAME MASTER PROTOCOL",
     "status": "STATUS",
     "vitality": "Vitality",
     "arsenal": "ARSENAL",
-    "arsenal_empty": "(Objects from the shop will materialize here)",
+    "arsenal_empty": "(Shop items will materialize here)",
     "attributes": "ATTRIBUTES",
     "streaming": "STREAMING ATTRIBUTES...",
     "game_master": "GAME MASTER",
     "room": "ROOM",
     "type": "TYPE",
-    "darkness_awaits": "THE DARKNESS AWAITS. ARE YOU PREPARED TO STEP INTO THE DUNGEON?",
+    "potion": "HEALTH POTION",
+    "instantly": "INSTANTLY",
+    "gold_available": "AVAILABLE GOLD",
+    "darkness_awaits": "THE DARKNESS AWAITS. ARE YOU PREPARED TO ENTER THE DUNGEON?",
     "you_died": "YOU DIED",
     "start_new": "START NEW CAMPAIGN",
     "enter_dungeon": "ENTER DUNGEON",
-    "path_blocked": "PATH BLOCKED! A physical trial awaits in your Quests Tab.",
+    "path_blocked": "PATH BLOCKED! A physical trial awaits in your Missions tab.",
     "override_trial": "DEBUG: OVERRIDE TRIAL (ADVANCE PROTOCOL)",
     "waiting_gm": "WAITING FOR GAME MASTER...",
     "errors": {
-      "gm_connection": "Game Master connection failed.",
+      "gm_connection": "Connection to Game Master failed.",
       "quest_pending": "You must physically complete the Quest before continuing.",
       "skip_failed": "Could not skip the trial."
     },
     "daily_pending": "DAILY PENDING",
-    "daily_lock_msg": "YOUR DAILY CONTRACT HAS NOT BEEN FULFILLED. THE COLISEUM WILL REMAIN CLOSED UNTIL YOU COMPLETE YOUR MANDATORY MISSION.",
+    "daily_lock_msg": "YOUR DAILY MISSION HAS NOT BEEN FULFILLED. THE DUNGEON WILL REMAIN CLOSED UNTIL YOU COMPLETE YOUR MANDATORY MISSION.",
     "verify_status": "VERIFY STATUS"
   },
   "camera": {
@@ -223,35 +250,35 @@
     "position_hint": "Stand sideways to the camera. Ensure your arms and chest are visible to the 'System'."
   },
   "quest_view": {
-    "protocol": "QUEST PROTOCOL",
+    "protocol": "MISSION",
     "system_workout": "System-Generated Workout",
     "awaiting_init": "Awaiting Initialization",
     "prepare": "Prepare your body. Protocol ready.",
-    "start": "START QUEST",
+    "start": "START MISSION",
     "progress": "Progress",
     "elapsed": "MISSION ELAPSED TIME",
     "complete": "COMPLETE ALL TASKS",
-    "abort": "Abort Protocol"
+    "abort": "CANCEL"
   },
   "quest_modal": {
     "edit": "EDIT",
     "new": "NEW",
-    "protocol": "QUEST PROTOCOL",
-    "title": "Quest Title",
-    "title_placeholder": "E.G. MORNING GRIND",
+    "protocol": "MISSION",
+    "title": "Mission Title",
+    "title_placeholder": "E.G. MORNING WORKOUT",
     "exercises": "Exercises",
     "add_new": "ADD NEW",
-    "update": "UPDATE PROTOCOL",
-    "initialize": "INITIALIZE PROTOCOL"
+    "update": "UPDATE MISSION",
+    "initialize": "START MISSION"
   },
   "splash": {
-    "initializing": "INITIALIZING PROTOCOL"
+    "initializing": "STARTING LOCKIN"
   },
   "survey": {
     "steps": {
       "container": "CONTAINER",
       "capacity": "CAPACITY",
-      "tuning": "TUNING",
+      "tuning": "CALIBRATION",
       "objective": "OBJECTIVE"
     },
     "fields": {
@@ -265,18 +292,18 @@
       "select": "SELECT..."
     },
     "pushup_capacity": "PUSH-UP CAPACITY",
-    "run_endurance": "RUN ENDURANCE",
-    "training_tuning": "CURRENT TRAINING TUNING",
+    "run_endurance": "RUNNING ENDURANCE",
+    "training_tuning": "CURRENT TRAINING CALIBRATION",
     "primary_objective": "PRIMARY OBJECTIVE",
     "frequency": {
       "never": "ZERO (RANK E)",
-      "never_desc": "No recorded physical activity",
+      "never_desc": "No physical activity recorded",
       "low": "1-2 DAYS (Incipient)",
       "low_desc": "Occasional training",
       "mid": "3-5 DAYS (Active)",
       "mid_desc": "Disciplined regimen",
       "daily": "DAILY (Elite)",
-      "daily_desc": "Boundary of human potential"
+      "daily_desc": "Human potential limit"
     },
     "goals": {
       "str": "BRUTE STRENGTH",
@@ -285,12 +312,12 @@
       "disc": "IRON DISCIPLINE"
     },
     "back": "BACK TO PROTOCOL",
-    "next": "NEXT STAGE",
-    "awake": "AWAKE PLAYER"
+    "next": "NEXT PHASE",
+    "awake": "AWAKEN PLAYER"
   },
   "analyzing": {
     "title": "SYSTEM",
-    "title_highlight": "SCAN",
+    "title_highlight": "SCANNING",
     "tasks": [
       "SCANNING BIOMETRIC DATA...",
       "CALIBRATING ATTRIBUTE MATRIX...",
@@ -300,10 +327,10 @@
       "SYNCHRONIZING WITH SERVER...",
       "FINALIZING PROFILE..."
     ],
-    "scan": "SCAN",
+    "scan": "SCANNING",
     "data": "DATA",
     "sync": "SYNC",
-    "valid": "VALID",
+    "valid": "VALIDATED",
     "claim_rank": "CLAIM YOUR RANK"
   },
   "rank_assignment": {
@@ -320,7 +347,7 @@
     "available_points": "Available Points",
     "awakening": "Awakening Potential...",
     "assign_more": "Assign {{n}} more points",
-    "confirm": "Confirm Awakening",
+    "confirm": "CONFIRM",
     "stats": {
       "str": "Strength",
       "agi": "Agility",
@@ -337,5 +364,12 @@
     "access_denied": "ACCESS DENIED",
     "login_prompt": "Log in to access this content",
     "login_button": "LOG IN"
+  },
+  "nav": {
+    "home": "HOME",
+    "quests": "MISSIONS",
+    "play": "ADVENTURE",
+    "rankings": "RANKINGS",
+    "profile": "PROFILE"
   }
 }

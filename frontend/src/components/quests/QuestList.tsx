@@ -41,7 +41,7 @@ export default function QuestList({
                 )}
                 {quest.isMandatory && (
                   <span className="text-[9px] sm:text-[10px] font-black italic uppercase bg-red-600 text-white px-2 sm:px-3 py-1 transform -skew-x-12 shadow-[2px_2px_0px_var(--neutral-white)] animate-pulse">
-                    MANDATORY
+                    {t('common.mandatory')}
                   </span>
                 )}
               </div>
@@ -91,7 +91,7 @@ export default function QuestList({
                 </div>
               )}
               {quest.steps && quest.steps.length > 3 && (
-                <div className="text-[8px] text-main font-black uppercase italic opacity-40">+ {quest.steps.length - 3} MORE TASKS</div>
+                <div className="text-[8px] text-main font-black uppercase italic opacity-40">+ {quest.steps.length - 3} {t('quests.more_tasks')}</div>
               )}
             </div>
 
@@ -103,7 +103,7 @@ export default function QuestList({
                 </div>
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-500" fill="currentColor" />
-                  <span className="text-yellow-500 font-black text-[11px] sm:text-[12px] italic tracking-tighter">GOLD+{quest.goldReward}</span>
+                  <span className="text-yellow-500 font-black text-[11px] sm:text-[12px] italic tracking-tighter">{t('quests.gold')}+{quest.goldReward}</span>
                 </div>
               </div>
 

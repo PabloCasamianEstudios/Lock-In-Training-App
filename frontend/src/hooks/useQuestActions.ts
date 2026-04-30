@@ -92,8 +92,8 @@ export function useQuestActions(
     if (!activeQuest) {
       setSystemPopup({
         isOpen: true,
-        title: 'INITIALIZE PROTOCOL',
-        message: 'ARE YOU READY TO COMMIT? THIS WILL LOCK YOUR ACTIVE QUEST SLOT UNTIL COMPLETION OR FAILURE.',
+        title: t('quests.initialize'),
+        message: t('quests.confirm_initialize'),
         type: 'INFO',
         onConfirm: async () => {
           try {
@@ -115,8 +115,8 @@ export function useQuestActions(
     } else {
       setSystemPopup({
         isOpen: true,
-        title: t('quests.system_overload'),
-        message: 'ONLY ONE ACTIVE QUEST IS PERMITTED. COMPLETE OR FAIL THE CURRENT PROTOCOL FIRST.',
+        title: t('auth.alert'),
+        message: t('quests.system_overload'),
         type: 'WARNING'
       });
     }

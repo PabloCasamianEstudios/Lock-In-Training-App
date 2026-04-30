@@ -269,7 +269,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
                   onClick={onLogout}
                   className="px-6 py-2 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap bg-neutral-black text-red-500/80 border-red-500/50 hover:bg-red-500/10 hover:border-red-500"
                 >
-                  {t('profile.emergency_logout')}
+                  {t('profile.logout')}
                 </button>
               </>
             )}
@@ -311,33 +311,33 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 no-scrollbar">
           {titles.length === 0 ? (
             <div className="text-center py-8 opacity-40">
-              <p className="font-black italic uppercase tracking-widest text-xs">No tienes títulos desbloqueados</p>
+              <p className="font-black italic uppercase tracking-widest text-xs">{t('profile.no_titles')}</p>
             </div>
           ) : (
-            titles.map((t) => (
+            titles.map((ti) => (
               <button
-                key={t.id}
-                onClick={() => handleEquipTitle(t.titleId)}
-                disabled={actionLoading || t.isEquipped}
+                key={ti.id}
+                onClick={() => handleEquipTitle(ti.titleId)}
+                disabled={actionLoading || ti.isEquipped}
                 className={`w-full p-6 border-4 text-left transition-all group flex items-center gap-4
-                  ${t.isEquipped
+                  ${ti.isEquipped
                     ? 'bg-main border-main text-neutral-black cursor-default'
                     : 'bg-neutral-black border-border text-text-main hover:border-main active:translate-x-1 active:translate-y-1'
                   }
                   ${actionLoading ? 'opacity-50 pointer-events-none' : ''}
                 `}
               >
-                <div className={`p-3 border-2 ${t.isEquipped ? 'border-neutral-black' : 'border-border group-hover:border-main'}`}>
+                <div className={`p-3 border-2 ${ti.isEquipped ? 'border-neutral-black' : 'border-border group-hover:border-main'}`}>
                   <Trophy className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-black italic uppercase tracking-tighter text-lg leading-none">{t.name}</p>
-                  <p className={`text-[10px] font-bold uppercase mt-1 ${t.isEquipped ? 'text-neutral-black opacity-60' : 'text-text-secondary'}`}>
-                    {t.description}
+                  <p className="font-black italic uppercase tracking-tighter text-lg leading-none">{ti.name}</p>
+                  <p className={`text-[10px] font-bold uppercase mt-1 ${ti.isEquipped ? 'text-neutral-black opacity-60' : 'text-text-secondary'}`}>
+                    {ti.description}
                   </p>
                 </div>
-                {t.isEquipped && (
-                  <span className="text-[10px] font-black italic uppercase bg-neutral-black text-main px-2 py-1">EQUIPADO</span>
+                {ti.isEquipped && (
+                  <span className="text-[10px] font-black italic uppercase bg-neutral-black text-main px-2 py-1">{t('profile.equipped_title')}</span>
                 )}
               </button>
             ))
@@ -394,7 +394,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
               </div>
             </div>
             <p className="text-[10px] text-text-secondary opacity-40 font-black uppercase italic tracking-[0.2em]">
-              {theme === 'dark' ? 'PROTOCOL: NIGHT_VISION_ENABLED' : 'PROTOCOL: DAYLIGHT_OVERRIDE'}
+              {theme === 'dark' ? t('common.dark_mode') : t('common.light_mode')}
             </p>
           </div>
 
@@ -411,7 +411,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
                 }}
                 className="w-full bg-neutral-black border-4 border-border p-5 text-text-main font-black italic uppercase hover:bg-surface hover:border-main transition-all flex items-center justify-center gap-3 group"
               >
-                VIEW PROTOCOL
+                {t('profile.view_page')}
               </button>
             </div>
 
@@ -426,7 +426,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
                 rel="noopener noreferrer"
                 className="w-full bg-neutral-black border-4 border-border p-5 text-text-main font-black italic uppercase hover:bg-surface hover:border-main transition-all flex items-center justify-center gap-3 group text-center no-underline"
               >
-                DOWNLOAD PDF
+                {t('profile.download_pdf')}
               </a>
             </div>
           </div>
@@ -436,7 +436,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
           <div className="space-y-4">
             <div className="flex items-center gap-3 text-main mb-2">
               <UserIcon className="w-5 h-5" />
-              <h3 className="text-sm font-black uppercase italic tracking-widest">CUENTA</h3>
+              <h3 className="text-sm font-black uppercase italic tracking-widest">{t('common.account')}</h3>
             </div>
             <button
               onClick={() => {
@@ -445,7 +445,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
               }}
               className="w-full bg-neutral-black border-4 border-border p-5 text-text-main font-black italic uppercase hover:bg-surface hover:border-main transition-all flex items-center justify-center gap-3 group"
             >
-              EDITAR DATOS
+              {t('settings.edit_data')}
             </button>
             <button
               onClick={() => {
@@ -454,7 +454,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
               }}
               className="w-full bg-red-600/20 border-4 border-red-600/50 p-5 text-red-500 font-black italic uppercase hover:bg-red-600 hover:text-white hover:border-red-600 transition-all flex items-center justify-center gap-3 group"
             >
-              ELIMINAR CUENTA
+              {t('settings.delete_account')}
             </button>
           </div>
 
@@ -469,11 +469,11 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
               onClick={handleExportData}
               className="w-full bg-neutral-black border-4 border-border p-5 text-text-main font-black italic uppercase hover:bg-surface hover:border-main transition-all flex items-center justify-center gap-3 group"
             >
-              EXPORT TO JSON
+              {t('common.export')} JSON
               <Download className="w-4 h-4 text-main group-hover:scale-120 transition-transform" />
             </button>
             <p className="text-[9px] text-text-secondary opacity-40 font-black uppercase italic tracking-[0.1em] text-center">
-              DESCARGA TU EXPEDIENTE DE CAZADOR COMPLETO
+              {t('profile.download_progression')}
             </p>
           </div>
 

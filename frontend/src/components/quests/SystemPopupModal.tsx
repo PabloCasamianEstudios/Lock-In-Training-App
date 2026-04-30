@@ -18,7 +18,7 @@ interface SystemPopupModalProps {
 
 export default function SystemPopupModal({ popup, onClose }: SystemPopupModalProps) {
   const { t } = useLanguage();
-  
+
   return (
     <PopupWindow
       isOpen={!!popup?.isOpen}
@@ -75,7 +75,7 @@ export default function SystemPopupModal({ popup, onClose }: SystemPopupModalPro
                     onClick={onClose}
                     className="flex-1 py-4 border-2 border-border text-[10px] font-black uppercase italic hover:bg-surface transition-all font-mono text-text-secondary"
                   >
-                    ABORT
+                    {t('quest_view.abort')}
                   </button>
                   <button
                     onClick={() => {
@@ -84,7 +84,7 @@ export default function SystemPopupModal({ popup, onClose }: SystemPopupModalPro
                     }}
                     className="flex-1 py-4 bg-red-600 text-neutral-black text-[10px] font-black uppercase italic hover:bg-red-500 transition-all shadow-[4px_4px_0px_var(--neutral-white)]"
                   >
-                    CONFIRM
+                    {t('level_up.confirm')}
                   </button>
                 </>
               ) : (

@@ -18,7 +18,7 @@ const AnalyzingScreen: FC<AnalyzingScreenProps> = ({ onAnalysisComplete }) => {
   useEffect(() => {
     const totalDuration = 4000;
     const interval = totalDuration / 100;
-    
+
     const timer = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
@@ -26,12 +26,12 @@ const AnalyzingScreen: FC<AnalyzingScreenProps> = ({ onAnalysisComplete }) => {
           setCompleted(true);
           return 100;
         }
-        
+
         const taskIdx = Math.floor((prev / 100) * tasks.length);
         if (taskIdx < tasks.length) {
           setCurrentTask(tasks[taskIdx]);
         }
-        
+
         return prev + 1;
       });
     }, interval);
@@ -46,7 +46,7 @@ const AnalyzingScreen: FC<AnalyzingScreenProps> = ({ onAnalysisComplete }) => {
       <div className="scanline" />
 
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] select-none pointer-events-none">
-        <h1 className="text-[30vw] font-black italic tracking-tighter transform -rotate-12">ANALYZING</h1>
+        <h1 className="text-[30vw] font-black italic tracking-tighter transform -rotate-12">{t('common.analyzing')}</h1>
       </div>
 
       <motion.div
@@ -91,8 +91,8 @@ const AnalyzingScreen: FC<AnalyzingScreenProps> = ({ onAnalysisComplete }) => {
                   { icon: Zap, label: t('analyzing.sync'), active: progress > 65 },
                   { icon: ShieldCheck, label: t('analyzing.valid'), active: progress > 90 },
                 ] as const).map((item, i) => (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className={`p-4 border-2 transform -skew-x-12 flex items-center gap-3 transition-colors ${item.active ? 'bg-white border-white text-black' : 'bg-transparent border-white/20 text-white/20'}`}
                   >
                     <item.icon className="w-5 h-5 flex-shrink-0" />

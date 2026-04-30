@@ -25,13 +25,7 @@ interface Tab {
   icon: ComponentType<{ className?: string }>;
 }
 
-const tabs: Tab[] = [
-  { id: 'home', label: 'HOME', icon: Home },
-  { id: 'quests', label: 'QUESTS', icon: Scroll },
-  { id: 'play', label: 'PLAY', icon: Swords },
-  { id: 'rankings', label: 'RANKINGS', icon: Trophy },
-  { id: 'profile', label: 'PROFILE', icon: User },
-];
+
 
 const pageMap: Record<string, ComponentType<PageProps>> = {
   home: HomePage,
@@ -59,6 +53,14 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
   const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
   const [navParams, setNavParams] = useState<any>({});
   const [isDailyDone, setIsDailyDone] = useState<boolean>(true);
+
+  const tabs: Tab[] = [
+    { id: 'home', label: t('nav.home'), icon: Home },
+    { id: 'quests', label: t('nav.quests'), icon: Scroll },
+    { id: 'play', label: t('nav.play'), icon: Swords },
+    { id: 'rankings', label: 'RANKINGS', icon: Trophy },
+    { id: 'profile', label: t('nav.profile'), icon: User },
+  ];
 
   const refreshDailyStatus = () => {
     if (user?.id && !user.isGuest) {
@@ -140,7 +142,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
               `}
             >
               <Swords className="w-4 h-4" />
-              ADVENTURE
+              {t('adventure.title')}
               {(isGuest || !isDailyDone) && <Lock className="w-3 h-3" />}
             </button>
           </div>
@@ -166,7 +168,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
                   onClick={() => { handleNavigate('profile'); setUserMenuOpen(false); }}
                   className="hub-dropdown-item"
                 >
-                  <User className="w-4 h-4" /> PROFILE {isGuest && <Lock className="w-3 h-3 ml-auto opacity-50" />}
+                  <User className="w-4 h-4" /> {t('profile.profile_navBar')} {isGuest && <Lock className="w-3 h-3 ml-auto opacity-50" />}
                 </button>
                 {user?.role === 'ADMIN' && (
                   <button
@@ -178,7 +180,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
                 )}
                 <div className="hub-dropdown-divider" />
                 <button onClick={onLogout} className="hub-dropdown-item hub-dropdown-danger">
-                  <LogOut className="w-4 h-4" /> {isGuest ? 'EXIT GUEST MODE' : 'LOGOUT'}
+                  <LogOut className="w-4 h-4" /> {isGuest ? 'EXIT GUEST MODE' : t('profile.logout')}
                 </button>
               </motion.div>
             )}

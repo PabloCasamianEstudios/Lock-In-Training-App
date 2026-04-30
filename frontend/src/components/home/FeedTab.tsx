@@ -27,7 +27,7 @@ export default function FeedTab({ dailyQuests }: FeedTabProps) {
                 </span>
               </div>
               <div className="text-right">
-                <span className="block text-[8px] font-black text-text-secondary opacity-20 uppercase mb-1">PROGRESION</span>
+                <span className="block text-[8px] font-black text-text-secondary opacity-20 uppercase mb-1">{t('home.progression')}</span>
                 <span className="text-[12px] font-black text-text-main italic tracking-widest">{quest.completedRepetitions || 0} / {quest.totalRepetitions || 1} REPS</span>
               </div>
             </div>

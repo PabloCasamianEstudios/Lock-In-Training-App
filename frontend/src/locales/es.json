@@ -24,8 +24,14 @@
     "control_panel": "Panel de Control de Cazador",
     "system_settings": "Ajustes del Sistema",
     "modify_interface": "Modificar interfaz y protocolos",
-    "emergency_logout": "Cierre de Emergencia",
-    "terminate_session": "Terminar sesión actual"
+    "logout": "Cerrar Sesión",
+    "terminate_session": "Terminar sesión actual",
+    "profile_navBar": "PERFIL",
+    "no_titles": "No tienes títulos deslboqueados",
+    "equipped_title": "EQUIPADO",
+    "view_page": "VER PÁGINA",
+    "download_pdf": "DESCARGAR PDF",
+    "download_progression": "DESCARGAR PROGRESO"
   },
   "home": {
     "title": "TERMINAL PRINCIPAL",
@@ -48,9 +54,10 @@
     "alone": "Solo en las sombras...",
     "find_hunters": "BUSCAR CAZADORES",
     "search_hunter": "BUSCAR CAZADOR",
-    "enter_username": "INGRESAR USERNAME...",
+    "enter_username": "INGRESAR NOMBRE DE USUARIO...",
     "scan": "SCAN",
-    "hunter_not_found": "CAZADOR NO ENCONTRADO EN LA BASE DE DATOS"
+    "hunter_not_found": "CAZADOR NO ENCONTRADO EN LA BASE DE DATOS",
+    "progression": "PROGRESIÓN"
   },
   "rankings": {
     "title": "RANKINGS GLOBALES",
@@ -65,17 +72,17 @@
     "live_status": "Estado: Competitivo Global",
     "performance_tracked": "Tu rendimiento está siendo rastreado en el coliseo global.",
     "no_hunters": "Sin cazadores clasificados aún",
-    "summon_allies": "Invoca a tus aliados para verlos aquí",
+    "summon_allies": "¡Añade amigos para verlos aquí!",
     "combat_circle": "Círculo de Combate (División A)",
     "season_active": "TEMPORADA ACTIVA",
     "syncing_group": "SINCRONIZANDO DATOS DE GRUPO...",
-    "league_protocol": "PROTOCOLO DE DIVISIÓN DE LIGA"
+    "league_protocol": "LIGA"
   },
   "quests": {
-    "title": "PROTOCOLOS DE MISIÓN",
+    "title": "MISIONES",
     "subtitle_decrypting": "DESCRIPTANDO DATOS DE MISIÓN...",
     "subtitle_assignments": "ASIGNACIONES DE COMBATE DISPONIBLES",
-    "initializing": "INICIALIZANDO PROTOCOLO DE MISIÓN...",
+    "initializing": "INICIANDO MISIÓN...",
     "error": "ERROR DE SISTEMA DETECTADO",
     "protocols": "Protocolos",
     "tabs": {
@@ -86,31 +93,41 @@
       "yours": "TUS_MISIONES"
     },
     "no_active": "Sin misiones activas en progreso",
-    "abort_protocol": "ABORTAR PROTOCOLO",
-    "terminate_mission": "¿ESTÁS SEGURO DE QUE QUIERES TERMINAR ESTA MISIÓN? TODOS LOS DATOS DEL EXPERIMENTO ACTUAL SERÁN PURGADOS.",
-    "protocol_failed": "PROTOCOLO FALLIDO",
-    "initialize": "INICIALIZAR",
-    "system_overload": "SOLO SE PERMITE UNA MISIÓN ACTIVA. COMPLETA O ABANDONA EL PROTOCOLO ACTUAL PRIMERO.",
-    "purge_protocol": "PROTOCOLO DE PURGA",
-    "delete_warning": "ESTÁS A PUNTO DE ELIMINAR ESTA MISIÓN. ESTA ACCIÓN NO SE PUEDE DESHACER. ¿PROCEDER?",
-    "protocol_success": "PROTOCOLO EXITOSO",
+    "abort_protocol": "ABANDONAR MISIÓN",
+    "terminate_mission": "¿ESTÁS SEGURO DE QUE QUIERES ABANDONAR ESTA MISIÓN? TODA LA PROGRESIÓN SERÁ ELIMINADA.",
+    "protocol_failed": "MISIÓN FALLIDA",
+    "initialize": "INICIAR MISIÓN",
+    "confirm_initialize": "¿ESTÁS SEGURO DE QUE QUIERES INICIAR ESTA MISIÓN? NO PODRÁS HACER OTRA MISIÓN HASTA QUE TERMINES O ABANDONES ESTA MISIÓN",
+    "system_overload": "SOLO SE PERMITE UNA MISIÓN ACTIVA. COMPLETA O ABANDONA LA MISIÓN ACTUAL PRIMERO.",
+    "purge_protocol": "ELIMINAR MISIÓN",
+    "delete_warning": "¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR ESTA MISIÓN? ESTA ACCIÓN NO SE PUEDE DESHACER. ¿PROCEDER?",
+    "protocol_success": "MISIÓN EXITOSA",
     "rewards": {
       "xp": "XP GANADA",
       "gold": "ORO ADQUIRIDO",
       "collect": "RECOLECTAR Y CONTINUAR"
-    }
+    },
+    "gold": "ORO",
+    "more_tasks": "MÁS EJERCICIOS"
   },
   "common": {
     "system_online": "Sistema Online",
     "hunter": "CAZADOR",
     "you": "TÚ",
     "rank": "RANGO",
-    "level": "nvl."
+    "level": "nvl.",
+    "export": "EXPORTAR",
+    "import": "IMPORTAR",
+    "mandatory": "OBLIGATORIO",
+    "analyzing": "ANALIZANDO",
+    "light_mode": "Modo Claro",
+    "dark_mode": "Modo Oscuro",
+    "account": "CUENTA"
   },
   "settings": {
     "title": "CONFIGURACIÓN DEL SISTEMA",
     "language": "IDIOMA DE INTERFAZ",
-    "select_language": "Seleccionar Idioma de Protocolo",
+    "select_language": "Seleccionar Idioma",
     "spanish": "Español",
     "english": "Inglés",
     "theme": "TEMA DE INTERFAZ",
@@ -118,30 +135,37 @@
     "light": "CLARO",
     "privacy_policy": "POLÍTICA DE PRIVACIDAD",
     "user_manual": "MANUAL DE USUARIO",
-    "save": "GUARDAR CAMBIOS"
+    "save": "GUARDAR CAMBIOS",
+    "advert": "ADVERTENCIA",
+    "delete_account": "ELIMINAR CUENTA",
+    "delete_account_warning": "¿ESTÁS SEGURO DE QUE QUIERES ELIMINAR TU CUENTA Y TODOS TUS PROGRESOS, ESTADÍSTICAS Y MISIONES DE FORMA PERMANENTE?",
+    "delete_account_success": "CUENTA ELIMINADA EXITOSAMENTE",
+    "delete_account_error": "ERROR AL ELIMINAR CUENTA",
+    "new password": "NUEVA CONTRASEÑA",
+    "edit_data": "EDITAR DATOS"
   },
   "auth": {
     "system": "SISTEMA",
     "new": "NUEVO",
     "access": "ACCESO",
     "player": "JUGADOR",
-    "username": "Perfil de Usuario",
+    "username": "Nombre de Usuario",
     "username_placeholder": "ej. SUNG_JIN_WOO",
-    "email": "Protocolo de Email",
-    "password": "Clave de Seguridad",
-    "password_placeholder": "tu contraseña",
+    "email": "Email",
+    "password": "Contraseña",
+    "password_placeholder": "Tu contraseña",
     "enter_stage": "ENTRAR AL NIVEL",
     "finalize_profile": "FINALIZAR PERFIL",
-    "no_data": "¿Sin datos? Crear protocolo de inicialización",
+    "no_data": "¿No tienes cuenta? Registrate aquí",
     "already_registered": "¿Ya estás registrado? Acceder al sistema",
     "guest_override": "ACCESO DE INVITADO",
     "alert": "ALERTA",
     "success": "SISTEMA",
     "errors": {
-      "missing_credentials": "Fallo de protocolo: Faltan credenciales requeridas",
-      "username_mandatory": "Fallo de identidad: El nombre de usuario es obligatorio",
-      "invalid_email": "Corrupción de datos: Formato de email no válido",
-      "password_short": "Alerta de seguridad: La clave debe tener al menos 6 caracteres"
+      "missing_credentials": "Error: Faltan credenciales requeridas",
+      "username_mandatory": "Error: El nombre de usuario es obligatorio",
+      "invalid_email": "Error: Formato de email no válido",
+      "password_short": "Error: La clave debe tener al menos 6 caracteres"
     },
     "messages": {
       "register_success": "Alineación de perfil completa. Inicializando vínculo neural...",
@@ -182,7 +206,7 @@
       "quest-progress": "Progreso de Misión",
       "competitive": "Automatización Competitiva",
       "moderation": "Seguridad y Moderación",
-      "shop": "Tienda e Inventario"
+      "shop": "Tienda"
     }
   },
   "adventure": {
@@ -199,6 +223,9 @@
     "game_master": "GAME MASTER",
     "room": "SALA",
     "type": "TIPO",
+    "potion": "POCIÓN DE VIDA",
+    "instantly": "AL INSTANTE",
+    "gold_available": "ORO DISPONIBLE",
     "darkness_awaits": "LA OSCURIDAD ESPERA. ¿ESTÁS PREPARADO PARA ENTRAR EN LA MAZMORRA?",
     "you_died": "HAS MUERTO",
     "start_new": "INICIAR NUEVA CAMPAÑA",
@@ -212,7 +239,7 @@
       "skip_failed": "No se pudo saltar la prueba."
     },
     "daily_pending": "DIARIA PENDIENTE",
-    "daily_lock_msg": "TU CONTRATO DIARIO NO HA SIDO CUMPLIDO. EL COLISEO PERMANECERÁ CERRADO HASTA QUE COMPLETES TU MISIÓN OBLIGATORIA.",
+    "daily_lock_msg": "TU MISIÓN DIARIA NO HA SIDO CUMPLIDO. LA MAZMORRA PERMANECERÁ CERRADA HASTA QUE COMPLETES TU MISIÓN OBLIGATORIA.",
     "verify_status": "VERIFICAR ESTADO"
   },
   "camera": {
@@ -223,7 +250,7 @@
     "position_hint": "Ponte frente a la cámara de forma lateral. Asegúrate de que tus brazos y pecho sean visibles para el 'Sistema'."
   },
   "quest_view": {
-    "protocol": "PROTOCOLO DE MISIÓN",
+    "protocol": "MISIÓN",
     "system_workout": "Entrenamiento Generado por el Sistema",
     "awaiting_init": "Esperando Inicialización",
     "prepare": "Prepara tu cuerpo. Protocolo listo.",
@@ -231,21 +258,21 @@
     "progress": "Progreso",
     "elapsed": "TIEMPO TRANSCURRIDO DE LA MISIÓN",
     "complete": "COMPLETAR TODAS LAS TAREAS",
-    "abort": "Abortar Protocolo"
+    "abort": "CANCELAR"
   },
   "quest_modal": {
     "edit": "EDITAR",
     "new": "NUEVO",
-    "protocol": "PROTOCOLO DE MISIÓN",
+    "protocol": "MISIÓN",
     "title": "Título de la Misión",
     "title_placeholder": "EJ. ENTRENAMIENTO MATUTINO",
     "exercises": "Ejercicios",
     "add_new": "AÑADIR NUEVO",
-    "update": "ACTUALIZAR PROTOCOLO",
-    "initialize": "INICIALIZAR PROTOCOLO"
+    "update": "ACTUALIZAR MISIÓN",
+    "initialize": "INICIAR MISIÓN"
   },
   "splash": {
-    "initializing": "INICIALIZANDO PROTOCOLO"
+    "initializing": "INICIANDO LOCKIN"
   },
   "survey": {
     "steps": {
@@ -320,7 +347,7 @@
     "available_points": "Puntos Disponibles",
     "awakening": "Despertando Potencial...",
     "assign_more": "Asigna {{n}} puntos más",
-    "confirm": "Confirmar Despertar",
+    "confirm": "CONFIRMAR",
     "stats": {
       "str": "Fuerza",
       "agi": "Agilidad",
@@ -337,5 +364,12 @@
     "access_denied": "ACCESO DENEGADO",
     "login_prompt": "Inicia sesión para acceder a este contenido",
     "login_button": "INICIAR SESIÓN"
+  },
+  "nav": {
+    "home": "INICIO",
+    "quests": "MISIONES",
+    "play": "AVENTURA",
+    "rankings": "RANKINGS",
+    "profile": "PERFIL"
   }
 }

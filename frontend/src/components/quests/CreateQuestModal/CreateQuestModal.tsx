@@ -117,7 +117,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || exercises.length === 0) return;
-    
+
     const data = {
       title,
       exercises: exercises.map(ex => ({
@@ -143,23 +143,23 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
     >
       <div className="flex justify-end gap-3 mb-4 -mt-2">
         {initialData ? (
-          <button 
+          <button
             type="button"
             onClick={handleExport}
             className="flex items-center gap-2 text-[9px] font-black uppercase italic bg-surface border border-border px-3 py-1.5 hover:bg-neutral-white hover:text-neutral-black transition-all text-text-secondary"
           >
-            <Download className="w-3 h-3" /> EXPORT JSON
+            <Download className="w-3 h-3" /> {t('common.export')} JSON
           </button>
         ) : (
           <>
-            <button 
+            <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               className="flex items-center gap-2 text-[9px] font-black uppercase italic bg-surface border border-border px-3 py-1.5 hover:bg-neutral-white hover:text-neutral-black transition-all text-text-secondary"
             >
-              <FileUp className="w-3 h-3" /> IMPORT JSON
+              <FileUp className="w-3 h-3" /> {t('common.import')} JSON
             </button>
-            <input 
+            <input
               type="file"
               ref={fileInputRef}
               onChange={handleImport}
@@ -173,7 +173,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
           <label className="text-[10px] font-black uppercase tracking-widest text-text-main opacity-40 italic">{t('quest_modal.title')}</label>
-          <input 
+          <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -186,7 +186,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <label className="text-[10px] font-black uppercase tracking-widest text-text-main opacity-40 italic">{t('quest_modal.exercises')}</label>
-            <button 
+            <button
               type="button"
               onClick={addExercise}
               className="flex items-center gap-1 text-[10px] font-black uppercase text-main hover:text-text-main transition-colors underline underline-offset-4 decoration-2"
@@ -198,7 +198,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
           <div className="space-y-3">
             <AnimatePresence>
               {exercises.map((ex, index) => (
-                <motion.div 
+                <motion.div
                   key={index}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -206,7 +206,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
                   className="flex gap-2 items-center bg-white/5 p-2 border border-white/10"
                 >
                   <div className="flex-1 grid grid-cols-2 gap-2">
-                    <select 
+                    <select
                       value={ex.name}
                       onChange={(e) => updateExercise(index, 'name', e.target.value)}
                       className="bg-neutral-black text-text-main font-black uppercase italic text-[10px] p-2 outline-none border border-border"
@@ -216,7 +216,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
                       ))}
                     </select>
                     <div className="relative">
-                      <input 
+                      <input
                         type="number"
                         value={ex.value}
                         onChange={(e) => updateExercise(index, 'value', e.target.value)}
@@ -228,7 +228,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
                     </div>
                   </div>
                   {exercises.length > 1 && (
-                    <button 
+                    <button
                       type="button"
                       onClick={() => removeExercise(index)}
                       className="p-2 text-text-secondary opacity-20 hover:text-red-500 transition-colors"
@@ -243,7 +243,7 @@ const CreateQuestModal: FC<CreateQuestModalProps> = ({ isOpen, onClose, onCreate
         </div>
 
         <div className="pt-6">
-          <button 
+          <button
             type="submit"
             className="w-full bg-main text-black font-black py-4 uppercase italic tracking-widest text-sm hover:bg-neutral-white hover:text-neutral-black hover:border-neutral-black transition-all shadow-[6px_6px_0px_var(--border)] hover:shadow-[6px_6px_0px_var(--main-color)]"
           >

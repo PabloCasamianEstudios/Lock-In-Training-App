@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { Store, Activity } from 'lucide-react';
 import BrutalistCard from '../common/BrutalistCard';
+import { useLanguage } from '../../LanguageContext';
 
 interface AdventureStoreProps {
   coins: number;
@@ -10,16 +11,19 @@ interface AdventureStoreProps {
 }
 
 export const AdventureStore: FC<AdventureStoreProps> = ({ coins, onBuyPotion, buying, canBuy }) => {
+
+  const { t } = useLanguage();
+
   return (
     <BrutalistCard padding="p-6" className="flex flex-col gap-4 border-2 border-border" variant="accent">
       <h2 className="text-text-main font-black text-lg italic uppercase border-b border-border pb-3 flex items-center gap-3 tracking-widest">
-        <Store className="w-5 h-5 text-main" /> TIENDA
+        <Store className="w-5 h-5 text-main" /> {t('admin.entities.shop')}
       </h2>
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between border-2 border-border p-3 bg-neutral-black">
           <div className="flex flex-col">
-            <span className="text-text-main font-black italic uppercase text-sm">POCIÓN DE VIDA</span>
-            <span className="text-main/80 text-[10px] font-black uppercase tracking-widest">+20 HP (AL INSTANTE)</span>
+            <span className="text-text-main font-black italic uppercase text-sm">{t('adventure.potion')}</span>
+            <span className="text-main/80 text-[10px] font-black uppercase tracking-widest">+20 HP ({t('adventure.instantly')})</span>
           </div>
           <button
             onClick={onBuyPotion}
@@ -30,7 +34,7 @@ export const AdventureStore: FC<AdventureStoreProps> = ({ coins, onBuyPotion, bu
           </button>
         </div>
         <div className="text-[10px] text-text-secondary italic font-black uppercase tracking-widest text-right">
-          ORO DISPONIBLE: <span className="text-yellow-500">{coins}</span>
+          {t('adventure.gold_available')}: <span className="text-yellow-500">{coins}</span>
         </div>
       </div>
     </BrutalistCard>
