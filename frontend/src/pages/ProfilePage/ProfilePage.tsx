@@ -83,7 +83,6 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
       await userService.equipTitle(user.id, titleId);
       const updatedTitles = await userService.getUserTitles(user.id);
       setTitles(updatedTitles);
-      setIsTitlePickerOpen(false);
     } catch (err) {
       console.error('Error equipping title:', err);
     } finally {
@@ -308,7 +307,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
         title="ELIGE TU TÍTULO"
         maxWidth="max-w-md"
       >
-        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 no-scrollbar">
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
           {titles.length === 0 ? (
             <div className="text-center py-8 opacity-40">
               <p className="font-black italic uppercase tracking-widest text-xs">{t('profile.no_titles')}</p>
@@ -318,10 +317,10 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
               <button
                 key={ti.id}
                 onClick={() => handleEquipTitle(ti.titleId)}
-                disabled={actionLoading || ti.isEquipped}
+                disabled={actionLoading}
                 className={`w-full p-6 border-4 text-left transition-all group flex items-center gap-4
                   ${ti.isEquipped
-                    ? 'bg-main border-main text-neutral-black cursor-default'
+                    ? 'bg-main border-main text-neutral-black hover:bg-main/90'
                     : 'bg-neutral-black border-border text-text-main hover:border-main active:translate-x-1 active:translate-y-1'
                   }
                   ${actionLoading ? 'opacity-50 pointer-events-none' : ''}

@@ -158,19 +158,19 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
                   <div className={`flex justify-between items-center border-b-2 pb-2 gap-4 ${isCompleted ? 'border-neutral-black/20' : 'border-border'}`}>
                     <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                       {isCompleted ? (
-                        <CheckSquare className="w-6 h-6 sm:w-8 sm:h-8 text-neutral-black flex-shrink-0" />
+                        <CheckSquare className="w-6 h-6 sm:w-8 sm:h-8 text-[var(--neutral-white)] opacity-30 flex-shrink-0" />
                       ) : (
                         <Square className="w-6 h-6 sm:w-8 sm:h-8 text-text-secondary opacity-40 flex-shrink-0" />
                       )}
-                      <span className={`text-lg sm:text-3xl font-black italic uppercase tracking-tighter leading-none ${isCompleted ? 'text-neutral-black' : 'text-text-main'}`}>
+                      <span className={`text-lg sm:text-3xl font-black italic uppercase tracking-tighter leading-none ${isCompleted ? 'text-[var(--neutral-white)] opacity-30' : 'text-text-main'}`}>
                         {step.exercise?.name ?? step.exerciseName ?? 'Exercise'}
                       </span>
                     </div>
 
                     <div className="flex flex-col items-end flex-shrink-0">
                       <span className={`text-[8px] sm:text-[10px] font-bold uppercase ${isCompleted ? 'text-neutral-black/60' : 'text-text-secondary opacity-40'}`}>{t('quest_view.progress')}</span>
-                      <span className={`text-lg sm:text-3xl font-black italic ${isCompleted ? 'text-neutral-black' : 'text-text-main'}`}>
-                        {progress} <span className={`text-sm sm:text-lg ${isCompleted ? 'text-neutral-black/40' : 'text-text-secondary opacity-50'}`}>/ {target}</span>
+                      <span className={`text-lg sm:text-3xl font-black italic ${isCompleted ? 'text-[var(--neutral-white)] opacity-30' : 'text-text-main'}`}>
+                        {progress} <span className={`text-sm sm:text-lg ${isCompleted ? 'text-[var(--neutral-white)] opacity-100' : 'text-text-secondary opacity-100'}`}>/ {target}</span>
                       </span>
                     </div>
                   </div>
@@ -181,7 +181,7 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
                       disabled={isCompleted && progress === target ? false : progress === 0}
                       className={`w-10 sm:w-12 border-2 p-2 sm:p-3 text-lg sm:text-xl font-black italic transition-all
                         ${isCompleted
-                          ? 'bg-neutral-black/10 border-neutral-black/20 text-neutral-black hover:bg-red-600 hover:text-white hover:border-red-500'
+                          ? 'bg-[var(--neutral-white)]/5 border-[var(--neutral-white)]/10 text-[var(--neutral-white)] opacity-30 hover:bg-red-600 hover:text-white hover:border-red-500 hover:opacity-100'
                           : 'bg-surface border-border text-text-secondary hover:border-red-500 hover:bg-red-600 hover:text-white'}`}
                     >
                       -
@@ -191,7 +191,7 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
                       disabled={isCompleted}
                       className={`flex-1 border-2 p-2 sm:p-3 text-xs sm:text-base font-black italic transition-all
                         ${isCompleted
-                          ? 'bg-neutral-black/10 border-neutral-black/20 text-neutral-black'
+                          ? 'bg-[var(--neutral-white)]/5 border-[var(--neutral-white)]/10 text-[var(--neutral-white)] opacity-30'
                           : 'bg-surface border-border text-text-secondary hover:border-main hover:bg-main hover:text-neutral-black'}`}
                     >
                       +1
@@ -201,7 +201,7 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
                       disabled={isCompleted}
                       className={`flex-1 border-2 p-2 sm:p-3 text-xs sm:text-base font-black italic transition-all
                         ${isCompleted
-                          ? 'bg-neutral-black/10 border-neutral-black/20 text-neutral-black'
+                          ? 'bg-[var(--neutral-white)]/5 border-[var(--neutral-white)]/10 text-[var(--neutral-white)] opacity-30'
                           : 'bg-surface border-border text-text-secondary hover:border-main hover:bg-main hover:text-neutral-black'}`}
                     >
                       +5

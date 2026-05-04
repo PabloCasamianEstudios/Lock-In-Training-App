@@ -413,9 +413,12 @@ public class UserController {
 
         for (UserTitle ut : allUserTitles) {
             if (ut.getTitle().getId().equals(titleId)) {
-                ut.setEquipped(true);
+                // Si ya estaba equipado, lo desequipamos (Toggle)
+                // Si no lo estaba, lo equipamos
+                ut.setEquipped(!ut.isEquipped());
                 target = ut;
             } else {
+                // Los demás siempre se desequipan (solo un título activo)
                 ut.setEquipped(false);
             }
         }

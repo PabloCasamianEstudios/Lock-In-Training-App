@@ -29,14 +29,14 @@ export default function QuestsTabsNav({ activeSubTab, setActiveSubTab, counts }:
       <h3 className="hidden md:block text-[10px] font-black uppercase tracking-[0.3em] text-text-secondary opacity-40 italic mb-6 border-l-4 border-main pl-3">
         {t('quests.protocols')}
       </h3>
-      <nav className="flex md:flex-col items-center gap-2 overflow-x-auto no-scrollbar py-2 md:py-0 mb-4 md:mb-0">
+      <nav className="flex md:flex-col flex-wrap md:flex-nowrap items-center gap-2 py-2 md:py-0 mb-4 md:mb-0">
         {TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveSubTab(tab.id as QuestTabType)}
-            className={`w-full text-left px-5 py-3 text-[10px] font-black border-2 transition-all uppercase tracking-[0.2em] whitespace-nowrap
+            className={`flex-1 md:w-full text-center md:text-left px-2 sm:px-5 py-2 sm:py-3 text-[7px] sm:text-[10px] font-black border-2 transition-all uppercase tracking-[0.1em] sm:tracking-[0.2em]
               ${activeSubTab === tab.id
-                ? 'bg-main text-neutral-black border-main shadow-[4px_4px_0px_var(--neutral-white)]'
+                ? 'bg-main text-neutral-black border-main shadow-[2px_2px_0px_var(--neutral-white)] sm:shadow-[4px_4px_0px_var(--neutral-white)]'
                 : 'bg-neutral-black text-text-secondary border-border hover:border-text-secondary'}`}
           >
             {tab.label}
