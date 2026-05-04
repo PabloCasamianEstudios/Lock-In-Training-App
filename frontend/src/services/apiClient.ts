@@ -1,6 +1,6 @@
 const formatError = (error: Error | string): string => {
   const msg = typeof error === 'string' ? error : (error.message || String(error));
-  
+
   if (msg.includes('ECONNREFUSED')) return 'Error de conexión: El servidor no responde.';
   if (msg.includes('already registered')) return 'Este email ya está en uso por otro usuario.';
   if (msg.includes('already taken')) return 'Este nombre de usuario ya está ocupado.';
@@ -8,11 +8,11 @@ const formatError = (error: Error | string): string => {
   if (msg.includes('6 characters')) return 'La contraseña debe tener al menos 6 caracteres.';
   if (msg.includes('Authentication failure') || msg.includes('Usuario no encontrado')) return 'Email o contraseña incorrectos.';
   if (msg.includes('Token expired')) return 'Sesión caducada. Por favor, accede de nuevo.';
-  
+
   return msg;
 };
 
-const BASE_URL = '';
+const BASE_URL = import.meta.env.VITE_API_URL || '';
 
 interface ApiClientConfig extends RequestInit {
   body?: any;
@@ -46,7 +46,7 @@ const apiClient = async <T = any>(endpoint: string, { body, ...customConfig }: A
     const response = await fetch(`${BASE_URL}${url}`, config);
     const contentType = response.headers.get('content-type');
     const isJson = contentType && contentType.includes('application/json');
-    
+
     let data: any;
     try {
       data = isJson ? await response.json() : await response.text();
