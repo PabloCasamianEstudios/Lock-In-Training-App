@@ -78,7 +78,7 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--neutral-black)] flex items-center justify-center py-12 px-6 relative overflow-y-auto overflow-x-hidden">
       <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
       <div className="smash-slash opacity-30" />
       <div className="scanline" />
@@ -88,7 +88,7 @@ const AuthPage: FC<AuthPageProps> = ({ onAuthComplete, onGuestEntry }) => {
         animate={{ opacity: 1, x: 0 }}
         className="w-full max-w-lg z-10"
       >
-        <div className="system-card border-white shadow-[12px_12px_0px_var(--main-color)] p-12">
+        <div className="system-card shadow-[12px_12px_0px_var(--main-color)] p-8 md:p-12">
           <AuthHeader isLogin={isLogin} />
 
           <form onSubmit={handleSubmit} className="space-y-8">

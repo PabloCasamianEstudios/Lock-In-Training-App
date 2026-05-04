@@ -41,7 +41,7 @@ export const AuthActions: FC<AuthActionsProps> = ({
         <button
           type="button"
           onClick={onToggleMode}
-          className="text-[10px] text-text-secondary uppercase hover:text-text-main transition-colors font-black tracking-[0.2em] italic"
+          className="text-[10px] text-[var(--secondary-text)] uppercase hover:text-main transition-colors font-black tracking-[0.2em] italic"
         >
           {isLogin ? t('auth.no_data') : t('auth.already_registered')}
         </button>

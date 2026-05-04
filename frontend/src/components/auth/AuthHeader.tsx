@@ -10,7 +10,7 @@ export const AuthHeader: FC<AuthHeaderProps> = ({ isLogin }) => {
   
   return (
     <div className="mb-12 space-y-1">
-      <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase leading-none">
+      <h2 className="text-5xl font-black italic text-[var(--neutral-white)] tracking-tighter uppercase leading-none">
         {isLogin ? t('auth.system') : t('auth.new')}
         <span className="block text-main"> {isLogin ? t('auth.access') : t('auth.player')}</span>
       </h2>
