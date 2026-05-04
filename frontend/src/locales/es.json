@@ -122,7 +122,8 @@
     "analyzing": "ANALIZANDO",
     "light_mode": "Modo Claro",
     "dark_mode": "Modo Oscuro",
-    "account": "CUENTA"
+    "account": "CUENTA",
+    "desktopApp": "APLICACIÓN DE ESCRITORIO"
   },
   "settings": {
     "title": "CONFIGURACIÓN DEL SISTEMA",

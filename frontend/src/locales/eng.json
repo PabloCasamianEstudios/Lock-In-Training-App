@@ -122,7 +122,8 @@
     "analyzing": "ANALYZING",
     "light_mode": "Light Mode",
     "dark_mode": "Dark Mode",
-    "account": "ACCOUNT"
+    "account": "ACCOUNT",
+    "desktopApp": "DESKTOP APP"
   },
   "settings": {
     "title": "SYSTEM CONFIGURATION",

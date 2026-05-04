@@ -432,7 +432,7 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
             <div className="space-y-4">
               <div className="flex items-center gap-3 text-main mb-2">
                 <Settings className="w-5 h-5" />
-                <h3 className="text-sm font-black uppercase italic tracking-widest">DESKTOP APP</h3>
+                <h3 className="text-sm font-black uppercase italic tracking-widest">{t('common.desktopApp')}</h3>
               </div>
               <a
                 href="https://drive.google.com/file/d/1tUldwayeqG4nF4zBlGf5MvffckR00vir/view?usp=sharing"
