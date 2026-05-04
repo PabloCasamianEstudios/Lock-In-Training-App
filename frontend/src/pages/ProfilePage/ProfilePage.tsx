@@ -428,6 +428,22 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
                 {t('profile.download_pdf')}
               </a>
             </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-main mb-2">
+                <Settings className="w-5 h-5" />
+                <h3 className="text-sm font-black uppercase italic tracking-widest">DESKTOP APP</h3>
+              </div>
+              <a
+                href="https://drive.google.com/file/d/1tUldwayeqG4nF4zBlGf5MvffckR00vir/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-main border-4 border-neutral-black p-5 text-neutral-black font-black italic uppercase hover:bg-neutral-white transition-all flex items-center justify-center gap-3 group text-center no-underline shadow-[4px_4px_0px_black]"
+              >
+                DESCARGAR .EXE
+                <Download className="w-4 h-4" />
+              </a>
+            </div>
           </div>
 
           <div className="h-1 bg-border/20 w-full my-4" />
