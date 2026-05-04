@@ -12,7 +12,7 @@ const formatError = (error: Error | string): string => {
   return msg;
 };
 
-const BASE_URL = import.meta.env.VITE_API_URL || '';
+const BASE_URL = 'https://lock-in-training-app.onrender.com';
 
 interface ApiClientConfig extends RequestInit {
   body?: any;
