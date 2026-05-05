@@ -415,7 +415,7 @@ public class UserController {
 
         List<RankingUserDTO> ranking = colleagues.stream()
                 .map(ul -> mapToRankingDTO(ul.getUser()))
-                .sorted((a, b) -> Long.compare(b.getSeasonPoints(), a.getSeasonPoints()))
+                .sorted((a, b) -> Long.compare(b.getTotalPoints(), a.getTotalPoints()))
                 .toList();
 
         return ResponseEntity.ok(ranking);
