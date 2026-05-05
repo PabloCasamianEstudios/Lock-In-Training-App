@@ -42,6 +42,8 @@ public class AdminController {
     private com.lockin.service.CompetitiveService competitiveService;
     @Autowired
     private com.lockin.service.SystemQuestService systemQuestService;
+    @Autowired
+    private AdventureSessionRepository adventureSessionRepository;
 
     /* --- COMPETITIVE MANAGEMENT ZONE --- */
     @PostMapping("/competitive/monthly-update")
@@ -382,30 +384,43 @@ public class AdminController {
         try {
             List<User> users = userRepository.findAll();
             LocalDate today = LocalDate.now();
-            LocalDateTime now = LocalDateTime.now();
             int count = 0;
 
             for (User user : users) {
-                // Verificar si ya tiene la obligatoria de hoy
-                boolean exists = userQuestProgressRepository.findByUserId(user.getId()).stream()
-                        .anyMatch(p -> p.isMandatoryDaily() 
+                // 1. Borrar misiones diarias obligatorias que ya tuviera hoy (Reset total)
+                List<UserQuestProgress> todayQuests = userQuestProgressRepository.findByUserId(user.getId()).stream()
+                        .filter(p -> p.isMandatoryDaily() 
                                     && p.getStartTime() != null 
-                                    && p.getStartTime().toLocalDate().equals(today));
+                                    && p.getStartTime().toLocalDate().equals(today))
+                        .toList();
                 
-                if (!exists) {
-                    // Generar una
-                    String rank = (user.getSeasonRank() != null) ? user.getSeasonRank() : "E";
-                    List<Quest> pool = questRepository.findByType(Quest.QuestType.SYSTEM).stream()
-                            .filter(q -> rank.equals(q.getRankDifficulty()))
-                            .toList();
-                    
-                    if (!pool.isEmpty()) {
-                        systemQuestService.generateMandatoryDaily(user);
-                        count++;
+                if (!todayQuests.isEmpty()) {
+                    for (UserQuestProgress p : todayQuests) {
+                        Quest oldQuest = p.getQuest();
+                        userQuestProgressRepository.delete(p);
+                        // Borramos la quest física si es de tipo diaria (para no saturar la BD)
+                        if (oldQuest.getType() == Quest.QuestType.DAILY) {
+                            questRepository.delete(oldQuest);
+                        }
                     }
+                    userQuestProgressRepository.flush();
+                    questRepository.flush();
+                }
+
+                // 2. Generar la nueva misión diaria
+                UserQuestProgress newMandatory = systemQuestService.generateMandatoryDaily(user);
+                
+                if (newMandatory != null) {
+                    count++;
+                    
+                    // 3. BLOQUEAR MODO AVENTURA: 
+                    adventureSessionRepository.findByUserAndIsActiveTrue(user).ifPresent(session -> {
+                        session.setPendingQuestId(newMandatory.getQuest().getId());
+                        adventureSessionRepository.save(session);
+                    });
                 }
             }
-            return ResponseEntity.ok("Se han asignado " + count + " misiones diarias obligatorias.");
+            return ResponseEntity.ok("Se han asignado " + count + " misiones diarias obligatorias y se ha reseteado el progreso de hoy.");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error al asignar: " + e.getMessage());

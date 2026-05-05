@@ -173,9 +173,7 @@ export default function FriendsTab({
             <Users className="w-16 h-16 text-text-secondary opacity-20" />
             <div className="text-center">
               <p className="text-xs font-black text-text-secondary uppercase tracking-[0.4em] italic mb-4">{t('home.alone')}</p>
-              <button className="text-[10px] font-black text-main border-b-2 border-main/20 pb-1 hover:text-text-main hover:border-text-main transition-all uppercase italic tracking-widest">
-                {t('home.find_hunters')}
-              </button>
+              <p className="text-[10px] font-black text-text-secondary uppercase tracking-[0.4em] italic mb-4">{t('home.find_friends')}</p>
             </div>
           </div>
         )}
