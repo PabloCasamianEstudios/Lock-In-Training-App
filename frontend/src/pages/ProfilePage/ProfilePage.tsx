@@ -208,7 +208,10 @@ const ProfilePage: FC<PageProps> = ({ user, profile, onLogout, targetId, onNavig
                 {displayUser?.email || 'OFFLINE_PROTOCOL'}
               </span>
               <span className="text-[10px] md:text-xs bg-main text-neutral-black px-4 py-1 font-black uppercase tracking-widest italic transform -skew-x-12 shadow-[4px_4px_0px_var(--neutral-white)]">
-                {t('common.rank')} {displayProfile?.rank || 'E'}
+                {t('profile.season_rank')}: {displayProfile?.seasonRank || 'E'}
+              </span>
+              <span className="text-[10px] md:text-xs bg-secondary text-neutral-white px-4 py-1 font-black uppercase tracking-widest italic transform -skew-x-12 shadow-[4px_4px_0px_var(--neutral-white)]">
+                {t('profile.league_rank')}: {displayProfile?.rank || 'Bronze'}
               </span>
             </div>
 

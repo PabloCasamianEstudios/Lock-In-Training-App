@@ -7,6 +7,8 @@
     "dossier": "EXTERNAL HUNTER DOSSIER",
     "level": "Lvl",
     "rank": "Rank",
+    "season_rank": "Season Rank",
+    "league_rank": "League Rank",
     "add_friend": "ADD FRIEND",
     "processing": "PROCESSING...",
     "request_sent": "REQUEST SENT",

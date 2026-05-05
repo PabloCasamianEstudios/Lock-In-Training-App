@@ -7,6 +7,8 @@
     "dossier": "DOSSIER DE CAZADOR EXTERNO",
     "level": "Nvl",
     "rank": "Rango",
+    "season_rank": "Rango de Temporada",
+    "league_rank": "Rango de Liga",
     "add_friend": "AÑADIR AMIGO",
     "processing": "PROCESANDO...",
     "request_sent": "SOLICITUD ENVIADA",
