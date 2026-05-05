@@ -101,6 +101,7 @@ public class AdminController {
         }
         List<com.lockin.model.dtos.RankingUserDTO> players = userLeagueRepository.findByLeagueId(id).stream()
                 .map(ul -> mapToRankingDTO(ul.getUser()))
+                .sorted((a, b) -> Long.compare(b.getTotalPoints(), a.getTotalPoints()))
                 .toList();
         return ResponseEntity.ok(players);
     }
@@ -221,10 +222,11 @@ public class AdminController {
         if (!questRepository.existsById(id)) {
             return ResponseEntity.status(404).body("El id no existe");
         }
-        
+
         // Verificar si hay progreso asociado
         if (userQuestProgressRepository.existsByQuestId(id)) {
-            return ResponseEntity.badRequest().body("No se puede eliminar la misión: usuarios tienen progreso activo o completado en ella.");
+            return ResponseEntity.badRequest()
+                    .body("No se puede eliminar la misión: usuarios tienen progreso activo o completado en ella.");
         }
 
         questRepository.deleteById(id);
@@ -387,18 +389,16 @@ public class AdminController {
             int count = 0;
 
             for (User user : users) {
-                // 1. Borrar misiones diarias obligatorias que ya tuviera hoy (Reset total)
                 List<UserQuestProgress> todayQuests = userQuestProgressRepository.findByUserId(user.getId()).stream()
-                        .filter(p -> p.isMandatoryDaily() 
-                                    && p.getStartTime() != null 
-                                    && p.getStartTime().toLocalDate().equals(today))
+                        .filter(p -> p.isMandatoryDaily()
+                                && p.getStartTime() != null
+                                && p.getStartTime().toLocalDate().equals(today))
                         .toList();
-                
+
                 if (!todayQuests.isEmpty()) {
                     for (UserQuestProgress p : todayQuests) {
                         Quest oldQuest = p.getQuest();
                         userQuestProgressRepository.delete(p);
-                        // Borramos la quest física si es de tipo diaria (para no saturar la BD)
                         if (oldQuest.getType() == Quest.QuestType.DAILY) {
                             questRepository.delete(oldQuest);
                         }
@@ -407,20 +407,19 @@ public class AdminController {
                     questRepository.flush();
                 }
 
-                // 2. Generar la nueva misión diaria
                 UserQuestProgress newMandatory = systemQuestService.generateMandatoryDaily(user);
-                
+
                 if (newMandatory != null) {
                     count++;
-                    
-                    // 3. BLOQUEAR MODO AVENTURA: 
+
                     adventureSessionRepository.findByUserAndIsActiveTrue(user).ifPresent(session -> {
                         session.setPendingQuestId(newMandatory.getQuest().getId());
                         adventureSessionRepository.save(session);
                     });
                 }
             }
-            return ResponseEntity.ok("Se han asignado " + count + " misiones diarias obligatorias y se ha reseteado el progreso de hoy.");
+            return ResponseEntity.ok("Se han asignado " + count
+                    + " misiones diarias obligatorias y se ha reseteado el progreso de hoy.");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error al asignar: " + e.getMessage());

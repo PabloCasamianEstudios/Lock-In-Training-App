@@ -20,8 +20,8 @@ interface SwaggerBlockProps {
   onDataReceived?: (data: any[]) => void;
 }
 
-export const SwaggerBlock: FC<SwaggerBlockProps> = ({ 
-  method, title, colorClass, borderClass, bgClass, entity, type = 'all', onDataReceived 
+export const SwaggerBlock: FC<SwaggerBlockProps> = ({
+  method, title, colorClass, borderClass, bgClass, entity, type = 'all', onDataReceived
 }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [data, setData] = useState<any[] | null>(null);
@@ -76,9 +76,14 @@ export const SwaggerBlock: FC<SwaggerBlockProps> = ({
     if (type === 'quest-start') return `/api/quests/{questId}/start?userId={n}`;
     if (type === 'quest-active') return `/api/quests/active/{id}`;
     if (type === 'quest-system-pool') return `/api/admin/quests/generate-system-pool`;
+    if (type === 'quest-assign-dailies') return `/api/admin/quests/assign-daily-mandatories`;
     if (type === 'comp-monthly') return `/api/admin/competitive/monthly-update`;
     if (type === 'comp-season') return `/api/admin/competitive/season-reset`;
     if (type === 'comp-ranks') return `/api/admin/competitive/refresh-ranks`;
+    if (type === 'mod-muted') return `/api/admin/moderation/muted`;
+    if (type === 'mod-unmute') return `/api/admin/moderation/unmute/{id}`;
+    if (type === 'mod-mute') return `/api/admin/moderation/mute/{id}`;
+    if (type === 'shop-buy-item') return `/api/shop/purchase/item/{userId}/{itemId}`;
     if (type === 'users-distribute-stats') return `/api/user/{id}/distribute-stats`;
     return `/api/admin/${entity}${(type === 'id' || method === 'delete' || method === 'put') ? '/{id}' : ''}`;
   };
@@ -120,9 +125,9 @@ export const SwaggerBlock: FC<SwaggerBlockProps> = ({
                     {type === 'custom-league-generate' ? 'Max Players Per League' :
                       (type === 'quest-complete' || type === 'quest-start' || type === 'quest-active') ? 'Progress / Quest / User ID (Required)' :
                         (type === 'mod-unmute' || type === 'mod-mute') ? 'Target User ID (Required)' :
-                        (type === 'shop-buy-item' || type === 'shop-buy-title') ? 'Target IDs (Format: userId,itemId/titleId)' :
-                          (type === 'users-custom-stats' || type === 'users-items' || type === 'users-titles' || type === 'users-league-players' || type === 'users-distribute-stats') ? 'User ID (Required)' :
-                            'Record / User / Request ID (Required)'}
+                          (type === 'shop-buy-item' || type === 'shop-buy-title') ? 'Target IDs (Format: userId,itemId/titleId)' :
+                            (type === 'users-custom-stats' || type === 'users-items' || type === 'users-titles' || type === 'users-league-players' || type === 'users-distribute-stats') ? 'User ID (Required)' :
+                              'Record / User / Request ID (Required)'}
                   </label>
                   <input
                     className="bg-surface border border-border p-2 text-text-main w-full outline-none focus:border-orange-500/50 font-mono text-xs"
@@ -193,7 +198,7 @@ export const SwaggerBlock: FC<SwaggerBlockProps> = ({
                           <td className="p-2 opacity-50 text-text-secondary">Lvl {u.level}</td>
                           <td className="p-2 text-right">
                             <span className={`px-2 py-0.5 rounded-sm font-black ${u.rank === 'S' ? 'bg-yellow-500 text-neutral-black shadow-[0_0_5px_yellow]' :
-                                u.rank === 'A' ? 'bg-purple-500 text-neutral-white' : 'bg-surface border border-border text-text-main'
+                              u.rank === 'A' ? 'bg-purple-500 text-neutral-white' : 'bg-surface border border-border text-text-main'
                               }`}>
                               {u.rank || 'E'}
                             </span>
