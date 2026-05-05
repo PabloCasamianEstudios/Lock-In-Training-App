@@ -181,64 +181,28 @@ public class UserController {
         }
 
         LocalDate today = LocalDate.now();
-        LocalDateTime now = LocalDateTime.now();
-
-        // 1. Verificar si ya existe la diaria obligatoria de hoy
         List<UserQuestProgress> allProgress = userQuestProgressRepository.findByUserId(id);
-        UserQuestProgress mandatoryProgress = allProgress.stream()
-                .filter(p -> p.isMandatoryDaily()
-                        && p.getStartTime() != null
+        
+        // 1. Buscar si ya existe la misión obligatoria de hoy
+        UserQuestProgress mandatory = allProgress.stream()
+                .filter(p -> p.isMandatoryDaily() 
+                        && p.getStartTime() != null 
                         && p.getStartTime().toLocalDate().equals(today))
                 .findFirst()
                 .orElse(null);
 
-        if (mandatoryProgress == null) {
-            // Generar nueva misión diaria obligatoria
+        // 2. Si no existe ninguna misión hoy, generar la obligatoria
+        if (mandatory == null) {
             User user = userRepository.findById(id).orElse(null);
-            String rank = (user != null && user.getSeasonRank() != null) ? user.getSeasonRank() : "E";
-
-            List<com.lockin.model.Quest> pool = questRepository.findByType(com.lockin.model.Quest.QuestType.SYSTEM)
-                    .stream()
-                    .filter(q -> rank.equals(q.getRankDifficulty()))
-                    .toList();
-
-            if (!pool.isEmpty()) {
-                mandatoryProgress = systemQuestService.generateMandatoryDaily(user);
+            if (user != null) {
+                mandatory = systemQuestService.generateMandatoryDaily(user);
             }
         }
 
+        // 3. Devolver una lista con esa única misión (si existe)
         List<Map<String, Object>> response = new ArrayList<>();
-
-        // Añadir la obligatoria si existe
-        if (mandatoryProgress != null) {
-            response.add(mapProgressToMap(mandatoryProgress, today));
-        }
-
-        List<com.lockin.model.Quest> dailyPool = questRepository.findByType(com.lockin.model.Quest.QuestType.DAILY)
-                .stream()
-                .filter(q -> q.getCreatorId() != null && q.getCreatorId() == 0L) // Solo globales
-                .collect(Collectors.toList());
-
-        java.util.Collections.shuffle(dailyPool, new java.util.Random(LocalDate.now().toEpochDay()));
-
-        for (com.lockin.model.Quest quest : dailyPool) {
-            if (response.size() >= 3)
-                break;
-
-            UserQuestProgress latest = userQuestProgressRepository.findByUserIdAndQuestId(id, quest.getId()).stream()
-                    .filter(p -> p.getStartTime() != null && p.getStartTime().toLocalDate().equals(today))
-                    .findFirst()
-                    .orElse(null);
-
-            if (latest == null) {
-                latest = new UserQuestProgress();
-                latest.setUser(userRepository.getReferenceById(id));
-                latest.setQuest(quest);
-                latest.setStatus(UserQuestProgress.QuestStatus.ACTIVE);
-                latest.setStartTime(now);
-                latest = userQuestProgressRepository.save(latest);
-            }
-            response.add(mapProgressToMap(latest, today));
+        if (mandatory != null) {
+            response.add(mapProgressToMap(mandatory, today));
         }
 
         return ResponseEntity.ok(response);
