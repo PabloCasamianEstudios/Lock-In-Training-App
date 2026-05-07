@@ -60,6 +60,9 @@ public class User {
     @Transient
     private Double imc;
 
+    @Transient
+    private String title;
+
     @PostLoad
     @PostPersist
     @PostUpdate

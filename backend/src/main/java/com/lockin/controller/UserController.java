@@ -106,7 +106,13 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         return userRepository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(u -> {
+                    userTitleRepository.findByUserId(u.getId()).stream()
+                            .filter(UserTitle::isEquipped)
+                            .findFirst()
+                            .ifPresent(ut -> u.setTitle(ut.getTitle().getName()));
+                    return ResponseEntity.ok(u);
+                })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

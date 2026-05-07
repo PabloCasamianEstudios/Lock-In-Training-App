@@ -124,6 +124,7 @@ export interface PlayerProfile {
   biometria?: Record<string, unknown>;
   profilePic?: string;
   seasonRank?: string;
+  title?: string;
   statPoints?: number;
 }
 
