@@ -31,9 +31,10 @@ export default function LeagueView({ players, currentUserId, onNavigate }: Leagu
     );
   }
 
-  const half = Math.ceil(players.length / 2);
-  const leftCol = players.slice(0, half);
-  const rightCol = players.slice(half);
+  const sortedPlayers = [...players].sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
+  const half = Math.ceil(sortedPlayers.length / 2);
+  const leftCol = sortedPlayers.slice(0, half);
+  const rightCol = sortedPlayers.slice(half);
 
   return (
     <div className="grid md:grid-cols-2 gap-10">

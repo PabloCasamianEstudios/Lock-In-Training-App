@@ -78,7 +78,7 @@ export default function FriendsTab({
                 </div>
                 <div className="min-w-0">
                   <h4 className="text-lg sm:text-xl font-black italic uppercase text-text-main group-hover:text-main transition-colors truncate">{searchResult.username}</h4>
-                  <p className="text-[10px] text-text-secondary font-black uppercase tracking-[0.2em]">{t('common.rank')} {searchResult.rank || 'E'}</p>
+                  <p className="text-[10px] text-text-secondary font-black uppercase tracking-[0.2em]">{t('common.rank')} {searchResult.seasonRank || 'E'}</p>
                 </div>
               </div>
 
@@ -161,7 +161,7 @@ export default function FriendsTab({
                   </div>
                   <div>
                     <p className="text-xs font-black text-text-main italic uppercase group-hover:text-main transition-colors">{friend.username ?? t('common.hunter')}</p>
-                    <p className="text-[9px] text-text-secondary uppercase tracking-widest font-black">{t('common.rank')} {friend.rank || 'E'}</p>
+                    <p className="text-[9px] text-text-secondary uppercase tracking-widest font-black">{t('common.rank')} {friend.seasonRank || 'E'}</p>
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-border group-hover:text-main transition-all transform group-hover:translate-x-1" />

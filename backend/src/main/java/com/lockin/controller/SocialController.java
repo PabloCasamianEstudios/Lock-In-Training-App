@@ -1,6 +1,9 @@
 package com.lockin.controller;
 
-import com.lockin.model.*;
+import com.lockin.model.User;
+import com.lockin.model.Friendship;
+import com.lockin.model.dtos.RankingUserDTO;
+import com.lockin.repository.UserTitleRepository;
 import com.lockin.repository.UserRepository;
 import com.lockin.repository.FriendshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,8 @@ public class SocialController {
     private FriendshipRepository friendshipRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserTitleRepository userTitleRepository;
 
     /* --- FRIENDSHIP ACTIONS ZONE --- */
     @PostMapping("/friends/request")
@@ -80,10 +85,29 @@ public class SocialController {
     }
 
     @GetMapping("/friends/{userId}")
-    public List<User> getFriends(@PathVariable Long userId) {
+    public List<RankingUserDTO> getFriends(@PathVariable Long userId) {
         /* --- FRIEND LIST MAPPING ZONE --- */
         return friendshipRepository.findAllAcceptedFriends(userId).stream()
                 .map(f -> f.getSender().getId().equals(userId) ? f.getReceiver() : f.getSender())
+                .map(this::mapToRankingDTO)
                 .toList();
+    }
+
+    private RankingUserDTO mapToRankingDTO(User user) {
+        String titleName = userTitleRepository.findByUserIdAndIsEquippedTrue(user.getId())
+                .map(ut -> ut.getTitle().getName())
+                .orElse("Sin Título");
+
+        return RankingUserDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .profilePic(user.getProfilePic())
+                .title(titleName)
+                .level(user.getLevel())
+                .rank(user.getRank())
+                .seasonRank(user.getSeasonRank())
+                .totalPoints(user.getTotalPoints())
+                .seasonPoints(user.getSeasonPoints())
+                .build();
     }
 }

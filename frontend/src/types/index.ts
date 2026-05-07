@@ -14,6 +14,7 @@ export interface User {
   coins: number;
   rank?: string;
   seasonRank?: string;
+  title?: string;
   role?: UserRole;
   weight?: number;
   height?: number;

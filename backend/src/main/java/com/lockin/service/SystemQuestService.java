@@ -239,6 +239,18 @@ public class SystemQuestService {
 
     @Transactional
     public UserQuestProgress generateMandatoryDaily(User user) {
+        LocalDate today = LocalDate.now();
+        // Salvaguarda: Si ya tiene una diaria hoy, no crear otra
+        Optional<UserQuestProgress> existing = userQuestProgressRepository.findByUserId(user.getId()).stream()
+                .filter(p -> p.isMandatoryDaily() 
+                          && p.getStartTime() != null 
+                          && p.getStartTime().toLocalDate().equals(today))
+                .findFirst();
+        
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
         String rank = (user.getSeasonRank() != null) ? user.getSeasonRank() : "E";
         List<Quest> pool = questRepository.findByType(Quest.QuestType.SYSTEM).stream()
                 .filter(q -> rank.equals(q.getRankDifficulty()))
