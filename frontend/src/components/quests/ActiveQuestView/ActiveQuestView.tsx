@@ -206,6 +206,16 @@ const ActiveQuestView: FC<ActiveQuestViewProps> = ({ activeProgress, onUpdatePro
                     >
                       +5
                     </button>
+                    <button
+                      onClick={() => handleIncrement(idx, step, target)}
+                      disabled={isCompleted}
+                      className={`flex-1 border-2 p-2 sm:p-3 text-xs sm:text-base font-black italic transition-all
+                        ${isCompleted
+                          ? 'bg-[var(--neutral-white)]/5 border-[var(--neutral-white)]/10 text-[var(--neutral-white)] opacity-30'
+                          : 'bg-surface border-border text-text-secondary hover:border-main hover:bg-main hover:text-neutral-black'}`}
+                    >
+                      MAX
+                    </button>
                   </div>
                 </div>
               );
