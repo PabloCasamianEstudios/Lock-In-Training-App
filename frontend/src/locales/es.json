@@ -234,6 +234,7 @@
     "you_died": "HAS MUERTO",
     "start_new": "INICIAR NUEVA CAMPAÑA",
     "enter_dungeon": "ENTRAR EN LA MAZMORRA",
+    "restart_campaign": "REINICIAR CAMPAÑA",
     "path_blocked": "¡CAMINO BLOQUEADO! Una prueba física te espera en tu pestaña de Misiones.",
     "override_trial": "DEBUG: SOBRESCRIBIR PRUEBA (AVANZAR PROTOCOLO)",
     "waiting_gm": "ESPERANDO AL GAME MASTER...",

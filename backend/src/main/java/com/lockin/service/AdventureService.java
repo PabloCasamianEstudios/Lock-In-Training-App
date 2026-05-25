@@ -24,7 +24,7 @@ public class AdventureService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${ai.game.master.url:http://localhost:8000/api/adventure}")
+    @Value("${ai.game.master.url:${AI_GAME_MASTER_URL:http://localhost:8000/api/adventure}}")
     private String aiApiUrl;
 
     public AdventureService(AdventureSessionRepository sessionRepository,
@@ -198,9 +198,9 @@ public class AdventureService {
         payload.put("max_hp", session.getMaxHp());
         payload.put("stats", statsMap);
         payload.put("inventory", items);
-        payload.put("context_history", limitedHistory);
+        payload.put("context_history", limitedHistory != null ? limitedHistory : "");
         payload.put("room_count", session.getRoomCount());
-        payload.put("past_rooms", session.getPastRooms());
+        payload.put("past_rooms", session.getPastRooms() != null ? session.getPastRooms() : "");
 
         // Añadir liga actual
         List<UserLeague> userLeagues = userLeagueRepository.findByUser(user);
@@ -208,6 +208,9 @@ public class AdventureService {
             UserLeague ul = userLeagues.get(0);
             payload.put("league", ul.getLeague().getRank());
             session.setCurrentLeague(ul.getLeague().getRank());
+        } else {
+            payload.put("league", "BRONCE");
+            session.setCurrentLeague("BRONCE");
         }
 
         if (choice != null) {

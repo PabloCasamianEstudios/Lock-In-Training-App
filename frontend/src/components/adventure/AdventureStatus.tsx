@@ -9,9 +9,13 @@ interface AdventureStatusProps {
   maxHp: number;
   level: number;
   league?: string | null;
+  onReset?: () => void;
+  isActive?: boolean;
 }
 
-export const AdventureStatus: FC<AdventureStatusProps> = ({ hp, maxHp, level, league }) => {
+export const AdventureStatus: FC<AdventureStatusProps> = ({ 
+  hp, maxHp, level, league, onReset, isActive 
+}) => {
   const { t } = useLanguage();
 
   return (
@@ -40,6 +44,15 @@ export const AdventureStatus: FC<AdventureStatusProps> = ({ hp, maxHp, level, le
           }
           valueLabel={`${hp} / ${maxHp}`}
         />
+
+        {isActive && onReset && (
+          <button
+            onClick={onReset}
+            className="w-full mt-2 py-3 bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-black font-black uppercase tracking-[0.2em] transition-all border-2 border-red-600/50 hover:border-red-600 text-[10px] italic shadow-[4px_4px_0px_rgba(220,38,38,0.2)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 cursor-pointer"
+          >
+            {t('adventure.restart_campaign')}
+          </button>
+        )}
       </div>
     </BrutalistCard>
   );

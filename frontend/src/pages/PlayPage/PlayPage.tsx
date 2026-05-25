@@ -28,7 +28,7 @@ interface AdventureSession {
 }
 
 const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [session, setSession] = useState<AdventureSession | null>(null);
   const [userStats, setUserStats] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<boolean>(false);
@@ -128,6 +128,26 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
     setBuying(false);
   };
 
+  const handleReset = async () => {
+    const confirmReset = window.confirm(
+      language === 'es' 
+        ? '¿Seguro que quieres reiniciar la campaña? Perderás todo tu progreso en la mazmorra actual de forma irreversible.' 
+        : 'Are you sure you want to restart the campaign? You will permanently lose all progress in the current dungeon.'
+    );
+    if (!confirmReset) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      await apiClient(`/api/adventure/reset/${user!.id}`, { method: 'DELETE' });
+      setSession(null);
+      fetchUserStats();
+    } catch (err: any) {
+      setError(err.message || 'No se pudo reiniciar la campaña.');
+    }
+    setLoading(false);
+  };
+
   if (!user || user.isGuest) {
     return (
       <PageLayout title={t('adventure.title')} subtitle={t('adventure.restricted')} icon={Swords}>
@@ -154,6 +174,8 @@ const PlayPage: FC<PageProps> = ({ user, profile, fetchProfile }) => {
             maxHp={session?.maxHp ?? 100}
             level={profile?.level ?? 1}
             league={session?.currentLeague}
+            onReset={handleReset}
+            isActive={!!isActive}
           />
 
           <AdventureStore

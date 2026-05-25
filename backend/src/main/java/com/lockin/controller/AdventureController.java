@@ -27,28 +27,31 @@ public class AdventureController {
     }
 
     @PostMapping("/start/{userId}")
-    public ResponseEntity<AdventureSession> startAdventure(@PathVariable Long userId) {
+    public ResponseEntity<?> startAdventure(@PathVariable Long userId) {
         try {
             AdventureSession session = adventureService.startAdventure(userId);
             return ResponseEntity.ok(session);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            e.printStackTrace();
+            String detail = e.getMessage() + (e.getCause() != null ? " | Causado por: " + e.getCause().getMessage() : "");
+            return ResponseEntity.badRequest().body("Error al iniciar aventura: " + detail);
         }
     }
 
     @PostMapping("/action/{userId}")
-    public ResponseEntity<AdventureSession> makeChoice(@PathVariable Long userId,
+    public ResponseEntity<?> makeChoice(@PathVariable Long userId,
             @RequestBody Map<String, String> body) {
         try {
             String choice = body.get("choice");
             if (choice == null || choice.isEmpty()) {
-                return ResponseEntity.badRequest().build();
+                return ResponseEntity.badRequest().body("La opción elegida no puede estar vacía.");
             }
             AdventureSession session = adventureService.makeChoice(userId, choice);
             return ResponseEntity.ok(session);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().build();
+            String detail = e.getMessage() + (e.getCause() != null ? " | Causado por: " + e.getCause().getMessage() : "");
+            return ResponseEntity.badRequest().body("Error en la acción de la aventura: " + detail);
         }
     }
 

@@ -234,6 +234,7 @@
     "you_died": "YOU DIED",
     "start_new": "START NEW CAMPAIGN",
     "enter_dungeon": "ENTER DUNGEON",
+    "restart_campaign": "RESTART CAMPAIGN",
     "path_blocked": "PATH BLOCKED! A physical trial awaits in your Missions tab.",
     "override_trial": "DEBUG: OVERRIDE TRIAL (ADVANCE PROTOCOL)",
     "waiting_gm": "WAITING FOR GAME MASTER...",
