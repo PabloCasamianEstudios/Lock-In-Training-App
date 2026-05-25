@@ -107,6 +107,6 @@ public class QuestService {
     }
 
     private long calculateRequiredXP(int level) {
-        return (long) (1000 * Math.pow(1.5, level - 1));
+        return (long) (500 * Math.pow(1.2, level - 1));
     }
 }
