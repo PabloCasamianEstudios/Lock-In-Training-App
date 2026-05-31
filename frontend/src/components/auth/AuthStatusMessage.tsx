@@ -21,7 +21,7 @@ export const AuthStatusMessage: FC<AuthStatusMessageProps> = ({ error, successMe
           className="bg-red-600 border-l-4 border-red-500 p-4 mb-4 transform -skew-x-12 flex items-start gap-4"
         >
           <div className="bg-red-500 text-white font-black text-[10px] px-2 py-0.5 rounded-sm">{t('auth.alert')}</div>
-          <p className="text-red-500 font-bold italic text-xs uppercase tracking-tighter leading-tight">
+          <p className="text-white font-bold italic text-xs uppercase tracking-tighter leading-tight">
             {error}
           </p>
         </motion.div>
@@ -34,7 +34,7 @@ export const AuthStatusMessage: FC<AuthStatusMessageProps> = ({ error, successMe
           className="bg-green-500/10 border-l-4 border-green-500 p-4 mb-4 transform -skew-x-12 flex items-start gap-4"
         >
           <div className="bg-green-500 text-black font-black text-[10px] px-2 py-0.5 rounded-sm">{t('auth.success')}</div>
-          <p className="text-green-500 font-bold italic text-xs uppercase tracking-tighter leading-tight">
+          <p className="text-white font-bold italic text-xs uppercase tracking-tighter leading-tight">
             {successMessage}
           </p>
         </motion.div>

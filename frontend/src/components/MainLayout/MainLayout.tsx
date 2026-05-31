@@ -180,7 +180,7 @@ const MainLayout: FC<MainLayoutProps> = ({ user, profile, onLogout, distributeSt
                 )}
                 <div className="hub-dropdown-divider" />
                 <button onClick={onLogout} className="hub-dropdown-item hub-dropdown-danger">
-                  <LogOut className="w-4 h-4" /> {isGuest ? 'EXIT GUEST MODE' : t('profile.logout')}
+                  <LogOut className="w-4 h-4" /> {isGuest ? 'SALIR DEL MODO INVITADO' : t('profile.logout')}
                 </button>
               </motion.div>
             )}
